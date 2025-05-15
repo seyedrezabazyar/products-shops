@@ -3,684 +3,921 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ایجاد پیکربندی جدید</title>
+    <title>ایجاد کانفیگ جدید</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/vazirmatn/33.0.3/Vazirmatn-font-face.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            50: '#f8fafc',
+                            100: '#e2e8f0',
+                            200: '#cbd5e1',
+                            300: '#94a3b8',
+                            400: '#64748b',
+                            500: '#475569',
+                            600: '#334155',
+                            700: '#1e293b',
+                            800: '#0f172a',
+                            900: '#020617',
+                        },
+                    },
+                },
+            },
+        }
+    </script>
     <style>
-        @font-face {
-            font-family: 'IRANSans';
-            src: url('https://cdn.jsdelivr.net/gh/rastikerdar/iranian-sans/WebFonts/woff2/IRANSansWeb.woff2') format('woff2');
-            font-weight: normal;
+        body {
+            font-family: "Vazirmatn", system-ui, sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
         }
 
-        * {
-            font-family: 'IRANSans', Tahoma, Arial, sans-serif;
+        .custom-shadow {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .input-field {
+            background-color: #000000;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+        }
+
+        .input-field:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background-color: #475569;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: #334155;
+        }
+
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        .section-card {
+            background-color: #0F172AFF;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            border: 1px solid #334155;
+        }
+
+        .section-header {
+            border-bottom: 1px solid #334155;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.25rem;
+            font-weight: 700;
+            color: #325eef;
+        }
+
+        .subsection {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #334155;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .method-box.selected {
+            background-color: rgba(16, 185, 129, 0.1);
+            border-color: #10b981 !important;
+        }
+
+        .method-box.selected .method-circle {
+            background-color: #10b981;
+            border-color: #059669;
+        }
+
+        .method-box.selected .method-title {
+            color: #10b981;
+        }
+
+        .method-box.selected .method-check-indicator {
+            opacity: 1;
         }
     </style>
 </head>
-<body class="bg-gray-50">
-<div class="min-h-screen py-10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Header -->
-        <div class="mb-10">
-            <h1 class="text-3xl font-bold text-gray-800">ایجاد پیکربندی جدید</h1>
-            <p class="mt-2 text-gray-600">لطفا اطلاعات مورد نیاز را با دقت وارد کنید.</p>
-        </div>
+<body class="min-h-screen py-10">
+<div class="container mx-auto px-4">
+    <div class="max-w-5xl mx-auto custom-shadow rounded-xl bg-dark-800 p-8 border border-dark-600">
+        <h1 class="text-3xl font-bold text-blue-400 mb-8 pb-4 border-b border-dark-600 flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
+            </svg>
+            ایجاد کانفیگ جدید
+        </h1>
 
-        <!-- Main Content -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-            @if ($errors->any())
-                <div class="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-                    <strong class="font-bold">خطا!</strong>
-                    <ul class="mt-2 list-disc list-inside">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+        @if ($errors->any())
+            <div class="bg-red-900/50 border border-red-500 text-red-200 px-6 py-4 rounded-lg mb-6">
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <strong class="font-bold text-lg">خطا!</strong>
                 </div>
-            @endif
+                <ul class="list-disc mr-8 mt-2">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-            <form action="{{ route('configs.store') }}" method="POST" class="space-y-8">
-                @csrf
+        <form action="{{ route('configs.store') }}" method="POST">
+            @csrf
 
-                <!-- Base Configuration -->
-                <div class="border-b border-gray-200 pb-6">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">تنظیمات پایه</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="name" class="block text-sm font-medium text-gray-700 mb-1">نام پیکربندی <span class="text-red-600">*</span></label>
-                            <input type="text" name="name" id="name" required value="{{ old('name') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                            <p class="mt-1 text-xs text-gray-500">فقط حروف، اعداد، خط تیره و زیرخط مجاز است</p>
-                        </div>
+            <!-- اطلاعات پایه -->
+            <div class="section-card">
+                <h2 class="section-header text-xl">اطلاعات پایه</h2>
 
-                        <div>
-                            <label for="method" class="block text-sm font-medium text-gray-700 mb-1">متد استخراج <span class="text-red-600">*</span></label>
-                            <select name="method" id="method" required class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                <option value="1" {{ old('method') == '1' ? 'selected' : '' }}>متد 1 (استخراج ساده)</option>
-                                <option value="2" {{ old('method') == '2' ? 'selected' : '' }}>متد 2 (استخراج با مرورگر)</option>
-                                <option value="3" {{ old('method') == '3' ? 'selected' : '' }}>متد 3 (استخراج پیشرفته)</option>
-                            </select>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="site_name" class="block text-sm font-medium text-blue-300 mb-2">نام سایت <span class="text-red-400">*</span></label>
+                    <input type="text" name="site_name" id="site_name" value="{{ old('site_name') }}"
+                           class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+                           placeholder="مثال: دیجی‌کالا" required>
                 </div>
 
-                <!-- URL Configuration -->
-                <div class="border-b border-gray-200 pb-6">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">پیکربندی URL ها</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <label for="base_urls" class="block text-sm font-medium text-gray-700 mb-1">URL های پایه</label>
-                            <textarea name="base_urls" id="base_urls" rows="3" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">{{ old('base_urls') }}</textarea>
-                            <p class="mt-1 text-xs text-gray-500">هر URL را در یک خط یا با کاما جدا کنید</p>
-                        </div>
+                <!-- روش اسکرپ با باکس‌های انتخابی -->
+                <div class="section-card">
+                    <h2 class="section-header text-xl flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                        روش اسکرپ
+                        <span class="text-red-400 mr-2">*</span>
+                    </h2>
 
-                        <div>
-                            <label for="products_urls" class="block text-sm font-medium text-gray-700 mb-1">URL های محصولات</label>
-                            <textarea name="products_urls" id="products_urls" rows="3" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">{{ old('products_urls') }}</textarea>
-                            <p class="mt-1 text-xs text-gray-500">هر URL را در یک خط یا با کاما جدا کنید</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Request Settings -->
-                <div class="border-b border-gray-200 pb-6">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">تنظیمات درخواست</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div>
-                            <label for="request_delay_min" class="block text-sm font-medium text-gray-700 mb-1">حداقل تاخیر درخواست (ms)</label>
-                            <input type="number" name="request_delay_min" id="request_delay_min" value="{{ old('request_delay_min', 3000) }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                        </div>
-
-                        <div>
-                            <label for="request_delay_max" class="block text-sm font-medium text-gray-700 mb-1">حداکثر تاخیر درخواست (ms)</label>
-                            <input type="number" name="request_delay_max" id="request_delay_max" value="{{ old('request_delay_max', 5000) }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                        </div>
-
-                        <div>
-                            <label for="request_delay" class="block text-sm font-medium text-gray-700 mb-1">تاخیر درخواست (ms)</label>
-                            <input type="number" name="request_delay" id="request_delay" value="{{ old('request_delay', 3000) }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                        </div>
-
-                        <div>
-                            <label for="timeout" class="block text-sm font-medium text-gray-700 mb-1">زمان انتظار (ثانیه)</label>
-                            <input type="number" name="timeout" id="timeout" value="{{ old('timeout', 120) }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                        </div>
-
-                        <div>
-                            <label for="max_retries" class="block text-sm font-medium text-gray-700 mb-1">حداکثر تعداد تلاش مجدد</label>
-                            <input type="number" name="max_retries" id="max_retries" value="{{ old('max_retries', 2) }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                        </div>
-
-                        <div>
-                            <label for="concurrency" class="block text-sm font-medium text-gray-700 mb-1">همزمانی</label>
-                            <input type="number" name="concurrency" id="concurrency" value="{{ old('concurrency', 1) }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                        </div>
-
-                        <div>
-                            <label for="batch_size" class="block text-sm font-medium text-gray-700 mb-1">اندازه دسته</label>
-                            <input type="number" name="batch_size" id="batch_size" value="{{ old('batch_size', 1) }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                        </div>
-
-                        <div>
-                            <label for="user_agent" class="block text-sm font-medium text-gray-700 mb-1">User Agent</label>
-                            <input type="text" name="user_agent" id="user_agent" value="{{ old('user_agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/91.0.4472.124') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                        </div>
-
-                        <div class="flex items-center pt-6">
-                            <input type="checkbox" name="verify_ssl" id="verify_ssl" {{ old('verify_ssl') ? 'checked' : '' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                            <label for="verify_ssl" class="mr-2 block text-sm text-gray-700">تایید SSL</label>
-                        </div>
-
-                        <div class="flex items-center pt-6">
-                            <input type="checkbox" name="keep_price_format" id="keep_price_format" {{ old('keep_price_format') ? 'checked' : '' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                            <label for="keep_price_format" class="mr-2 block text-sm text-gray-700">حفظ فرمت قیمت</label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- WebDriver Settings (Method 2 & 3) -->
-                <div class="border-b border-gray-200 pb-6 method-2-3-fields">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">تنظیمات WebDriver (متد 2 و 3)</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="scrool" class="block text-sm font-medium text-gray-700 mb-1">تعداد اسکرول</label>
-                            <input type="number" name="scrool" id="scrool" value="{{ old('scrool', 10) }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                        </div>
-
-                        <div>
-                            <label for="container" class="block text-sm font-medium text-gray-700 mb-1">سلکتور محتوا</label>
-                            <input type="text" name="container" id="container" value="{{ old('container') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                            <p class="mt-1 text-xs text-gray-500">سلکتور CSS برای عنصر محتوایی اصلی</p>
-                        </div>
-
-                        <div class="method-3-fields">
-                            <label for="basescroll" class="block text-sm font-medium text-gray-700 mb-1">تعداد اسکرول پایه (متد 3)</label>
-                            <input type="number" name="basescroll" id="basescroll" value="{{ old('basescroll', 10) }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                        </div>
-
-                        <div class="method-2-fields">
-                            <div class="flex items-center pt-6">
-                                <input type="checkbox" name="share_product_id_from_method_2" id="share_product_id_from_method_2" {{ old('share_product_id_from_method_2') ? 'checked' : '' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                                <label for="share_product_id_from_method_2" class="mr-2 block text-sm text-gray-700">اشتراک‌گذاری شناسه محصول از متد 2</label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Pagination Settings -->
-                <div class="border-b border-gray-200 pb-6 method-2-3-fields">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">تنظیمات صفحه‌بندی</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="pagination_method" class="block text-sm font-medium text-gray-700 mb-1">روش صفحه‌بندی</label>
-                            <select name="pagination_method" id="pagination_method" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                <option value="next_button" {{ old('pagination_method', 'next_button') == 'next_button' ? 'selected' : '' }}>دکمه صفحه بعد</option>
-                                <option value="url" {{ old('pagination_method') == 'url' ? 'selected' : '' }}>URL</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label for="pagination_max_pages" class="block text-sm font-medium text-gray-700 mb-1">حداکثر تعداد صفحات</label>
-                            <input type="number" name="pagination_max_pages" id="pagination_max_pages" value="{{ old('pagination_max_pages', 3) }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                        </div>
-
-                        <div>
-                            <label for="scroll_delay" class="block text-sm font-medium text-gray-700 mb-1">تاخیر اسکرول (ms)</label>
-                            <input type="number" name="scroll_delay" id="scroll_delay" value="{{ old('scroll_delay', 5000) }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                        </div>
-
-                        <!-- Next Button Settings -->
-                        <div class="next-button-fields">
-                            <label for="pagination_next_button_selector" class="block text-sm font-medium text-gray-700 mb-1">سلکتور دکمه صفحه بعد</label>
-                            <input type="text" name="pagination_next_button_selector" id="pagination_next_button_selector" value="{{ old('pagination_next_button_selector') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                            <p class="mt-1 text-xs text-gray-500">سلکتور CSS برای دکمه صفحه بعد</p>
-                        </div>
-
-                        <!-- URL Settings -->
-                        <div class="url-fields hidden">
-                            <div class="grid grid-cols-1 gap-4">
-                                <div>
-                                    <label for="pagination_url_type" class="block text-sm font-medium text-gray-700 mb-1">نوع URL</label>
-                                    <select name="pagination_url_type" id="pagination_url_type" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                        <option value="query" {{ old('pagination_url_type', 'query') == 'query' ? 'selected' : '' }}>Query</option>
-                                        <option value="path" {{ old('pagination_url_type') == 'path' ? 'selected' : '' }}>Path</option>
-                                    </select>
-                                </div>
-
-                                <div>
-                                    <label for="pagination_url_parameter" class="block text-sm font-medium text-gray-700 mb-1">پارامتر URL</label>
-                                    <input type="text" name="pagination_url_parameter" id="pagination_url_parameter" value="{{ old('pagination_url_parameter', 'page') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                </div>
-
-                                <div>
-                                    <label for="pagination_url_separator" class="block text-sm font-medium text-gray-700 mb-1">جداکننده URL</label>
-                                    <input type="text" name="pagination_url_separator" id="pagination_url_separator" value="{{ old('pagination_url_separator', '=') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                </div>
-
-                                <div>
-                                    <label for="pagination_url_suffix" class="block text-sm font-medium text-gray-700 mb-1">پسوند URL</label>
-                                    <input type="text" name="pagination_url_suffix" id="pagination_url_suffix" value="{{ old('pagination_url_suffix') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                </div>
-
-                                <div class="flex items-center pt-2">
-                                    <input type="checkbox" name="pagination_use_sample_url" id="pagination_use_sample_url" {{ old('pagination_use_sample_url') ? 'checked' : '' }} class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
-                                    <label for="pagination_use_sample_url" class="mr-2 block text-sm text-gray-700">استفاده از URL نمونه</label>
-                                </div>
-
-                                <div class="sample-url-field {{ old('pagination_use_sample_url') ? '' : 'hidden' }}">
-                                    <label for="pagination_sample_url" class="block text-sm font-medium text-gray-700 mb-1">URL نمونه</label>
-                                    <input type="text" name="pagination_sample_url" id="pagination_sample_url" value="{{ old('pagination_sample_url') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Main Page Selectors -->
-                <div class="border-b border-gray-200 pb-6">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">سلکتورهای صفحه اصلی</h3>
-                    <div class="grid grid-cols-1 gap-6">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label for="main_page_product_links_type" class="block text-sm font-medium text-gray-700 mb-1">نوع سلکتور لینک محصولات</label>
-                                <select name="main_page_product_links_type" id="main_page_product_links_type" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                    <option value="css" {{ old('main_page_product_links_type', 'css') == 'css' ? 'selected' : '' }}>CSS</option>
-                                    <option value="xpath" {{ old('main_page_product_links_type') == 'xpath' ? 'selected' : '' }}>XPath</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="main_page_product_links_selector" class="block text-sm font-medium text-gray-700 mb-1">سلکتور لینک محصولات</label>
-                                <input type="text" name="main_page_product_links_selector" id="main_page_product_links_selector" value="{{ old('main_page_product_links_selector') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                            </div>
-
-                            <div>
-                                <label for="main_page_product_links_attribute" class="block text-sm font-medium text-gray-700 mb-1">ویژگی لینک محصولات</label>
-                                <input type="text" name="main_page_product_links_attribute" id="main_page_product_links_attribute" value="{{ old('main_page_product_links_attribute', 'href') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                            </div>
-                        </div>
-
-                        <!-- Product ID from Main Page Fields (conditional) -->
-                        <div class="product-id-main-page-fields hidden">
-                            <div class="mt-4 border-t border-gray-200 pt-4">
-                                <h4 class="text-lg font-medium text-gray-800 mb-2">شناسه محصول از صفحه اصلی</h4>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div>
-                                        <label for="main_page_product_id_type" class="block text-sm font-medium text-gray-700 mb-1">نوع سلکتور شناسه محصول</label>
-                                        <select name="main_page_product_id_type" id="main_page_product_id_type" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                            <option value="css" {{ old('main_page_product_id_type', 'css') == 'css' ? 'selected' : '' }}>CSS</option>
-                                            <option value="xpath" {{ old('main_page_product_id_type') == 'xpath' ? 'selected' : '' }}>XPath</option>
-                                        </select>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                        <!-- روش 1 -->
+                        <div class="method-box cursor-pointer transition-all duration-300 rounded-xl border-2 border-dark-600 hover:border-blue-500" data-method="1">
+                            <input type="radio" id="method1" name="method" value="1" class="hidden method-radio" checked>
+                            <label for="method1" class="block w-full h-full cursor-pointer">
+                                <div class="p-5 text-center">
+                                    <div class="flex justify-center mb-3">
+                                        <div class="w-16 h-16 rounded-full bg-dark-700 flex items-center justify-center border-2 border-dark-500 method-circle">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                            </svg>
+                                        </div>
                                     </div>
-
-                                    <div>
-                                        <label for="main_page_product_id_selector" class="block text-sm font-medium text-gray-700 mb-1">سلکتور شناسه محصول</label>
-                                        <input type="text" name="main_page_product_id_selector" id="main_page_product_id_selector" value="{{ old('main_page_product_id_selector') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                    </div>
-
-                                    <div>
-                                        <label for="main_page_product_id_attribute" class="block text-sm font-medium text-gray-700 mb-1">ویژگی شناسه محصول</label>
-                                        <input type="text" name="main_page_product_id_attribute" id="main_page_product_id_attribute" value="{{ old('main_page_product_id_attribute') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
+                                    <h3 class="text-lg font-bold method-title">روش 1</h3>
+                                    <p class="text-gray-300 mt-2">صفحه‌بندی ساده</p>
+                                    <div class="mt-3 method-check-indicator opacity-0 transition-opacity duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                        </svg>
                                     </div>
                                 </div>
-                            </div>
+                            </label>
+                        </div>
+
+                        <!-- روش 2 -->
+                        <div class="method-box cursor-pointer transition-all duration-300 rounded-xl border-2 border-dark-600 hover:border-blue-500" data-method="2">
+                            <input type="radio" id="method2" name="method" value="2" class="hidden method-radio">
+                            <label for="method2" class="block w-full h-full cursor-pointer">
+                                <div class="p-5 text-center">
+                                    <div class="flex justify-center mb-3">
+                                        <div class="w-16 h-16 rounded-full bg-dark-700 flex items-center justify-center border-2 border-dark-500 method-circle">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-lg font-bold method-title">روش 2</h3>
+                                    <p class="text-gray-300 mt-2">وب درایور</p>
+                                    <div class="mt-3 method-check-indicator opacity-0 transition-opacity duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- روش 3 -->
+                        <div class="method-box cursor-pointer transition-all duration-300 rounded-xl border-2 border-dark-600 hover:border-blue-500" data-method="3">
+                            <input type="radio" id="method3" name="method" value="3" class="hidden method-radio">
+                            <label for="method3" class="block w-full h-full cursor-pointer">
+                                <div class="p-5 text-center">
+                                    <div class="flex justify-center mb-3">
+                                        <div class="w-16 h-16 rounded-full bg-dark-700 flex items-center justify-center border-2 border-dark-500 method-circle">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <h3 class="text-lg font-bold method-title">روش 3</h3>
+                                    <p class="text-gray-300 mt-2">وب درایور بهینه</p>
+                                    <div class="mt-3 method-check-indicator opacity-0 transition-opacity duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mx-auto text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </label>
                         </div>
                     </div>
                 </div>
 
-                <!-- Product ID Configuration -->
-                <div class="border-b border-gray-200 pb-6">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">پیکربندی شناسه محصول</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="product_id_method" class="block text-sm font-medium text-gray-700 mb-1">روش شناسه محصول</label>
-                            <select name="product_id_method" id="product_id_method" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                <option value="selector" {{ old('product_id_method', 'selector') == 'selector' ? 'selected' : '' }}>سلکتور</option>
-                                <option value="url_pattern" {{ old('product_id_method') == 'url_pattern' ? 'selected' : '' }}>الگوی URL</option>
-                                <option value="script" {{ old('product_id_method') == 'script' ? 'selected' : '' }}>اسکریپت</option>
+            <!-- آدرس‌های پایه -->
+            <div class="section-card">
+                <h2 class="section-header text-xl flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                    </svg>
+                    آدرس‌های پایه
+                </h2>
+
+                <div class="form-group">
+                    <label class="block text-sm font-medium text-blue-300 mb-2">آدرس‌های پایه (URL) <span class="text-red-400">*</span></label>
+                    <div class="base-urls-container space-y-3">
+                        <div class="flex">
+                            <input type="url" name="base_urls[]" class="input-field flex-1 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+                                   placeholder="https://example.com" required>
+                            <button type="button" class="add-base-url mr-2 btn-primary px-4 py-2 rounded-lg flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="block text-sm font-medium text-blue-300 mb-2">آدرس‌های صفحات محصول <span class="text-red-400">*</span></label>
+                    <div class="products-urls-container space-y-3">
+                        <div class="flex">
+                            <input type="url" name="products_urls[]" class="input-field flex-1 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+                                   placeholder="https://example.com/product/123" required>
+                            <button type="button" class="add-product-url mr-2 btn-primary px-4 py-2 rounded-lg flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- تنظیمات قیمت -->
+            <div class="section-card">
+                <h2 class="section-header text-xl flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    تنظیمات قیمت
+                </h2>
+
+                <div class="form-group mb-4">
+                    <div class="flex items-center">
+                        <input type="hidden" name="keep_price_format" value="0">
+                        <input type="checkbox" name="keep_price_format" value="1" id="keep_price_format"
+                               class="w-5 h-5 text-blue-600 border-gray-500 rounded focus:ring-blue-500 bg-gray-700"
+                            {{ old('keep_price_format') ? 'checked' : '' }}>
+                        <label for="keep_price_format" class="mr-2 text-gray-300">حفظ فرمت قیمت</label>
+                    </div>
+                </div>
+
+            <!-- تنظیمات پیجینیشن -->
+            <div id="pagination-settings" class="section-card method-settings method-1-settings">
+                <h2 class="section-header text-xl flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+                    </svg>
+                    تنظیمات صفحه‌بندی
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
+                    <div class="form-group">
+                        <label class="block text-sm font-medium text-blue-300 mb-2">نوع صفحه‌بندی <span class="text-red-400">*</span></label>
+                        <select name="pagination[type]" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200">
+                            <option value="query">Query Parameter</option>
+                            <option value="path">Path Parameter</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="block text-sm font-medium text-blue-300 mb-2">پارامتر صفحه‌بندی <span class="text-red-400">*</span></label>
+                        <input type="text" name="pagination[parameter]" value="page" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" required>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
+                    <div class="form-group">
+                        <label class="block text-sm font-medium text-blue-300 mb-2">جداکننده <span class="text-red-400">*</span></label>
+                        <input type="text" name="pagination[separator]" value="=" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="block text-sm font-medium text-blue-300 mb-2">حداکثر صفحات <span class="text-red-400">*</span></label>
+                        <input type="number" name="pagination[max_pages]" value="10" min="1" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="inline-flex items-center">
+                        <input type="hidden" name="pagination[use_sample_url]" value="0">
+                        <input type="checkbox" name="pagination[use_sample_url]" value="1" id="pagination_use_sample_url" ...>
+                        <span class="mr-3 text-gray-200">استفاده از URL نمونه</span>
+                    </label>
+                </div>
+
+                <div id="sample-url-container" class="form-group hidden">
+                    <label class="block text-sm font-medium text-blue-300 mb-2">URL نمونه</label>
+                    <input type="url" name="pagination[sample_url]" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder="https://example.com/products?page=1">
+                </div>
+            </div>
+
+            <!-- تنظیمات روش 2 و 3 -->
+            <div id="method-2-3-settings" class="section-card method-settings method-2-settings method-3-settings hidden">
+                <h2 class="section-header text-xl flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    تنظیمات وب درایور
+                </h2>
+
+                <!-- فیلد کانتینر برای متد 3 -->
+                <div class="form-group method-3-field">
+                    <label for="container" class="text-gray-300">کانتینر <span class="text-gray-500">(اختیاری)</span></label>
+                    <input type="text" name="container" id="container" class="form-control bg-dark-700 text-gray-300 border-dark-500 rounded-lg focus:ring-blue-500 focus:border-blue-500" value="{{ old('container') }}">
+                    <small class="text-gray-500">این فیلد برای متد 3 اختیاری است.</small>
+                </div>
+
+                <div class="form-group">
+                    <label class="block text-sm font-medium text-blue-300 mb-2">تعداد اسکرول</label>
+                    <input type="number" name="scrool" value="10" min="1" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200">
+                </div>
+
+                <div class="form-group">
+                    <label class="block text-sm font-medium text-blue-300 mb-2">روش صفحه‌بندی <span class="text-red-400">*</span></label>
+                    <select name="pagination_method" id="pagination_method" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200">
+                        <option value="next_button">دکمه بعدی</option>
+                        <option value="url">URL</option>
+                    </select>
+                </div>
+
+                <div id="next-button-container" class="form-group">
+                    <label class="block text-sm font-medium text-blue-300 mb-2">سلکتور دکمه بعدی <span class="text-red-400">*</span></label>
+                    <input type="text" name="pagination_next_button_selector" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder=".next-page-button">
+                </div>
+
+                <div id="url-pagination-container" class="hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-blue-300 mb-2">نوع پیجینیشن URL <span class="text-red-400">*</span></label>
+                            <select name="pagination_url_type" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200">
+                                <option value="query">Query Parameter</option>
+                                <option value="path">Path Parameter</option>
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-blue-300 mb-2">پارامتر <span class="text-red-400">*</span></label>
+                            <input type="text" name="pagination_url_parameter" value="page" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200">
+                        </div>
+                    </div>
 
-                        <div>
-                            <label for="product_id_source" class="block text-sm font-medium text-gray-700 mb-1">منبع شناسه محصول</label>
-                            <select name="product_id_source" id="product_id_source" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                <option value="product_page" {{ old('product_id_source', 'product_page') == 'product_page' ? 'selected' : '' }}>صفحه محصول</option>
-                                <option value="main_page" {{ old('product_id_source') == 'main_page' ? 'selected' : '' }}>صفحه اصلی</option>
-                            </select>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-5">
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-blue-300 mb-2">جداکننده <span class="text-red-400">*</span></label>
+                            <input type="text" name="pagination_url_separator" value="=" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200">
+                        </div>
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-blue-300 mb-2">حداکثر صفحات <span class="text-red-400">*</span></label>
+                            <input type="number" name="pagination_max_pages" value="3" min="1" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="inline-flex items-center">
+                            <input type="checkbox" name="pagination_use_sample_url" value="1" class="h-5 w-5 text-blue-500 rounded focus:ring-blue-400 focus:ring-opacity-50">
+                            <span class="mr-3 text-gray-200">استفاده از URL نمونه</span>
+                        </label>
+                    </div>
+
+                    <div id="pagination-sample-url-container" class="form-group hidden">
+                        <label class="block text-sm font-medium text-blue-300 mb-2">URL نمونه</label>
+                        <input type="url" name="pagination_sample_url" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder="https://example.com/products?page=1">
+                    </div>
+                </div>
+            </div>
+
+            <!-- تنظیمات روش 2 -->
+            <div id="method-2-only-settings" class="section-card method-settings method-2-settings hidden">
+                <div class="form-group">
+                    <label class="inline-flex items-center">
+                        <input type="checkbox" name="share_product_id_from_method_2" value="1" class="h-5 w-5 text-blue-500 rounded focus:ring-blue-400 focus:ring-opacity-50">
+                        <span class="mr-3 text-gray-200">اشتراک گذاری شناسه محصول از روش 2</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- سلکتورها -->
+            <div class="section-card">
+                <h2 class="section-header text-xl flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+                    </svg>
+                    سلکتورها
+                </h2>
+
+                <!-- سلکتورهای صفحه اصلی -->
+                <div class="subsection">
+                    <h3 class="text-lg font-semibold text-blue-300 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                        صفحه اصلی
+                    </h3>
+
+                    <div class="bg-dark-700/50 p-5 rounded-lg border border-dark-600">
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-blue-300 mb-2">سلکتور لینک محصولات <span class="text-red-400">*</span></label>
+                            <input type="hidden" name="selectors[main_page][product_links][type]" value="css">
+                            <input type="text" name="selectors[main_page][product_links][selector]" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder=".product-item a" required>
                         </div>
 
-                        <div class="url-pattern-fields {{ old('product_id_method') == 'url_pattern' ? '' : 'hidden' }}">
-                            <label for="product_id_url_pattern" class="block text-sm font-medium text-gray-700 mb-1">الگوی URL شناسه محصول</label>
-                            <input type="text" name="product_id_url_pattern" id="product_id_url_pattern" value="{{ old('product_id_url_pattern') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                            <p class="mt-1 text-xs text-gray-500">مثال: /product-(\d+)/</p>
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-blue-300 mb-2">صفت لینک محصولات <span class="text-red-400">*</span></label>
+                            <input type="text" name="selectors[main_page][product_links][attribute]" value="href" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" required>
                         </div>
 
-                        <div class="script-fields {{ old('product_id_method') == 'script' ? '' : 'hidden' }}">
-                            <label for="product_id_fallback_script_patterns" class="block text-sm font-medium text-gray-700 mb-1">الگوهای اسکریپت شناسه محصول</label>
-                            <textarea name="product_id_fallback_script_patterns" id="product_id_fallback_script_patterns" rows="2" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">{{ old('product_id_fallback_script_patterns') }}</textarea>
-                            <p class="mt-1 text-xs text-gray-500">هر الگو را در یک خط یا با کاما جدا کنید</p>
+                        <!-- شناسه محصول در صفحه اصلی (شرطی) -->
+                        <div id="main-page-product-id-container" class="form-group hidden">
+                            <label class="block text-sm font-medium text-blue-300 mb-2">سلکتور شناسه محصول <span class="text-red-400">*</span></label>
+                            <input type="hidden" name="selectors[main_page][product_id][type]" value="css">
+                            <input type="text" name="selectors[main_page][product_id][selector]" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder=".product-item .product-id">
+                        </div>
+
+                        <div id="main-page-product-id-attr-container" class="form-group hidden">
+                            <label class="block text-sm font-medium text-blue-300 mb-2">صفت شناسه محصول <span class="text-red-400">*</span></label>
+                            <input type="text" name="selectors[main_page][product_id][attribute]" value="data-id" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200">
                         </div>
                     </div>
                 </div>
 
-                <!-- Product Page Selectors -->
-                <div class="border-b border-gray-200 pb-6">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">سلکتورهای صفحه محصول</h3>
+                <!-- سلکتورهای صفحه محصول -->
+                <div class="subsection">
+                    <h3 class="text-lg font-semibold text-blue-300 mb-4 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                        </svg>
+                        صفحه محصول
+                    </h3>
 
-                    <!-- Title Selector -->
-                    <div class="mb-6">
-                        <h4 class="text-lg font-medium text-gray-800 mb-2">عنوان محصول</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="product_page_title_type" class="block text-sm font-medium text-gray-700 mb-1">نوع سلکتور</label>
-                                <select name="product_page_title_type" id="product_page_title_type" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                    <option value="css" {{ old('product_page_title_type', 'css') == 'css' ? 'selected' : '' }}>CSS</option>
-                                    <option value="xpath" {{ old('product_page_title_type') == 'xpath' ? 'selected' : '' }}>XPath</option>
-                                </select>
+                    <div class="bg-dark-700/50 p-5 rounded-lg border border-dark-600">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label class="block text-sm font-medium text-blue-300 mb-2">سلکتور عنوان</label>
+                                <input type="hidden" name="selectors[product_page][title][type]" value="css">
+                                <input type="text" name="selectors[product_page][title][selector]" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder=".product-title">
                             </div>
 
-                            <div>
-                                <label for="product_page_title_selector" class="block text-sm font-medium text-gray-700 mb-1">سلکتور</label>
-                                <input type="text" name="product_page_title_selector" id="product_page_title_selector" value="{{ old('product_page_title_selector') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Category Selector -->
-                    <div class="mb-6">
-                        <h4 class="text-lg font-medium text-gray-800 mb-2">دسته‌بندی محصول</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="product_page_category_type" class="block text-sm font-medium text-gray-700 mb-1">نوع سلکتور</label>
-                                <select name="product_page_category_type" id="product_page_category_type" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                    <option value="css" {{ old('product_page_category_type', 'css') == 'css' ? 'selected' : '' }}>CSS</option>
-                                    <option value="xpath" {{ old('product_page_category_type') == 'xpath' ? 'selected' : '' }}>XPath</option>
-                                </select>
+                            <div class="form-group">
+                                <label class="block text-sm font-medium text-blue-300 mb-2">سلکتور دسته‌بندی</label>
+                                <input type="hidden" name="selectors[product_page][category][type]" value="css">
+                                <input type="text" name="selectors[product_page][category][selector]" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder=".breadcrumb">
                             </div>
 
-                            <div>
-                                <label for="product_page_category_selector" class="block text-sm font-medium text-gray-700 mb-1">سلکتور</label>
-                                <input type="text" name="product_page_category_selector" id="product_page_category_selector" value="{{ old('product_page_category_selector') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
+                            <div class="form-group">
+                                <label class="block text-sm font-medium text-blue-300 mb-2">سلکتور موجودی</label>
+                                <input type="hidden" name="selectors[product_page][availability][type]" value="css">
+                                <input type="text" name="selectors[product_page][availability][selector]" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder=".product-availability">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="block text-sm font-medium text-blue-300 mb-2">سلکتور قیمت</label>
+                                <input type="hidden" name="selectors[product_page][price][type]" value="css">
+                                <input type="text" name="selectors[product_page][price][selector]" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder=".product-price">
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Price Selector -->
-                    <div class="mb-6">
-                        <h4 class="text-lg font-medium text-gray-800 mb-2">قیمت محصول</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="product_page_price_type" class="block text-sm font-medium text-gray-700 mb-1">نوع سلکتور</label>
-                                <select name="product_page_price_type" id="product_page_price_type" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                    <option value="css" {{ old('product_page_price_type', 'css') == 'css' ? 'selected' : '' }}>CSS</option>
-                                    <option value="xpath" {{ old('product_page_price_type') == 'xpath' ? 'selected' : '' }}>XPath</option>
-                                </select>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label class="block text-sm font-medium text-blue-300 mb-2">سلکتور تصویر</label>
+                                <input type="hidden" name="selectors[product_page][image][type]" value="css">
+                                <input type="text" name="selectors[product_page][image][selector]" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder=".product-image">
                             </div>
 
-                            <div>
-                                <label for="product_page_price_selector" class="block text-sm font-medium text-gray-700 mb-1">سلکتور</label>
-                                <input type="text" name="product_page_price_selector" id="product_page_price_selector" value="{{ old('product_page_price_selector') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                <p class="mt-1 text-xs text-gray-500">چندین سلکتور را با کاما جدا کنید</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Availability Selector -->
-                    <div class="mb-6">
-                        <h4 class="text-lg font-medium text-gray-800 mb-2">موجودی محصول</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label for="product_page_availability_type" class="block text-sm font-medium text-gray-700 mb-1">نوع سلکتور</label>
-                                <select name="product_page_availability_type" id="product_page_availability_type" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                    <option value="css" {{ old('product_page_availability_type', 'css') == 'css' ? 'selected' : '' }}>CSS</option>
-                                    <option value="xpath" {{ old('product_page_availability_type') == 'xpath' ? 'selected' : '' }}>XPath</option>
-                                </select>
+                            <div class="form-group">
+                                <label class="block text-sm font-medium text-blue-300 mb-2">صفت تصویر</label>
+                                <input type="text" name="selectors[product_page][image][attribute]" value="src" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200">
                             </div>
 
-                            <div>
-                                <label for="product_page_availability_selector" class="block text-sm font-medium text-gray-700 mb-1">سلکتور</label>
-                                <input type="text" name="product_page_availability_selector" id="product_page_availability_selector" value="{{ old('product_page_availability_selector') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                <p class="mt-1 text-xs text-gray-500">چندین سلکتور را با کاما جدا کنید</p>
+                            <div class="form-group">
+                                <label class="block text-sm font-medium text-blue-300 mb-2">سلکتور تخفیف</label>
+                                <input type="hidden" name="selectors[product_page][off][type]" value="css">
+                                <input type="text" name="selectors[product_page][off][selector]" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder=".product-discount">
                             </div>
 
-                            <div>
-                                <label for="product_page_availability_keyword" class="block text-sm font-medium text-gray-700 mb-1">کلمه کلیدی موجودی</label>
-                                <input type="text" name="product_page_availability_keyword" id="product_page_availability_keyword" value="{{ old('product_page_availability_keyword', 'ناموجود') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                            </div>
-
-                            <div>
-                                <label for="availability_mode" class="block text-sm font-medium text-gray-700 mb-1">حالت موجودی</label>
-                                <select name="availability_mode" id="availability_mode" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                    <option value="selector" {{ old('availability_mode', 'selector') == 'selector' ? 'selected' : '' }}>سلکتور</option>
-                                    <option value="keyword" {{ old('availability_mode') == 'keyword' ? 'selected' : '' }}>کلمه کلیدی</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="availability_keywords_positive" class="block text-sm font-medium text-gray-700 mb-1">کلمات کلیدی موجود</label>
-                                <input type="text" name="availability_keywords_positive" id="availability_keywords_positive" value="{{ old('availability_keywords_positive') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                <p class="mt-1 text-xs text-gray-500">با کاما جدا کنید</p>
-                            </div>
-
-                            <div>
-                                <label for="availability_keywords_negative" class="block text-sm font-medium text-gray-700 mb-1">کلمات کلیدی ناموجود</label>
-                                <input type="text" name="availability_keywords_negative" id="availability_keywords_negative" value="{{ old('availability_keywords_negative') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                <p class="mt-1 text-xs text-gray-500">با کاما جدا کنید</p>
+                            <div class="form-group">
+                                <label class="block text-sm font-medium text-blue-300 mb-2">سلکتور گارانتی</label>
+                                <input type="hidden" name="selectors[product_page][guarantee][type]" value="css">
+                                <input type="text" name="selectors[product_page][guarantee][selector]" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder=".product-guarantee">
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Image Selector -->
-                    <div class="mb-6">
-                        <h4 class="text-lg font-medium text-gray-800 mb-2">تصویر محصول</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label for="image_method" class="block text-sm font-medium text-gray-700 mb-1">روش تصویر</label>
-                                <select name="image_method" id="image_method" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                    <option value="product_page" {{ old('image_method', 'product_page') == 'product_page' ? 'selected' : '' }}>صفحه محصول</option>
-                                    <option value="main_page" {{ old('image_method') == 'main_page' ? 'selected' : '' }}>صفحه اصلی</option>
-                                </select>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div id="product-page-product-id-container" class="form-group">
+                                <label class="block text-sm font-medium text-blue-300 mb-2">سلکتور شناسه محصول</label>
+                                <input type="hidden" name="selectors[product_page][product_id][type]" value="css">
+                                <input type="text" name="selectors[product_page][product_id][selector]" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder=".product-id">
                             </div>
 
-                            <div>
-                                <label for="product_page_image_type" class="block text-sm font-medium text-gray-700 mb-1">نوع سلکتور</label>
-                                <select name="product_page_image_type" id="product_page_image_type" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                    <option value="css" {{ old('product_page_image_type', 'css') == 'css' ? 'selected' : '' }}>CSS</option>
-                                    <option value="xpath" {{ old('product_page_image_type') == 'xpath' ? 'selected' : '' }}>XPath</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="product_page_image_selector" class="block text-sm font-medium text-gray-700 mb-1">سلکتور</label>
-                                <input type="text" name="product_page_image_selector" id="product_page_image_selector" value="{{ old('product_page_image_selector') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                            </div>
-
-                            <div>
-                                <label for="product_page_image_attribute" class="block text-sm font-medium text-gray-700 mb-1">ویژگی</label>
-                                <input type="text" name="product_page_image_attribute" id="product_page_image_attribute" value="{{ old('product_page_image_attribute', 'src') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Off Selector -->
-                    <div class="mb-6">
-                        <h4 class="text-lg font-medium text-gray-800 mb-2">تخفیف محصول</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="product_page_off_type" class="block text-sm font-medium text-gray-700 mb-1">نوع سلکتور</label>
-                                <select name="product_page_off_type" id="product_page_off_type" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                    <option value="css" {{ old('product_page_off_type', 'css') == 'css' ? 'selected' : '' }}>CSS</option>
-                                    <option value="xpath" {{ old('product_page_off_type') == 'xpath' ? 'selected' : '' }}>XPath</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="product_page_off_selector" class="block text-sm font-medium text-gray-700 mb-1">سلکتور</label>
-                                <input type="text" name="product_page_off_selector" id="product_page_off_selector" value="{{ old('product_page_off_selector') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Guarantee Selector -->
-                    <div class="mb-6">
-                        <h4 class="text-lg font-medium text-gray-800 mb-2">گارانتی محصول</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label for="guarantee_method" class="block text-sm font-medium text-gray-700 mb-1">روش گارانتی</label>
-                                <select name="guarantee_method" id="guarantee_method" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                    <option value="title" {{ old('guarantee_method', 'title') == 'title' ? 'selected' : '' }}>عنوان</option>
-                                    <option value="selector" {{ old('guarantee_method') == 'selector' ? 'selected' : '' }}>سلکتور</option>
-                                </select>
-                            </div>
-
-                            <div class="guarantee-selector-fields {{ old('guarantee_method') == 'selector' ? '' : 'hidden' }}">
-                                <label for="product_page_guarantee_type" class="block text-sm font-medium text-gray-700 mb-1">نوع سلکتور</label>
-                                <select name="product_page_guarantee_type" id="product_page_guarantee_type" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                    <option value="css" {{ old('product_page_guarantee_type', 'css') == 'css' ? 'selected' : '' }}>CSS</option>
-                                    <option value="xpath" {{ old('product_page_guarantee_type') == 'xpath' ? 'selected' : '' }}>XPath</option>
-                                </select>
-                            </div>
-
-                            <div class="guarantee-selector-fields {{ old('guarantee_method') == 'selector' ? '' : 'hidden' }}">
-                                <label for="product_page_guarantee_selector" class="block text-sm font-medium text-gray-700 mb-1">سلکتور</label>
-                                <input type="text" name="product_page_guarantee_selector" id="product_page_guarantee_selector" value="{{ old('product_page_guarantee_selector') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                            </div>
-
-                            <div>
-                                <label for="guarantee_keywords" class="block text-sm font-medium text-gray-700 mb-1">کلمات کلیدی گارانتی</label>
-                                <input type="text" name="guarantee_keywords" id="guarantee_keywords" value="{{ old('guarantee_keywords') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                <p class="mt-1 text-xs text-gray-500">با کاما جدا کنید</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Product ID Selector (from product page) -->
-                    <div class="mb-6 product-id-product-page-fields {{ old('product_id_source') == 'main_page' ? 'hidden' : '' }}">
-                        <h4 class="text-lg font-medium text-gray-800 mb-2">شناسه محصول (از صفحه محصول)</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label for="product_page_product_id_type" class="block text-sm font-medium text-gray-700 mb-1">نوع سلکتور</label>
-                                <select name="product_page_product_id_type" id="product_page_product_id_type" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                                    <option value="css" {{ old('product_page_product_id_type', 'css') == 'css' ? 'selected' : '' }}>CSS</option>
-                                    <option value="xpath" {{ old('product_page_product_id_type') == 'xpath' ? 'selected' : '' }}>XPath</option>
-                                </select>
-                            </div>
-
-                            <div>
-                                <label for="product_page_product_id_selector" class="block text-sm font-medium text-gray-700 mb-1">سلکتور</label>
-                                <input type="text" name="product_page_product_id_selector" id="product_page_product_id_selector" value="{{ old('product_page_product_id_selector') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                            </div>
-
-                            <div>
-                                <label for="product_page_product_id_attribute" class="block text-sm font-medium text-gray-700 mb-1">ویژگی</label>
-                                <input type="text" name="product_page_product_id_attribute" id="product_page_product_id_attribute" value="{{ old('product_page_product_id_attribute') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
+                            <div class="form-group">
+                                <label class="block text-sm font-medium text-blue-300 mb-2">صفت شناسه محصول</label>
+                                <input type="text" name="selectors[product_page][product_id][attribute]" value="data-id" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200">
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Price Keywords -->
-                <div class="border-b border-gray-200 pb-6">
-                    <h3 class="text-xl font-semibold text-gray-800 mb-4">کلمات کلیدی قیمت</h3>
-                    <div>
-                        <label for="price_keywords_unpriced" class="block text-sm font-medium text-gray-700 mb-1">کلمات کلیدی بدون قیمت</label>
-                        <input type="text" name="price_keywords_unpriced" id="price_keywords_unpriced" value="{{ old('price_keywords_unpriced') }}" class="border border-gray-300 focus:ring-indigo-500 focus:border-indigo-500 block w-full rounded-md p-2 text-sm">
-                        <p class="mt-1 text-xs text-gray-500">با کاما جدا کنید</p>
+            <!-- روش شناسایی محصول -->
+            <div class="section-card">
+                <h2 class="section-header text-xl flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    روش‌های شناسایی محصول
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="form-group">
+                        <label class="block text-sm font-medium text-blue-300 mb-2">روش شناسایی شناسه محصول <span class="text-red-400">*</span></label>
+                        <select name="product_id_method" id="product_id_method" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200">
+                            <option value="selector">سلکتور</option>
+                            <option value="url">URL</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="block text-sm font-medium text-blue-300 mb-2">منبع شناسایی شناسه محصول <span class="text-red-400">*</span></label>
+                        <select name="product_id_source" id="product_id_source" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200">
+                            <option value="product_page">صفحه محصول</option>
+                            <option value="url">URL</option>
+                            <option value="main_page">صفحه اصلی</option>
+                        </select>
                     </div>
                 </div>
 
-                <!-- Submit Button -->
-                <div class="flex justify-between items-center">
-                    <a href="{{ route('configs.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        <i class="fas fa-arrow-right ml-2"></i>
-                        بازگشت
-                    </a>
-                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        <i class="fas fa-save ml-2"></i>
-                        ذخیره پیکربندی
-                    </button>
+                <div class="form-group">
+                    <label class="block text-sm font-medium text-blue-300 mb-2">روش شناسایی گارانتی <span class="text-red-400">*</span></label>
+                    <select name="guarantee_method" class="input-field w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200">
+                        <option value="selector">سلکتور</option>
+                        <option value="title">عنوان</option>
+                    </select>
                 </div>
-            </form>
-        </div>
+            </div>
+
+            <!-- کلمات کلیدی گارانتی -->
+            <div class="section-card">
+                <h2 class="section-header text-xl flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                    </svg>
+                    کلمات کلیدی
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
+                    <div class="form-group">
+                        <label class="block text-sm font-medium text-blue-300 mb-2">کلمات کلیدی گارانتی <span class="text-red-400">*</span></label>
+                        <div class="guarantee-keywords-container space-y-3">
+                            <div class="flex">
+                                <input type="text" name="guarantee_keywords[]" class="input-field flex-1 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" value="گارانتی" required>
+                                <button type="button" class="add-guarantee-keyword mr-2 btn-primary px-4 py-2 rounded-lg flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="block text-sm font-medium text-blue-300 mb-2">کلمات کلیدی موجودی (مثبت) <span class="text-red-400">*</span></label>
+                        <div class="availability-positive-container space-y-3">
+                            <div class="flex">
+                                <input type="text" name="availability_keywords[positive][]" class="input-field flex-1 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" value="موجود" required>
+                                <button type="button" class="add-availability-positive mr-2 btn-primary px-4 py-2 rounded-lg flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="block text-sm font-medium text-blue-300 mb-2">کلمات کلیدی موجودی (منفی) <span class="text-red-400">*</span></label>
+                        <div class="availability-negative-container space-y-3">
+                            <div class="flex">
+                                <input type="text" name="availability_keywords[negative][]" class="input-field flex-1 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" value="ناموجود" required>
+                                <button type="button" class="add-availability-negative mr-2 btn-primary px-4 py-2 rounded-lg flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="block text-sm font-medium text-blue-300 mb-2">کلمات کلیدی قیمت (بدون قیمت) <span class="text-red-400">*</span></label>
+                        <div class="price-unpriced-container space-y-3">
+                            <div class="flex">
+                                <input type="text" name="price_keywords[unpriced][]" class="input-field flex-1 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" value="تماس بگیرید" required>
+                                <button type="button" class="add-price-unpriced mr-2 btn-primary px-4 py-2 rounded-lg flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- دکمه ثبت -->
+            <div class="flex justify-center mt-8">
+                <button type="submit" class="btn-primary text-lg font-bold py-3 px-8 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50">
+                    ذخیره کانفیگ
+                </button>
+            </div>
+        </form>
     </div>
 </div>
 
-<!-- JavaScript -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Method selection handling
-        const methodSelect = document.getElementById('method');
-        const method23Fields = document.querySelectorAll('.method-2-3-fields');
-        const method2Fields = document.querySelectorAll('.method-2-fields');
-        const method3Fields = document.querySelectorAll('.method-3-fields');
+        // دکمه‌های اضافه کردن آدرس‌های پایه
+        document.querySelector('.add-base-url').addEventListener('click', function() {
+            const container = document.querySelector('.base-urls-container');
+            const newInput = document.createElement('div');
+            newInput.className = 'flex';
+            newInput.innerHTML = `
+                    <input type="url" name="base_urls[]" class="input-field flex-1 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder="https://example.com" required>
+                    <button type="button" class="remove-url mr-2 btn-danger px-4 py-2 rounded-lg flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                `;
+            container.appendChild(newInput);
 
-        function updateMethodFields() {
-            const methodValue = methodSelect.value;
-
-            // Method 2 & 3 fields
-            method23Fields.forEach(field => {
-                field.classList.toggle('hidden', methodValue === '1');
+            newInput.querySelector('.remove-url').addEventListener('click', function() {
+                container.removeChild(newInput);
             });
+        });
 
-            // Method 2 specific fields
-            method2Fields.forEach(field => {
-                field.classList.toggle('hidden', methodValue !== '2');
-            });
+        // دکمه‌های اضافه کردن آدرس‌های محصول
+        document.querySelector('.add-product-url').addEventListener('click', function() {
+            const container = document.querySelector('.products-urls-container');
+            const newInput = document.createElement('div');
+            newInput.className = 'flex';
+            newInput.innerHTML = `
+                    <input type="url" name="products_urls[]" class="input-field flex-1 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder="https://example.com/product/123" required>
+                    <button type="button" class="remove-url mr-2 btn-danger px-4 py-2 rounded-lg flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                `;
+            container.appendChild(newInput);
 
-            // Method 3 specific fields
-            method3Fields.forEach(field => {
-                field.classList.toggle('hidden', methodValue !== '3');
+            newInput.querySelector('.remove-url').addEventListener('click', function() {
+                container.removeChild(newInput);
             });
+        });
+
+        // دکمه‌های اضافه کردن کلمات کلیدی گارانتی
+        document.querySelector('.add-guarantee-keyword').addEventListener('click', function() {
+            const container = document.querySelector('.guarantee-keywords-container');
+            const newInput = document.createElement('div');
+            newInput.className = 'flex';
+            newInput.innerHTML = `
+                    <input type="text" name="guarantee_keywords[]" class="input-field flex-1 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" required>
+                    <button type="button" class="remove-keyword mr-2 btn-danger px-4 py-2 rounded-lg flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                `;
+            container.appendChild(newInput);
+
+            newInput.querySelector('.remove-keyword').addEventListener('click', function() {
+                container.removeChild(newInput);
+            });
+        });
+
+        // دکمه‌های اضافه کردن کلمات کلیدی موجودی مثبت
+        document.querySelector('.add-availability-positive').addEventListener('click', function() {
+            const container = document.querySelector('.availability-positive-container');
+            const newInput = document.createElement('div');
+            newInput.className = 'flex';
+            newInput.innerHTML = `
+                    <input type="text" name="availability_keywords[positive][]" class="input-field flex-1 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" required>
+                    <button type="button" class="remove-keyword mr-2 btn-danger px-4 py-2 rounded-lg flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                `;
+            container.appendChild(newInput);
+
+            newInput.querySelector('.remove-keyword').addEventListener('click', function() {
+                container.removeChild(newInput);
+            });
+        });
+
+        // دکمه‌های اضافه کردن کلمات کلیدی موجودی منفی
+        document.querySelector('.add-availability-negative').addEventListener('click', function() {
+            const container = document.querySelector('.availability-negative-container');
+            const newInput = document.createElement('div');
+            newInput.className = 'flex';
+            newInput.innerHTML = `
+                    <input type="text" name="availability_keywords[negative][]" class="input-field flex-1 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" required>
+                    <button type="button" class="remove-keyword mr-2 btn-danger px-4 py-2 rounded-lg flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                `;
+            container.appendChild(newInput);
+
+            newInput.querySelector('.remove-keyword').addEventListener('click', function() {
+                container.removeChild(newInput);
+            });
+        });
+
+        // دکمه‌های اضافه کردن کلمات کلیدی قیمت بدون قیمت
+        document.querySelector('.add-price-unpriced').addEventListener('click', function() {
+            const container = document.querySelector('.price-unpriced-container');
+            const newInput = document.createElement('div');
+            newInput.className = 'flex';
+            newInput.innerHTML = `
+                    <input type="text" name="price_keywords[unpriced][]" class="input-field flex-1 px-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" required>
+                    <button type="button" class="remove-keyword mr-2 btn-danger px-4 py-2 rounded-lg flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                `;
+            container.appendChild(newInput);
+
+            newInput.querySelector('.remove-keyword').addEventListener('click', function() {
+                container.removeChild(newInput);
+            });
+        });
+
+        // نمایش/مخفی کردن URL نمونه بر اساس چک‌باکس
+        document.querySelector('input[name="pagination[use_sample_url]"]').addEventListener('change', function() {
+            document.getElementById('sample-url-container').classList.toggle('hidden', !this.checked);
+        });
+
+        document.querySelector('input[name="pagination_use_sample_url"]').addEventListener('change', function() {
+            document.getElementById('pagination-sample-url-container').classList.toggle('hidden', !this.checked);
+        });
+
+        // تغییر روش پیجینیشن در روش‌های 2 و 3
+        document.getElementById('pagination_method').addEventListener('change', function() {
+            const nextButtonContainer = document.getElementById('next-button-container');
+            const urlPaginationContainer = document.getElementById('url-pagination-container');
+
+            if (this.value === 'next_button') {
+                nextButtonContainer.classList.remove('hidden');
+                urlPaginationContainer.classList.add('hidden');
+            } else {
+                nextButtonContainer.classList.add('hidden');
+                urlPaginationContainer.classList.remove('hidden');
+            }
+        });
+
+        // تغییر منبع شناسایی شناسه محصول
+        document.getElementById('product_id_source').addEventListener('change', function() {
+            const mainPageProductIdContainer = document.getElementById('main-page-product-id-container');
+            const mainPageProductIdAttrContainer = document.getElementById('main-page-product-id-attr-container');
+            const productPageProductIdContainer = document.getElementById('product-page-product-id-container');
+
+            if (this.value === 'main_page') {
+                mainPageProductIdContainer.classList.remove('hidden');
+                mainPageProductIdAttrContainer.classList.remove('hidden');
+            } else {
+                mainPageProductIdContainer.classList.add('hidden');
+                mainPageProductIdAttrContainer.classList.add('hidden');
+            }
+
+            if (this.value === 'product_page') {
+                productPageProductIdContainer.classList.remove('hidden');
+            } else {
+                productPageProductIdContainer.classList.add('hidden');
+            }
+        });
+
+        // تغییر روش اسکرپ
+        const methodRadios = document.querySelectorAll('input[name="method"]');
+        methodRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                const method = this.value;
+
+                // مخفی کردن همه تنظیمات
+                document.querySelectorAll('.method-settings').forEach(el => {
+                    el.classList.add('hidden');
+                });
+
+                // نمایش تنظیمات مرتبط با روش انتخابی
+                document.querySelectorAll(`.method-${method}-settings`).forEach(el => {
+                    el.classList.remove('hidden');
+                });
+            });
+        });
+
+        // تنظیم اولیه نمایش/مخفی بر اساس مقادیر پیش‌فرض
+        const initialMethod = document.querySelector('input[name="method"]:checked').value;
+        document.querySelectorAll('.method-settings').forEach(el => {
+            el.classList.add('hidden');
+        });
+        document.querySelectorAll(`.method-${initialMethod}-settings`).forEach(el => {
+            el.classList.remove('hidden');
+        });
+
+        // تنظیم اولیه روش پیجینیشن
+        const initialPaginationMethod = document.getElementById('pagination_method').value;
+        if (initialPaginationMethod === 'next_button') {
+            document.getElementById('next-button-container').classList.remove('hidden');
+            document.getElementById('url-pagination-container').classList.add('hidden');
+        } else {
+            document.getElementById('next-button-container').classList.add('hidden');
+            document.getElementById('url-pagination-container').classList.remove('hidden');
         }
 
-        methodSelect.addEventListener('change', updateMethodFields);
-        updateMethodFields(); // Initial state
-
-        // Pagination method handling
-        const paginationMethodSelect = document.getElementById('pagination_method');
-        const nextButtonFields = document.querySelectorAll('.next-button-fields');
-        const urlFields = document.querySelectorAll('.url-fields');
-
-        function updatePaginationFields() {
-            const paginationMethodValue = paginationMethodSelect.value;
-
-            nextButtonFields.forEach(field => {
-                field.classList.toggle('hidden', paginationMethodValue !== 'next_button');
-            });
-
-            urlFields.forEach(field => {
-                field.classList.toggle('hidden', paginationMethodValue !== 'url');
-            });
+        // تنظیم اولیه منبع شناسایی شناسه محصول
+        const initialProductIdSource = document.getElementById('product_id_source').value;
+        if (initialProductIdSource === 'main_page') {
+            document.getElementById('main-page-product-id-container').classList.remove('hidden');
+            document.getElementById('main-page-product-id-attr-container').classList.remove('hidden');
+        } else {
+            document.getElementById('main-page-product-id-container').classList.add('hidden');
+            document.getElementById('main-page-product-id-attr-container').classList.add('hidden');
         }
 
-        paginationMethodSelect.addEventListener('change', updatePaginationFields);
-        updatePaginationFields(); // Initial state
-
-        // Sample URL checkbox handling
-        const sampleUrlCheckbox = document.getElementById('pagination_use_sample_url');
-        const sampleUrlField = document.querySelector('.sample-url-field');
-
-        function updateSampleUrlField() {
-            sampleUrlField.classList.toggle('hidden', !sampleUrlCheckbox.checked);
+        if (initialProductIdSource !== 'product_page') {
+            document.getElementById('product-page-product-id-container').classList.add('hidden');
         }
+    });
+    // اضافه کردن این کد به اسکریپت موجود
+    document.addEventListener('DOMContentLoaded', function() {
+        const methodBoxes = document.querySelectorAll('.method-box');
 
-        sampleUrlCheckbox.addEventListener('change', updateSampleUrlField);
-        updateSampleUrlField(); // Initial state
+        // تنظیم حالت اولیه
+        const initialMethod = document.querySelector('input[name="method"]:checked').value;
+        document.querySelector(`.method-box[data-method="${initialMethod}"]`).classList.add('selected');
 
-        // Product ID method handling
-        const productIdMethodSelect = document.getElementById('product_id_method');
-        const urlPatternFields = document.querySelectorAll('.url-pattern-fields');
-        const scriptFields = document.querySelectorAll('.script-fields');
+        // اضافه کردن رویداد کلیک به باکس‌ها
+        methodBoxes.forEach(box => {
+            box.addEventListener('click', function() {
+                // حذف کلاس selected از همه باکس‌ها
+                methodBoxes.forEach(b => b.classList.remove('selected'));
 
-        function updateProductIdMethodFields() {
-            const productIdMethodValue = productIdMethodSelect.value;
+                // اضافه کردن کلاس selected به باکس انتخاب شده
+                this.classList.add('selected');
 
-            urlPatternFields.forEach(field => {
-                field.classList.toggle('hidden', productIdMethodValue !== 'url_pattern');
+                // انتخاب رادیو باتن مربوطه
+                const radioBtn = this.querySelector('.method-radio');
+                radioBtn.checked = true;
+
+                // فراخوانی رویداد change برای رادیو باتن
+                const event = new Event('change');
+                radioBtn.dispatchEvent(event);
             });
-
-            scriptFields.forEach(field => {
-                field.classList.toggle('hidden', productIdMethodValue !== 'script');
-            });
-        }
-
-        productIdMethodSelect.addEventListener('change', updateProductIdMethodFields);
-        updateProductIdMethodFields(); // Initial state
-
-        // Product ID source handling
-        const productIdSourceSelect = document.getElementById('product_id_source');
-        const productIdMainPageFields = document.querySelectorAll('.product-id-main-page-fields');
-        const productIdProductPageFields = document.querySelectorAll('.product-id-product-page-fields');
-
-        function updateProductIdSourceFields() {
-            const productIdSourceValue = productIdSourceSelect.value;
-
-            productIdMainPageFields.forEach(field => {
-                field.classList.toggle('hidden', productIdSourceValue !== 'main_page');
-            });
-
-            productIdProductPageFields.forEach(field => {
-                field.classList.toggle('hidden', productIdSourceValue !== 'product_page');
-            });
-        }
-
-        productIdSourceSelect.addEventListener('change', updateProductIdSourceFields);
-        updateProductIdSourceFields(); // Initial state
-
-        // Guarantee method handling
-        const guaranteeMethodSelect = document.getElementById('guarantee_method');
-        const guaranteeSelectorFields = document.querySelectorAll('.guarantee-selector-fields');
-
-        function updateGuaranteeMethodFields() {
-            const guaranteeMethodValue = guaranteeMethodSelect.value;
-
-            guaranteeSelectorFields.forEach(field => {
-                field.classList.toggle('hidden', guaranteeMethodValue !== 'selector');
-            });
-        }
-
-        guaranteeMethodSelect.addEventListener('change', updateGuaranteeMethodFields);
-        updateGuaranteeMethodFields(); // Initial state
+        });
     });
 </script>
 </body>
