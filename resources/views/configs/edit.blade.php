@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ویرایش کانفیگ {{ $filename }}</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>ویرایش تنظیم</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
-<header class="bg-blue-600 text-white p-4">
-    <h1 class="text-2xl font-bold">ویرایش کانفیگ {{ $filename }}</h1>
-</header>
-<main class="container mx-auto p-6 flex-grow">
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">ویرایش تنظیم: {{ $name }}</h1>
+
     @if ($errors->any())
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4">
+        <div class="alert alert-danger">
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -20,230 +19,523 @@
             </ul>
         </div>
     @endif
-    <form id="config-form" action="{{ route('configs.update', $filename) }}" method="POST" class="bg-white shadow-md rounded-lg p-6" onsubmit="return validateForm()">
+
+    <form action="{{ route('configs.update', $name) }}" method="POST">
         @csrf
         @method('PUT')
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">نام سایت</label>
-            <input type="text" name="site_name" value="{{ old('site_name', $filename) }}" placeholder="مثال: imenstore" class="w-full px-3 py-2 border rounded" required>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">آدرس‌های پایه</label>
-            <div id="base-urls">
-                @foreach ($content['base_urls'] as $url)
-                    <input type="url" name="base_urls[]" value="{{ $url }}" placeholder="https://example.com" class="w-full px-3 py-2 border rounded mb-2" required>
-                @endforeach
-            </div>
-            <button type="button" onclick="addField('base-urls')" class="bg-blue-500 text-white px-3 py-1 rounded">افزودن آدرس</button>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">آدرس‌های محصولات</label>
-            <div id="products-urls">
-                @foreach ($content['products_urls'] as $url)
-                    <input type="url" name="products_urls[]" value="{{ $url }}" placeholder="https://example.com/shop" class="w-full px-3 py-2 border rounded mb-2" required>
-                @endforeach
-            </div>
-            <button type="button" onclick="addField('products-urls')" class="bg-blue-500 text-white px-3 py-1 rounded">افزودن آدرس</button>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">حفظ فرمت قیمت</label>
-            <select name="keep_price_format" class="w-full px-3 py-2 border rounded">
-                <option value="0" {{ $content['keep_price_format'] ? '' : 'selected' }}>خیر</option>
-                <option value="1" {{ $content['keep_price_format'] ? 'selected' : '' }}>بله</option>
+
+        <!-- روش -->
+        <div class="mb-3">
+            <label for="method" class="form-label">روش</label>
+            <select name="method" id="method" class="form-select" required>
+                <option value="1" {{ old('method', $config['method']) == 1 ? 'selected' : '' }}>روش 1</option>
+                <option value="2" {{ old('method', $config['method']) == 2 ? 'selected' : '' }}>روش 2</option>
+                <option value="3" {{ old('method', $config['method']) == 3 ? 'selected' : '' }}>روش 3</option>
             </select>
         </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">روش شناسایی محصول</label>
-            <select name="product_id_method" class="w-full px-3 py-2 border rounded">
-                <option value="selector" {{ $content['product_id_method'] === 'selector' ? 'selected' : '' }}>انتخابگر</option>
-                <option value="url" {{ $content['product_id_method'] === 'url' ? 'selected' : '' }}>آدرس</option>
+
+        <!-- آدرس‌های پایه -->
+        <div class="mb-3">
+            <label for="base_urls" class="form-label">آدرس‌های پایه (جدا شده با کاما)</label>
+            <textarea name="base_urls" id="base_urls" class="form-control">{{ old('base_urls', implode(',', $config['base_urls'] ?? [])) }}</textarea>
+        </div>
+
+        <!-- آدرس‌های محصولات -->
+        <div class="mb-3">
+            <label for="products_urls" class="form-label">آدرس‌های محصولات (جدا شده با کاما)</label>
+            <textarea name="products_urls" id="products_urls" class="form-control">{{ old('products_urls', implode(',', $config['products_urls'] ?? [])) }}</textarea>
+        </div>
+
+        <!-- تنظیمات عمومی -->
+        <h3>تنظیمات عمومی</h3>
+        <div class="mb-3">
+            <label for="request_delay_min" class="form-label">حداقل تأخیر درخواست (میلی‌ثانیه)</label>
+            <input type="number" name="request_delay_min" id="request_delay_min" class="form-control" value="{{ old('request_delay_min', $config['request_delay_min'] ?? 3000) }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="request_delay_max" class="form-label">حداکثر تأخیر درخواست (میلی‌ثانیه)</label>
+            <input type="number" name="request_delay_max" id="request_delay_max" class="form-control" value="{{ old('request_delay_max', $config['request_delay_max'] ?? 5000) }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="timeout" class="form-label">مهلت زمانی (ثانیه)</label>
+            <input type="number" name="timeout" id="timeout" class="form-control" value="{{ old('timeout', $config['timeout'] ?? 120) }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="max_retries" class="form-label">حداکثر تلاش مجدد</label>
+            <input type="number" name="max_retries" id="max_retries" class="form-control" value="{{ old('max_retries', $config['max_retries'] ?? 2) }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="concurrency" class="form-label">همزمانی</label>
+            <input type="number" name="concurrency" id="concurrency" class="form-control" value="{{ old('concurrency', $config['concurrency'] ?? 1) }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="batch_size" class="form-label">اندازه دسته</label>
+            <input type="number" name="batch_size" id="batch_size" class="form-control" value="{{ old('batch_size', $config['batch_size'] ?? 1) }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="request_delay" class="form-label">تأخیر درخواست (میلی‌ثانیه)</label>
+            <input type="number" name="request_delay" id="request_delay" class="form-control" value="{{ old('request_delay', $config['request_delay'] ?? 3000) }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="user_agent" class="form-label">User Agent</label>
+            <input type="text" name="user_agent" id="user_agent" class="form-control" value="{{ old('user_agent', $config['user_agent'] ?? 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/91.0.4472.124') }}">
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" name="verify_ssl" id="verify_ssl" class="form-check-input" {{ old('verify_ssl', $config['verify_ssl'] ?? false) ? 'checked' : '' }}>
+            <label for="verify_ssl" class="form-check-label">تأیید SSL</label>
+        </div>
+
+        <div class="mb-3 form-check">
+            <input type="checkbox" name="keep_price_format" id="keep_price_format" class="form-check-input" {{ old('keep_price_format', $config['keep_price_format'] ?? false) ? 'checked' : '' }}>
+            <label for="keep_price_format" class="form-check-label">حفظ فرمت قیمت</label>
+        </div>
+
+        <!-- تنظیمات تصویر -->
+        <div class="mb-3">
+            <label for="image_method" class="form-label">روش تصویر</label>
+            <select name="image_method" id="image_method" class="form-select">
+                <option value="product_page" {{ old('image_method', $config['image_method'] ?? 'product_page') == 'product_page' ? 'selected' : '' }}>صفحه محصول</option>
+                <option value="other" {{ old('image_method', $config['image_method'] ?? 'other') == 'other' ? 'selected' : '' }}>سایر</option>
             </select>
         </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">منبع شناسایی محصول</label>
-            <select name="product_id_source" id="product_id_source" onchange="toggleProductIdFields()" class="w-full px-3 py-2 border rounded">
-                <option value="product_page" {{ $content['product_id_source'] === 'product_page' ? 'selected' : '' }}>صفحه محصول</option>
-                <option value="url" {{ $content['product_id_source'] === 'url' ? 'selected' : '' }}>آدرس</option>
-                <option value="main_page" {{ $content['product_id_source'] === 'main_page' ? 'selected' : '' }}>صفحه اصلی</option>
+
+        <!-- تنظیمات موجودی -->
+        <div class="mb-3">
+            <label for="availability_mode" class="form-label">حالت موجودی</label>
+            <select name="availability_mode" id="availability_mode" class="form-select">
+                <option value="selector" {{ old('availability_mode', $config['availability_mode'] ?? 'selector') == 'selector' ? 'selected' : '' }}>انتخاب‌گر</option>
+                <option value="keyword" {{ old('availability_mode', $config['availability_mode'] ?? 'keyword') == 'keyword' ? 'selected' : '' }}>کلمه کلیدی</option>
             </select>
         </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">روش گارانتی</label>
-            <select name="guarantee_method" class="w-full px-3 py-2 border rounded">
-                <option value="selector" {{ $content['guarantee_method'] === 'selector' ? 'selected' : '' }}>انتخابگر</option>
-                <option value="title" {{ $content['guarantee_method'] === 'title' ? 'selected' : '' }}>عنوان</option>
+
+        <!-- تنظیمات شناسه محصول -->
+        <div class="mb-3">
+            <label for="product_id_method" class="form-label">روش شناسه محصول</label>
+            <select name="product_id_method" id="product_id_method" class="form-select">
+                <option value="selector" {{ old('product_id_method', $config['product_id_method'] ?? 'selector') == 'selector' ? 'selected' : '' }}>انتخاب‌گر</option>
+                <option value="url" {{ old('product_id_method', $config['product_id_method'] ?? 'url') == 'url' ? 'selected' : '' }}>URL</option>
             </select>
         </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">کلمات کلیدی گارانتی</label>
-            <div id="guarantee-keywords">
-                @foreach ($content['guarantee_keywords'] as $keyword)
-                    <input type="text" name="guarantee_keywords[]" value="{{ $keyword }}" placeholder="مثال: گارانتی 12 ماهه" class="w-full px-3 py-2 border rounded mb-2" required>
-                @endforeach
+
+        <div class="mb-3">
+            <label for="product_id_source" class="form-label">منبع شناسه محصول</label>
+            <select name="product_id_source" id="product_id_source" class="form-select">
+                <option value="product_page" {{ old('product_id_source', $config['product_id_source'] ?? 'product_page') == 'product_page' ? 'selected' : '' }}>صفحه محصول</option>
+                <option value="main_page" {{ old('product_id_source', $config['product_id_source'] ?? 'main_page') == 'main_page' ? 'selected' : '' }}>صفحه اصلی</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="product_id_url_pattern" class="form-label">الگوی URL شناسه محصول</label>
+            <input type="text" name="product_id_url_pattern" id="product_id_url_pattern" class="form-control" value="{{ old('product_id_url_pattern', $config['product_id_url_pattern'] ?? '') }}">
+        </div>
+
+        <!-- تنظیمات گارانتی -->
+        <div class="mb-3">
+            <label for="guarantee_method" class="form-label">روش گارانتی</label>
+            <select name="guarantee_method" id="guarantee_method" class="form-select">
+                <option value="title" {{ old('guarantee_method', $config['guarantee_method'] ?? 'title') == 'title' ? 'selected' : '' }}>عنوان</option>
+                <option value="selector" {{ old('guarantee_method', $config['guarantee_method'] ?? 'selector') == 'selector' ? 'selected' : '' }}>انتخاب‌گر</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="guarantee_keywords" class="form-label">کلمات کلیدی گارانتی (جدا شده با کاما)</label>
+            <textarea name="guarantee_keywords" id="guarantee_keywords" class="form-control">{{ old('guarantee_keywords', implode(',', $config['guarantee_keywords'] ?? [])) }}</textarea>
+        </div>
+
+        <!-- انتخاب‌گرهای صفحه اصلی -->
+        <h3>انتخاب‌گرهای صفحه اصلی</h3>
+        <div class="mb-3">
+            <label for="main_page_product_links_type" class="form-label">نوع انتخاب‌گر لینک محصولات</label>
+            <select name="main_page_product_links_type" id="main_page_product_links_type" class="form-select">
+                <option value="css" {{ old('main_page_product_links_type', $config['selectors']['main_page']['product_links']['type'] ?? 'css') == 'css' ? 'selected' : '' }}>CSS</option>
+                <option value="xpath" {{ old('main_page_product_links_type', $config['selectors']['main_page']['product_links']['type'] ?? 'xpath') == 'xpath' ? 'selected' : '' }}>XPath</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="main_page_product_links_selector" class="form-label">انتخاب‌گر لینک محصولات</label>
+            <input type="text" name="main_page_product_links_selector" id="main_page_product_links_selector" class="form-control" value="{{ old('main_page_product_links_selector', $config['selectors']['main_page']['product_links']['selector'] ?? '') }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="main_page_product_links_attribute" class="form-label">ویژگی لینک محصولات</label>
+            <input type="text" name="main_page_product_links_attribute" id="main_page_product_links_attribute" class="form-control" value="{{ old('main_page_product_links_attribute', $config['selectors']['main_page']['product_links']['attribute'] ?? 'href') }}">
+        </div>
+
+        <!-- انتخاب‌گر شناسه محصول در صفحه اصلی -->
+        <div id="main_page_product_id_fields" style="display: {{ old('product_id_source', $config['product_id_source'] ?? 'product_page') == 'main_page' ? 'block' : 'none' }};">
+            <h4>انتخاب‌گر شناسه محصول (صفحه اصلی)</h4>
+            <div class="mb-3">
+                <label for="main_page_product_id_type" class="form-label">نوع انتخاب‌گر شناسه محصول</label>
+                <select name="main_page_product_id_type" id="main_page_product_id_type" class="form-select">
+                    <option value="css" {{ old('main_page_product_id_type', $config['selectors']['main_page']['product_id']['type'] ?? 'css') == 'css' ? 'selected' : '' }}>CSS</option>
+                    <option value="xpath" {{ old('main_page_product_id_type', $config['selectors']['main_page']['product_id']['type'] ?? 'xpath') == 'xpath' ? 'selected' : '' }}>XPath</option>
+                </select>
             </div>
-            <button type="button" onclick="addField('guarantee-keywords')" class="bg-blue-500 text-white px-3 py-1 rounded">افزودن کلمه کلیدی</button>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">کلمات کلیدی موجودی (مثبت)</label>
-            <div id="availability-positive">
-                @foreach ($content['availability_keywords']['positive'] as $keyword)
-                    <input type="text" name="availability_keywords[positive][]" value="{{ $keyword }}" placeholder="مثال: موجود" class="w-full px-3 py-2 border rounded mb-2" required>
-                @endforeach
+
+            <div class="mb-3">
+                <label for="main_page_product_id_selector" class="form-label">انتخاب‌گر شناسه محصول</label>
+                <input type="text" name="main_page_product_id_selector" id="main_page_product_id_selector" class="form-control" value="{{ old('main_page_product_id_selector', $config['selectors']['main_page']['product_id']['selector'] ?? '') }}">
             </div>
-            <button type="button" onclick="addField('availability-positive')" class="bg-blue-500 text-white px-3 py-1 rounded">افزودن کلمه کلیدی</button>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">کلمات کلیدی موجودی (منفی)</label>
-            <div id="availability-negative">
-                @foreach ($content['availability_keywords']['negative'] as $keyword)
-                    <input type="text" name="availability_keywords[negative][]" value="{{ $keyword }}" placeholder="مثال: ناموجود" class="w-full px-3 py-2 border rounded mb-2" required>
-                @endforeach
-            </div>
-            <button type="button" onclick="addField('availability-negative')" class="bg-blue-500 text-white px-3 py-1 rounded">افزودن کلمه کلیدی</button>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">کلمات کلیدی قیمت (بدون قیمت)</label>
-            <div id="price-unpriced">
-                @foreach ($content['price_keywords']['unpriced'] as $keyword)
-                    <input type="text" name="price_keywords[unpriced][]" value="{{ $keyword }}" placeholder="مثال: تماس بگیرید" class="w-full px-3 py-2 border rounded mb-2" required>
-                @endforeach
-            </div>
-            <button type="button" onclick="addField('price-unpriced')" class="bg-blue-500 text-white px-3 py-1 rounded">افزودن کلمه کلیدی</button>
-        </div>
-        <h2 class="text-xl font-bold mb-4">انتخابگرهای صفحه اصلی</h2>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">لینک‌های محصول - نوع</label>
-            <input type="text" name="selectors[main_page][product_links][type]" value="{{ old('selectors.main_page.product_links.type', $content['selectors']['main_page']['product_links']['type']) }}" placeholder="مثال: css" class="w-full px-3 py-2 border rounded" required>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">لینک‌های محصول - انتخابگر</label>
-            <input type="text" name="selectors[main_page][product_links][selector]" value="{{ old('selectors.main_page.product_links.selector', $content['selectors']['main_page']['product_links']['selector']) }}" placeholder="مثال: div.product-grid-item > div > div > a" class="w-full px-3 py-2 border rounded" required>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">لینک‌های محصول - ویژگی</label>
-            <input type="text" name="selectors[main_page][product_links][attribute]" value="{{ old('selectors.main_page.product_links.attribute', $content['selectors']['main_page']['product_links']['attribute']) }}" placeholder="مثال: href" class="w-full px-3 py-2 border rounded" required>
-        </div>
-        <div id="main-page-product-id" class="hidden">
-            <h3 class="text-lg font-bold mb-2">شناسه محصول</h3>
-            <div class="mb-4">
-                <label class="block text-gray-700 font-bold mb-2">نوع</label>
-                <input type="text" name="selectors[main_page][product_id][type]" value="{{ old('selectors.main_page.product_id.type', $content['selectors']['main_page']['product_id']['type'] ?? '') }}" placeholder="مثال: css" class="w-full px-3 py-2 border rounded">
-            </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 font-bold mb-2">انتخابگر</label>
-                <input type="text" name="selectors[main_page][product_id][selector]" value="{{ old('selectors.main_page.product_id.selector', $content['selectors']['main_page']['product_id']['selector'] ?? '') }}" placeholder="مثال: div.product-grid-item > div > div > div > div > div > a" class="w-full px-3 py-2 border rounded">
-            </div>
-            <div class="mb-4">
-                <label class="block text-gray-700 font-bold mb-2">ویژگی</label>
-                <input type="text" name="selectors[main_page][product_id][attribute]" value="{{ old('selectors.main_page.product_id.attribute', $content['selectors']['main_page']['product_id']['attribute'] ?? '') }}" placeholder="مثال: data-product_id" class="w-full px-3 py-2 border rounded">
+
+            <div class="mb-3">
+                <label for="main_page_product_id_attribute" class="form-label">ویژگی شناسه محصول</label>
+                <input type="text" name="main_page_product_id_attribute" id="main_page_product_id_attribute" class="form-control" value="{{ old('main_page_product_id_attribute', $config['selectors']['main_page']['product_id']['attribute'] ?? '') }}">
             </div>
         </div>
-        <h2 class="text-xl font-bold mb-4">انتخابگرهای صفحه محصول</h2>
-        @foreach (['title' => 'عنوان', 'category' => 'دسته‌بندی', 'availability' => 'موجودی', 'price' => 'قیمت', 'image' => 'تصویر', 'off' => 'تخفیف', 'guarantee' => 'گارانتی', 'product_id' => 'شناسه محصول'] as $field => $label)
-            <div class="mb-4">
-                <h3 class="text-lg font-bold mb-2">{{ $label }}</h3>
-                <div class="mb-2">
-                    <label class="block text-gray-700 font-bold">نوع</label>
-                    <input type="text" name="selectors[product_page][{{ $field }}][type]" value="{{ old('selectors.product_page.' . $field . '.type', $content['selectors']['product_page'][$field]['type']) }}" placeholder="مثال: css" class="w-full px-3 py-2 border rounded" required>
+
+        <!-- انتخاب‌گرهای صفحه محصول -->
+        <h3>انتخاب‌گرهای صفحه محصول</h3>
+        <div class="mb-3">
+            <label for="product_page_title_type" class="form-label">نوع انتخاب‌گر عنوان</label>
+            <select name="product_page_title_type" id="product_page_title_type" class="form-select">
+                <option value="css" {{ old('product_page_title_type', $config['selectors']['product_page']['title']['type'] ?? 'css') == 'css' ? 'selected' : '' }}>CSS</option>
+                <option value="xpath" {{ old('product_page_title_type', $config['selectors']['product_page']['title']['type'] ?? 'xpath') == 'xpath' ? 'selected' : '' }}>XPath</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_title_selector" class="form-label">انتخاب‌گر عنوان</label>
+            <input type="text" name="product_page_title_selector" id="product_page_title_selector" class="form-control" value="{{ old('product_page_title_selector', $config['selectors']['product_page']['title']['selector'] ?? '') }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_category_type" class="form-label">نوع انتخاب‌گر دسته‌بندی</label>
+            <select name="product_page_category_type" id="product_page_category_type" class="form-select">
+                <option value="css" {{ old('product_page_category_type', $config['selectors']['product_page']['category']['type'] ?? 'css') == 'css' ? 'selected' : '' }}>CSS</option>
+                <option value="xpath" {{ old('product_page_category_type', $config['selectors']['product_page']['category']['type'] ?? 'xpath') == 'xpath' ? 'selected' : '' }}>XPath</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_category_selector" class="form-label">انتخاب‌گر دسته‌بندی</label>
+            <input type="text" name="product_page_category_selector" id="product_page_category_selector" class="form-control" value="{{ old('product_page_category_selector', $config['selectors']['product_page']['category']['selector'] ?? '') }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_availability_type" class="form-label">نوع انتخاب‌گر موجودی</label>
+            <select name="product_page_availability_type" id="product_page_availability_type" class="form-select">
+                <option value="css" {{ old('product_page_availability_type', $config['selectors']['product_page']['availability']['type'] ?? 'css') == 'css' ? 'selected' : '' }}>CSS</option>
+                <option value="xpath" {{ old('product_page_availability_type', $config['selectors']['product_page']['availability']['type'] ?? 'xpath') == 'xpath' ? 'selected' : '' }}>XPath</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_availability_selector" class="form-label">انتخاب‌گر موجودی (جدا شده با کاما)</label>
+            <textarea name="product_page_availability_selector" id="product_page_availability_selector" class="form-control">{{ old('product_page_availability_selector', implode(',', $config['selectors']['product_page']['availability']['selector'] ?? [])) }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_availability_keyword" class="form-label">کلمه کلیدی موجودی</label>
+            <input type="text" name="product_page_availability_keyword" id="product_page_availability_keyword" class="form-control" value="{{ old('product_page_availability_keyword', $config['selectors']['product_page']['availability']['keyword'] ?? 'ناموجود') }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_price_type" class="form-label">نوع انتخاب‌گر قیمت</label>
+            <select name="product_page_price_type" id="product_page_price_type" class="form-select">
+                <option value="css" {{ old('product_page_price_type', $config['selectors']['product_page']['price']['type'] ?? 'css') == 'css' ? 'selected' : '' }}>CSS</option>
+                <option value="xpath" {{ old('product_page_price_type', $config['selectors']['product_page']['price']['type'] ?? 'xpath') == 'xpath' ? 'selected' : '' }}>XPath</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_price_selector" class="form-label">انتخاب‌گر قیمت (جدا شده با کاما)</label>
+            <textarea name="product_page_price_selector" id="product_page_price_selector" class="form-control">{{ old('product_page_price_selector', implode(',', $config['selectors']['product_page']['price']['selector'] ?? [])) }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_image_type" class="form-label">نوع انتخاب‌گر تصویر</label>
+            <select name="product_page_image_type" id="product_page_image_type" class="form-select">
+                <option value="css" {{ old('product_page_image_type', $config['selectors']['product_page']['image']['type'] ?? 'css') == 'css' ? 'selected' : '' }}>CSS</option>
+                <option value="xpath" {{ old('product_page_image_type', $config['selectors']['product_page']['image']['type'] ?? 'xpath') == 'xpath' ? 'selected' : '' }}>XPath</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_image_selector" class="form-label">انتخاب‌گر تصویر</label>
+            <input type="text" name="product_page_image_selector" id="product_page_image_selector" class="form-control" value="{{ old('product_page_image_selector', $config['selectors']['product_page']['image']['selector'] ?? '') }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_image_attribute" class="form-label">ویژگی تصویر</label>
+            <input type="text" name="product_page_image_attribute" id="product_page_image_attribute" class="form-control" value="{{ old('product_page_image_attribute', $config['selectors']['product_page']['image']['attribute'] ?? 'src') }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_off_type" class="form-label">نوع انتخاب‌گر تخفیف</label>
+            <select name="product_page_off_type" id="product_page_off_type" class="form-select">
+                <option value="css" {{ old('product_page_off_type', $config['selectors']['product_page']['off']['type'] ?? 'css') == 'css' ? 'selected' : '' }}>CSS</option>
+                <option value="xpath" {{ old('product_page_off_type', $config['selectors']['product_page']['off']['type'] ?? 'xpath') == 'xpath' ? 'selected' : '' }}>XPath</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_off_selector" class="form-label">انتخاب‌گر تخفیف</label>
+            <input type="text" name="product_page_off_selector" id="product_page_off_selector" class="form-control" value="{{ old('product_page_off_selector', $config['selectors']['product_page']['off']['selector'] ?? '') }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_guarantee_type" class="form-label">نوع انتخاب‌گر گارانتی</label>
+            <select name="product_page_guarantee_type" id="product_page_guarantee_type" class="form-select">
+                <option value="css" {{ old('product_page_guarantee_type', $config['selectors']['product_page']['guarantee']['type'] ?? 'css') == 'css' ? 'selected' : '' }}>CSS</option>
+                <option value="xpath" {{ old('product_page_guarantee_type', $config['selectors']['product_page']['guarantee']['type'] ?? 'xpath') == 'xpath' ? 'selected' : '' }}>XPath</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_guarantee_selector" class="form-label">انتخاب‌گر گارانتی</label>
+            <input type="text" name="product_page_guarantee_selector" id="product_page_guarantee_selector" class="form-control" value="{{ old('product_page_guarantee_selector', $config['selectors']['product_page']['guarantee']['selector'] ?? '') }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_product_id_type" class="form-label">نوع انتخاب‌گر شناسه محصول</label>
+            <select name="product_page_product_id_type" id="product_page_product_id_type" class="form-select">
+                <option value="css" {{ old('product_page_product_id_type', $config['selectors']['product_page']['product_id']['type'] ?? 'css') == 'css' ? 'selected' : '' }}>CSS</option>
+                <option value="xpath" {{ old('product_page_product_id_type', $config['selectors']['product_page']['product_id']['type'] ?? 'xpath') == 'xpath' ? 'selected' : '' }}>XPath</option>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_product_id_selector" class="form-label">انتخاب‌گر شناسه محصول</label>
+            <input type="text" name="product_page_product_id_selector" id="product_page_product_id_selector" class="form-control" value="{{ old('product_page_product_id_selector', $config['selectors']['product_page']['product_id']['selector'] ?? '') }}">
+        </div>
+
+        <div class="mb-3">
+            <label for="product_page_product_id_attribute" class="form-label">ویژگی شناسه محصول</label>
+            <input type="text" name="product_page_product_id_attribute" id="product_page_product_id_attribute" class="form-control" value="{{ old('product_page_product_id_attribute', $config['selectors']['product_page']['product_id']['attribute'] ?? '') }}">
+        </div>
+
+        <!-- کلمات کلیدی -->
+        <h3>کلمات کلیدی</h3>
+        <div class="mb-3">
+            <label for="availability_keywords_positive" class="form-label">کلمات کلیدی مثبت موجودی (جدا شده با کاما)</label>
+            <textarea name="availability_keywords_positive" id="availability_keywords_positive" class="form-control">{{ old('availability_keywords_positive', implode(',', $config['availability_keywords']['positive'] ?? [])) }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="availability_keywords_negative" class="form-label">کلمات کلیدی منفی موجودی (جدا شده با کاما)</label>
+            <textarea name="availability_keywords_negative" id="availability_keywords_negative" class="form-control">{{ old('availability_keywords_negative', implode(',', $config['availability_keywords']['negative'] ?? [])) }}</textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="price_keywords_unpriced" class="form-label">کلمات کلیدی بدون قیمت (جدا شده با کاما)</label>
+            <textarea name="price_keywords_unpriced" id="price_keywords_unpriced" class="form-control">{{ old('price_keywords_unpriced', implode(',', $config['price_keywords']['unpriced'] ?? [])) }}</textarea>
+        </div>
+
+        <!-- الگوهای اسکریپت بازگشتی -->
+        <div class="mb-3">
+            <label for="product_id_fallback_script_patterns" class="form-label">الگوهای اسکریپت بازگشتی شناسه محصول (جدا شده با کاما)</label>
+            <textarea name="product_id_fallback_script_patterns" id="product_id_fallback_script_patterns" class="form-control">{{ old('product_id_fallback_script_patterns', implode(',', $config['product_id_fallback_script_patterns'] ?? [])) }}</textarea>
+        </div>
+
+        <!-- تنظیمات روش 2 -->
+        <div id="method2_fields" style="display: {{ old('method', $config['method']) == 2 ? 'block' : 'none' }};">
+            <h3>تنظیمات روش 2</h3>
+            <div class="mb-3 form-check">
+                <input type="checkbox" name="share_product_id_from_method_2" id="share_product_id_from_method_2" class="form-check-input" {{ old('share_product_id_from_method_2', $config['share_product_id_from_method_2'] ?? false) ? 'checked' : '' }}>
+                <label for="share_product_id_from_method_2" class="form-check-label">اشتراک‌گذاری شناسه محصول</label>
+            </div>
+
+            <div class="mb-3">
+                <label for="scrool" class="form-label">اسکرول</label>
+                <input type="number" name="scrool" id="scrool" class="form-control" value="{{ old('scrool', $config['scrool'] ?? 10) }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="container" class="form-label">کانتینر</label>
+                <input type="text" name="container" id="container" class="form-control" value="{{ old('container', $config['container'] ?? '') }}">
+            </div>
+
+            <!-- تنظیمات ناوبری -->
+            <h4>تنظیمات ناوبری</h4>
+            <div class="mb-3">
+                <label for="pagination_method" class="form-label">روش صفحه‌بندی</label>
+                <select name="pagination_method" id="pagination_method" class="form-select">
+                    <option value="next_button" {{ old('pagination_method', $config['method_2']['navigation']['pagination']['method'] ?? 'next_button') == 'next_button' ? 'selected' : '' }}>دکمه بعدی</option>
+                    <option value="url" {{ old('pagination_method', $config['method_2']['navigation']['pagination']['method'] ?? 'url') == 'url' ? 'selected' : '' }}>URL</option>
+                </select>
+            </div>
+
+            <div id="pagination_next_button_fields" style="display: {{ old('pagination_method', $config['method_2']['navigation']['pagination']['method'] ?? 'next_button') == 'next_button' ? 'block' : 'none' }};">
+                <div class="mb-3">
+                    <label for="pagination_next_button_selector" class="form-label">انتخاب‌گر دکمه بعدی</label>
+                    <input type="text" name="pagination_next_button_selector" id="pagination_next_button_selector" class="form-control" value="{{ old('pagination_next_button_selector', $config['method_2']['navigation']['pagination']['next_button']['selector'] ?? '') }}">
                 </div>
-                <div class="mb-2">
-                    <label class="block text-gray-700 font-bold">انتخابگر</label>
-                    <input type="text" name="selectors[product_page][{{ $field }}][selector]" value="{{ old('selectors.product_page.' . $field . '.selector', $content['selectors']['product_page'][$field]['selector']) }}" placeholder="مثال: .product_title" class="w-full px-3 py-2 border rounded" required>
+
+                <div class="mb-3">
+                    <label for="pagination_max_pages" class="form-label">حداکثر صفحات</label>
+                    <input type="number" name="pagination_max_pages" id="pagination_max_pages" class="form-control" value="{{ old('pagination_max_pages', $config['method_2']['navigation']['pagination']['next_button']['max_clicks'] ?? 3) }}">
                 </div>
-                @if (in_array($field, ['image', 'product_id']))
-                    <div class="mb-2">
-                        <label class="block text-gray-700 font-bold">ویژگی</label>
-                        <input type="text" name="selectors[product_page][{{ $field }}][attribute]" value="{{ old('selectors.product_page.' . $field . '.attribute', $content['selectors']['product_page'][$field]['attribute'] ?? '') }}" placeholder="مثال: src" class="w-full px-3 py-2 border rounded">
+            </div>
+
+            <div id="pagination_url_fields" style="display: {{ old('pagination_method', $config['method_2']['navigation']['pagination']['method'] ?? 'url') == 'url' ? 'block' : 'none' }};">
+                <div class="mb-3">
+                    <label for="pagination_url_type" class="form-label">نوع URL</label>
+                    <select name="pagination_url_type" id="pagination_url_type" class="form-select">
+                        <option value="query" {{ old('pagination_url_type', $config['method_2']['navigation']['pagination']['url']['type'] ?? 'query') == 'query' ? 'selected' : '' }}>پارامتر کوئری</option>
+                        <option value="path" {{ old('pagination_url_type', $config['method_2']['navigation']['pagination']['url']['type'] ?? 'path') == 'path' ? 'selected' : '' }}>مسیر</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="pagination_url_parameter" class="form-label">پارامتر URL</label>
+                    <input type="text" name="pagination_url_parameter" id="pagination_url_parameter" class="form-control" value="{{ old('pagination_url_parameter', $config['method_2']['navigation']['pagination']['url']['parameter'] ?? 'page') }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="pagination_url_separator" class="form-label">جداکننده URL</label>
+                    <input type="text" name="pagination_url_separator" id="pagination_url_separator" class="form-control" value="{{ old('pagination_url_separator', $config['method_2']['navigation']['pagination']['url']['separator'] ?? '=') }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="pagination_url_suffix" class="form-label">پسوند URL</label>
+                    <input type="text" name="pagination_url_suffix" id="pagination_url_suffix" class="form-control" value="{{ old('pagination_url_suffix', $config['method_2']['navigation']['pagination']['url']['suffix'] ?? '') }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="pagination_max_pages" class="form-label">حداکثر صفحات</label>
+                    <input type="number" name="pagination_max_pages" id="pagination_max_pages" class="form-control" value="{{ old('pagination_max_pages', $config['method_2']['navigation']['pagination']['url']['max_pages'] ?? 3) }}">
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" name="pagination_use_sample_url" id="pagination_use_sample_url" class="form-check-input" {{ old('pagination_use_sample_url', $config['method_2']['navigation']['pagination']['url']['use_sample_url'] ?? false) ? 'checked' : '' }}>
+                    <label for="pagination_use_sample_url" class="form-check-label">استفاده از URL نمونه</label>
+                </div>
+
+                <div class="mb-3">
+                    <label for="pagination_sample_url" class="form-label">URL نمونه</label>
+                    <input type="text" name="pagination_sample_url" id="pagination_sample_url" class="form-control" value="{{ old('pagination_sample_url', $config['method_2']['navigation']['pagination']['url']['sample_url'] ?? '') }}">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="scroll_delay" class="form-label">تأخیر اسکرول (میلی‌ثانیه)</label>
+                <input type="number" name="scroll_delay" id="scroll_delay" class="form-control" value="{{ old('scroll_delay', $config['method_2']['navigation']['scroll_delay'] ?? 5000) }}">
+            </div>
+        </div>
+
+        <!-- تنظیمات روش 3 -->
+        <div id="method3_fields" style="display: {{ old('method', $config['method']) == 3 ? 'block' : 'none' }};">
+            <h3>تنظیمات روش 3</h3>
+            <div class="mb-3">
+                <label for="scrool" class="form-label">اسکرول</label>
+                <input type="number" name="scrool" id="scrool" class="form-control" value="{{ old('scrool', $config['scrool'] ?? 10) }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="container" class="form-label">کانتینر</label>
+                <input type="text" name="container" id="container" class="form-control" value="{{ old('container', $config['container'] ?? '') }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="basescroll" class="form-label">اسکرول پایه</label>
+                <input type="number" name="basescroll" id="basescroll" class="form-control" value="{{ old('basescroll', $config['basescroll'] ?? 10) }}">
+            </div>
+
+            <!-- تنظیمات ناوبری -->
+            <h4>تنظیمات ناوبری</h4>
+            <div class="mb-3">
+                <label for="pagination_method" class="form-label">روش صفحه‌بندی</label>
+                <select name="pagination_method" id="pagination_method_method3" class="form-select">
+                    <option value="next_button" {{ old('pagination_method', $config['method_3']['navigation']['pagination']['method'] ?? 'next_button') == 'next_button' ? 'selected' : 'none' }};">
+                    <div class="mb-3">
+                        <label for="pagination_next_button_selector" class="form-label">انتخاب‌گر دکمه بعدی</label>
+                        <input type="text" name="pagination_next_button_selector" id="pagination_next_button_selector_method3" class="form-control" value="{{ old('pagination_next_button_selector', $config['method_3']['navigation']['pagination']['next_button']['selector'] ?? '') }}">
                     </div>
-                @endif
             </div>
-        @endforeach
-        <h2 class="text-xl font-bold mb-4">صفحه‌بندی</h2>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">نوع صفحه‌بندی</label>
-            <select name="pagination[type]" id="pagination_type" class="w-full px-3 py-2 border rounded">
-                <option value="path" {{ $content['method_settings']['method_1']['pagination']['type'] === 'path' ? 'selected' : '' }}>مسیر</option>
-                <option value="query" {{ $content['method_settings']['method_1']['pagination']['type'] === 'query' ? 'selected' : '' }}>پرس‌وجو</option>
-            </select>
+
+            <div id="pagination_url_fields_method3" style="display: {{ old('pagination_method', $config['method_3']['navigation']['pagination']['method'] ?? 'url') == 'url' ? 'block' : 'none' }};">
+                <div class="mb-3">
+                    <label for="pagination_url_type" class="form-label">نوع URL</label>
+                    <select name="pagination_url_type" id="pagination_url_type_method3" class="form-select">
+                        <option value="query" {{ old('pagination_url_type', $config['method_3']['navigation']['pagination']['url']['type'] ?? 'query') == 'query' ? 'selected' : '' }}>پارامتر کوئری</option>
+                        <option value="path" {{ old('pagination_url_type', $config['method_3']['navigation']['pagination']['url']['type'] ?? 'path') == 'path' ? 'selected' : '' }}>مسیر</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="pagination_url_parameter" class="form-label">پارامتر URL</label>
+                    <input type="text" name="pagination_url_parameter" id="pagination_url_parameter_method3" class="form-control" value="{{ old('pagination_url_parameter', $config['method_3']['navigation']['pagination']['url']['parameter'] ?? 'page') }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="pagination_url_separator" class="form-label">جداکننده URL</label>
+                    <input type="text" name="pagination_url_separator" id="pagination_url_separator_method3" class="form-control" value="{{ old('pagination_url_separator', $config['method_3']['navigation']['pagination']['url']['separator'] ?? '=') }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="pagination_url_suffix" class="form-label">پسوند URL</label>
+                    <input type="text" name="pagination_url_suffix" id="pagination_url_suffix_method3" class="form-control" value="{{ old('pagination_url_suffix', $config['method_3']['navigation']['pagination']['url']['suffix'] ?? '') }}">
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" name="pagination_use_sample_url" id="pagination_use_sample_url_method3" class="form-check-input" {{ old('pagination_use_sample_url', $config['method_3']['navigation']['pagination']['url']['use_sample_url'] ?? false) ? 'checked' : '' }}>
+                    <label for="pagination_use_sample_url" class="form-check-label">استفاده از URL نمونه</label>
+                </div>
+
+                <div class="mb-3">
+                    <label for="pagination_sample_url" class="form-label">URL نمونه</label>
+                    <input type="text" name="pagination_sample_url" id="pagination_sample_url_method3" class="form-control" value="{{ old('pagination_sample_url', $config['method_3']['navigation']['pagination']['url']['sample_url'] ?? '') }}">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label for="pagination_max_pages" class="form-label">حداکثر تکرار</label>
+                <input type="number" name="pagination_max_pages" id="pagination_max_pages_method3" class="form-control" value="{{ old('pagination_max_pages', $config['method_3']['navigation']['max_iterations'] ?? 3) }}">
+            </div>
+
+            <div class="mb-3">
+                <label for="scroll_delay" class="form-label">تأخیر اسکرول (میلی‌ثانیه)</label>
+                <input type="number" name="scroll_delay" id="scroll_delay_method3" class="form-control" value="{{ old('scroll_delay', $config['method_3']['navigation']['timing']['scroll_delay'] ?? 5000) }}">
+            </div>
         </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">پارامتر</label>
-            <input type="text" name="pagination[parameter]" value="{{ old('pagination.parameter', $content['method_settings']['method_1']['pagination']['parameter']) }}" placeholder="مثال: page" class="w-full px-3 py-2 border rounded" required>
+
+        <!-- دکمه‌ها -->
+        <div class="mb-3">
+            <button type="submit" class="btn btn-primary">به‌روزرسانی</button>
+            <a href="{{ route('configs.index') }}" class="btn btn-secondary">لغو</a>
         </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">جداکننده</label>
-            <input type="text" name="pagination[separator]" value="{{ old('pagination.separator', $content['method_settings']['method_1']['pagination']['separator']) }}" placeholder="مثال: /" class="w-full px-3 py-2 border rounded" required>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">پسوند</label>
-            <input type="text" name="pagination[suffix]" value="{{ old('pagination.suffix', $content['method_settings']['method_1']['pagination']['suffix']) }}" placeholder="مثال: .html" class="w-full px-3 py-2 border rounded">
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">حداکثر تعداد صفحات</label>
-            <input type="number" name="pagination[max_pages]" value="{{ old('pagination.max_pages', $content['method_settings']['method_1']['pagination']['max_pages']) }}" placeholder="مثال: 35" class="w-full px-3 py-2 border rounded" required>
-        </div>
-        <div class="mb-4">
-            <label class="block text-gray-700 font-bold mb-2">استفاده از آدرس نمونه</label>
-            <select name="pagination[use_sample_url]" id="use_sample_url" onchange="toggleSampleUrl()" class="w-full px-3 py-2 border rounded">
-                <option value="0" {{ $content['method_settings']['method_1']['pagination']['use_sample_url'] ? '' : 'selected' }}>خیر</option>
-                <option value="1" {{ $content['method_settings']['method_1']['pagination']['use_sample_url'] ? 'selected' : '' }}>بله</option>
-            </select>
-        </div>
-        <div class="mb-4 hidden" id="sample_url">
-            <label class="block text-gray-700 font-bold mb-2">آدرس نمونه</label>
-            <input type="url" name="pagination[sample_url]" id="sample_url_input" value="{{ old('pagination.sample_url', $content['method_settings']['method_1']['pagination']['sample_url']) }}" placeholder="مثال: https://example.com/shop/page/2/" class="w-full px-3 py-2 border rounded">
-            <p id="sample_url_error" class="text-red-500 text-sm mt-1 hidden">لطفاً یک آدرس معتبر (مانند https://example.com) وارد کنید.</p>
-        </div>
-        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">ذخیره</button>
     </form>
-</main>
-<footer class="bg-gray-800 text-white text-center p-4">
-    <p>© ۱۴۰۴ مدیریت کانفیگ</p>
-</footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    function addField(containerId) {
-        const container = document.getElementById(containerId);
-        const input = document.createElement('input');
-        input.type = containerId.includes('url') ? 'url' : 'text';
-        input.name = container.querySelector('input').name;
-        input.className = 'w-full px-3 py-2 border rounded mb-2';
-        input.required = true;
-        input.placeholder = container.querySelector('input').placeholder;
-        container.appendChild(input);
-    }
+    // نمایش/مخفی کردن فیلدهای روش 2 و 3
+    document.getElementById('method').addEventListener('change', function() {
+        const method = this.value;
+        document.getElementById('method2_fields').style.display = method == '2' ? 'block' : 'none';
+        document.getElementById('method3_fields').style.display = method == '3' ? 'block' : 'none';
+    });
 
-    function toggleProductIdFields() {
-        const source = document.getElementById('product_id_source').value;
-        const productIdSection = document.getElementById('main-page-product-id');
-        productIdSection.classList.toggle('hidden', source !== 'main_page');
-    }
+    // نمایش/مخفی کردن فیلدهای شناسه محصول صفحه اصلی
+    document.getElementById('product_id_source').addEventListener('change', function() {
+        const source = this.value;
+        document.getElementById('main_page_product_id_fields').style.display = source == 'main_page' ? 'block' : 'none';
+    });
 
-    function toggleSampleUrl() {
-        const useSampleUrl = document.getElementById('use_sample_url').value;
-        const sampleUrlField = document.getElementById('sample_url');
-        sampleUrlField.classList.toggle('hidden', useSampleUrl !== '1');
-    }
+    // نمایش/مخفی کردن فیلدهای صفحه‌بندی روش 2
+    document.getElementById('pagination_method').addEventListener('change', function() {
+        const method = this.value;
+        document.getElementById('pagination_next_button_fields').style.display = method == 'next_button' ? 'block' : 'none';
+        document.getElementById('pagination_url_fields').style.display = method == 'url' ? 'block' : 'none';
+    });
 
-    function validateForm() {
-        const useSampleUrl = document.getElementById('use_sample_url').value;
-        const sampleUrlInput = document.getElementById('sample_url_input');
-        const sampleUrlError = document.getElementById('sample_url_error');
-
-        if (useSampleUrl === '1') {
-            const urlPattern = /^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/;
-            if (!urlPattern.test(sampleUrlInput.value)) {
-                sampleUrlError.classList.remove('hidden');
-                sampleUrlInput.focus();
-                return false;
-            } else {
-                sampleUrlError.classList.add('hidden');
-            }
-        }
-        return true;
-    }
-
-    toggleProductIdFields();
-    toggleSampleUrl();
+    // نمایش/مخفی کردن فیلدهای صفحه‌بندی روش 3
+    document.getElementById('pagination_method_method3').addEventListener('change', function() {
+        const method = this.value;
+        document.getElementById('pagination_next_button_fields_method3').style.display = method == 'next_button' ? 'block' : 'none';
+        document.getElementById('pagination_url_fields_method3').style.display = method == 'url' ? 'block' : 'none';
+    });
 </script>
 </body>
 </html>

@@ -3,216 +3,228 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 
 class ConfigController extends Controller
 {
+    protected $configPath;
+
+    public function __construct()
+    {
+        $this->configPath = storage_path('app/configs');
+
+        if (!File::exists($this->configPath)) {
+            File::makeDirectory($this->configPath, 0755, true);
+        }
+    }
+
+    /**
+     * Display a listing of the configs.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index()
     {
-        $files = Storage::files('private');
+        $files = File::files($this->configPath);
         $configs = [];
+
         foreach ($files as $file) {
-            if (pathinfo($file, PATHINFO_EXTENSION) === 'json') {
-                $configs[] = [
-                    'filename' => pathinfo($file, PATHINFO_FILENAME),
-                    'content' => json_decode(Storage::get($file), true)
-                ];
-            }
+            $name = pathinfo($file, PATHINFO_FILENAME);
+            $configData = json_decode(File::get($file), true);
+            $configs[] = [
+                'name' => $name,
+                'data' => $configData
+            ];
         }
+
         return view('configs.index', compact('configs'));
     }
 
+    /**
+     * Show the form for creating a new config.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function create()
     {
         return view('configs.create');
     }
 
+    /**
+     * Store a newly created config in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'site_name' => 'required|string|max:255',
-            'base_urls' => 'required|array|min:1',
-            'base_urls.*' => 'required|url',
-            'products_urls' => 'required|array|min:1',
-            'products_urls.*' => 'required|url',
-            'keep_price_format' => 'required|boolean',
-            'product_id_method' => 'required|in:selector,url',
-            'product_id_source' => 'required|in:product_page,url,main_page',
-            'guarantee_method' => 'required|in:selector,title',
-            'guarantee_keywords' => 'required|array|min:1',
-            'guarantee_keywords.*' => 'required|string',
-            'availability_keywords.positive' => 'required|array|min:1',
-            'availability_keywords.positive.*' => 'required|string',
-            'availability_keywords.negative' => 'required|array|min:1',
-            'availability_keywords.negative.*' => 'required|string',
-            'price_keywords.unpriced' => 'required|array|min:1',
-            'price_keywords.unpriced.*' => 'required|string',
-            'selectors.main_page.product_links.type' => 'required|string',
-            'selectors.main_page.product_links.selector' => 'required|string',
-            'selectors.main_page.product_links.attribute' => 'required|string',
-            'pagination.type' => 'required|in:query,path',
-            'pagination.parameter' => 'required|string',
-            'pagination.separator' => 'required|string',
-            'pagination.max_pages' => 'required|integer|min:1',
-            'pagination.use_sample_url' => 'required|boolean',
-            'pagination.sample_url' => 'required_if:pagination.use_sample_url,1|url',
+            'name' => 'required|alpha_dash|unique:configs,name',
+            'method' => 'required|in:1,2,3',
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
-        $config = $this->buildConfig($request->all());
-        $filename = $request->site_name . '.json';
-        Storage::put('private/' . $filename, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        $name = $request->input('name');
+        $method = (int)$request->input('method');
 
-        return redirect()->route('configs.index')->with('success', 'کانفیگ با موفقیت ذخیره شد!');
+        $config = $this->buildConfigData($request, $method);
+
+        File::put($this->configPath . '/' . $name . '.json', json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+        return redirect()->route('configs.index')->with('success', 'Config created successfully!');
     }
 
-    public function edit($filename)
+    /**
+     * Show the form for editing the specified config.
+     *
+     * @param  string  $name
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($name)
     {
-        $content = json_decode(Storage::get('private/' . $filename . '.json'), true);
-        return view('configs.edit', compact('content', 'filename'));
+        $filePath = $this->configPath . '/' . $name . '.json';
+
+        if (!File::exists($filePath)) {
+            return redirect()->route('configs.index')->with('error', 'Config not found!');
+        }
+
+        $config = json_decode(File::get($filePath), true);
+
+        return view('configs.edit', compact('name', 'config'));
     }
 
-    public function update(Request $request, $filename)
+    /**
+     * Update the specified config in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  string  $name
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $name)
     {
+        $filePath = $this->configPath . '/' . $name . '.json';
+
+        if (!File::exists($filePath)) {
+            return redirect()->route('configs.index')->with('error', 'Config not found!');
+        }
+
         $validator = Validator::make($request->all(), [
-            'site_name' => 'required|string|max:255',
-            'base_urls' => 'required|array|min:1',
-            'base_urls.*' => 'required|url',
-            'products_urls' => 'required|array|min:1',
-            'products_urls.*' => 'required|url',
-            'keep_price_format' => 'required|boolean',
-            'product_id_method' => 'required|in:selector,url',
-            'product_id_source' => 'required|in:product_page,url,main_page',
-            'guarantee_method' => 'required|in:selector,title',
-            'guarantee_keywords' => 'required|array|min:1',
-            'guarantee_keywords.*' => 'required|string',
-            'availability_keywords.positive' => 'required|array|min:1',
-            'availability_keywords.positive.*' => 'required|string',
-            'availability_keywords.negative' => 'required|array|min:1',
-            'availability_keywords.negative.*' => 'required|string',
-            'price_keywords.unpriced' => 'required|array|min:1',
-            'price_keywords.unpriced.*' => 'required|string',
-            'selectors.main_page.product_links.type' => 'required|string',
-            'selectors.main_page.product_links.selector' => 'required|string',
-            'selectors.main_page.product_links.attribute' => 'required|string',
-            'pagination.type' => 'required|in:query,path',
-            'pagination.parameter' => 'required|string',
-            'pagination.separator' => 'required|string',
-            'pagination.max_pages' => 'required|integer|min:1',
-            'pagination.use_sample_url' => 'required|boolean',
-            'pagination.sample_url' => 'required_if:pagination.use_sample_url,1|url',
+            'method' => 'required|in:1,2,3',
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
-        $config = $this->buildConfig($request->all());
-        Storage::put('private/' . $filename . '.json', json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        $method = (int)$request->input('method');
+        $config = $this->buildConfigData($request, $method);
 
-        return redirect()->route('configs.index')->with('success', 'کانفیگ با موفقیت به‌روزرسانی شد!');
+        File::put($filePath, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+        return redirect()->route('configs.index')->with('success', 'Config updated successfully!');
     }
 
-    public function destroy($filename)
+    /**
+     * Remove the specified config from storage.
+     *
+     * @param  string  $name
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($name)
     {
-        Storage::delete('private/' . $filename . '.json');
-        return redirect()->route('configs.index')->with('success', 'کانفیگ با موفقیت حذف شد!');
+        $filePath = $this->configPath . '/' . $name . '.json';
+
+        if (File::exists($filePath)) {
+            File::delete($filePath);
+            return redirect()->route('configs.index')->with('success', 'Config deleted successfully!');
+        }
+
+        return redirect()->route('configs.index')->with('error', 'Config not found!');
     }
 
-    private function buildConfig(array $data)
+    /**
+     * Build config data from request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $method
+     * @return array
+     */
+    private function buildConfigData(Request $request, $method)
     {
-        return [
-            'method' => 1,
-            'base_urls' => $data['base_urls'],
-            'products_urls' => $data['products_urls'],
-            'request_delay_min' => 1000,
-            'request_delay_max' => 1000,
-            'timeout' => 60,
-            'max_retries' => 2,
-            'concurrency' => 10,
-            'batch_size' => 10,
-            'user_agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/91.0.4472.124',
-            'verify_ssl' => false,
-            'keep_price_format' => filter_var($data['keep_price_format'], FILTER_VALIDATE_BOOLEAN),
-            'image_method' => 'product_page',
-            'product_id_method' => $data['product_id_method'],
-            'product_id_source' => $data['product_id_source'],
-            'product_id_fallback_script_patterns' => [
-                'product_id:\\s*\"(\\d+)\"',
-                'product_id:\\s*(\\d+)'
-            ],
-            'category_method' => 'selector',
-            'category_word_count' => 1,
-            'guarantee_method' => $data['guarantee_method'],
-            'guarantee_keywords' => $data['guarantee_keywords'],
-            'availability_keywords' => [
-                'positive' => $data['availability_keywords']['positive'],
-                'negative' => $data['availability_keywords']['negative'],
-            ],
-            'price_keywords' => [
-                'unpriced' => $data['price_keywords']['unpriced'],
-            ],
+        // Common configuration for all methods
+        $config = [
+            'method' => $method,
+            'processing_method' => $method === 3 ? 3 : 1,
+            'base_urls' => $this->formatArrayInput($request->input('base_urls')),
+            'products_urls' => $this->formatArrayInput($request->input('products_urls')),
+            'request_delay_min' => (int)$request->input('request_delay_min', 3000),
+            'request_delay_max' => (int)$request->input('request_delay_max', 5000),
+            'timeout' => (int)$request->input('timeout', 120),
+            'max_retries' => (int)$request->input('max_retries', 2),
+            'concurrency' => (int)$request->input('concurrency', 1),
+            'batch_size' => (int)$request->input('batch_size', 1),
+            'request_delay' => (int)$request->input('request_delay', 3000),
+            'user_agent' => $request->input('user_agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/91.0.4472.124'),
+            'verify_ssl' => $request->has('verify_ssl'),
+            'keep_price_format' => $request->has('keep_price_format'),
+            'image_method' => $request->input('image_method', 'product_page'),
+            'availability_mode' => $request->input('availability_mode', 'selector'),
+            'product_id_method' => $request->input('product_id_method', 'selector'),
+            'product_id_source' => $request->input('product_id_source', 'product_page'),
+            'product_id_url_pattern' => $request->input('product_id_url_pattern', ''),
+            'guarantee_method' => $request->input('guarantee_method', 'title'),
+            'guarantee_keywords' => $this->formatArrayInput($request->input('guarantee_keywords')),
             'selectors' => [
                 'main_page' => [
                     'product_links' => [
-                        'type' => $data['selectors']['main_page']['product_links']['type'],
-                        'selector' => $data['selectors']['main_page']['product_links']['selector'],
-                        'attribute' => $data['selectors']['main_page']['product_links']['attribute'],
-                        'product_id' => $data['selectors']['main_page']['product_links']['product_id'] ?? '',
-                    ],
-                    'product_id' => $data['product_id_source'] === 'main_page' ? [
-                        'type' => $data['selectors']['main_page']['product_id']['type'] ?? '',
-                        'selector' => $data['selectors']['main_page']['product_id']['selector'] ?? '',
-                        'attribute' => $data['selectors']['main_page']['product_id']['attribute'] ?? '',
-                    ] : [],
-                    'guarantee' => [
-                        'type' => 'css',
-                        'selector' => 'div.product-seller-row:nth-child(2) > div:nth-child(2) > div:nth-child(1)',
-                    ],
-                    'image' => [
-                        'type' => 'css',
-                        'selector' => 'li.product img',
-                        'attribute' => 'src',
+                        'type' => $request->input('main_page_product_links_type', 'css'),
+                        'selector' => $request->input('main_page_product_links_selector', ''),
+                        'attribute' => $request->input('main_page_product_links_attribute', 'href'),
                     ],
                 ],
                 'product_page' => [
                     'title' => [
-                        'type' => $data['selectors']['product_page']['title']['type'],
-                        'selector' => $data['selectors']['product_page']['title']['selector'],
+                        'type' => $request->input('product_page_title_type', 'css'),
+                        'selector' => $request->input('product_page_title_selector', ''),
                     ],
                     'category' => [
-                        'type' => $data['selectors']['product_page']['category']['type'],
-                        'selector' => $data['selectors']['product_page']['category']['selector'],
+                        'type' => $request->input('product_page_category_type', 'css'),
+                        'selector' => $request->input('product_page_category_selector', ''),
                     ],
                     'availability' => [
-                        'type' => $data['selectors']['product_page']['availability']['type'],
-                        'selector' => $data['selectors']['product_page']['availability']['selector'],
+                        'type' => $request->input('product_page_availability_type', 'css'),
+                        'selector' => $this->formatArrayInput($request->input('product_page_availability_selector')),
+                        'keyword' => $request->input('product_page_availability_keyword', 'ناموجود'),
                     ],
                     'price' => [
-                        'type' => $data['selectors']['product_page']['price']['type'],
-                        'selector' => $data['selectors']['product_page']['price']['selector'],
+                        'type' => $request->input('product_page_price_type', 'css'),
+                        'selector' => $this->formatArrayInput($request->input('product_page_price_selector')),
                     ],
                     'image' => [
-                        'type' => $data['selectors']['product_page']['image']['type'],
-                        'selector' => $data['selectors']['product_page']['image']['selector'],
-                        'attribute' => $data['selectors']['product_page']['image']['attribute'],
+                        'type' => $request->input('product_page_image_type', 'css'),
+                        'selector' => $request->input('product_page_image_selector', ''),
+                        'attribute' => $request->input('product_page_image_attribute', 'src'),
                     ],
                     'off' => [
-                        'type' => $data['selectors']['product_page']['off']['type'],
-                        'selector' => $data['selectors']['product_page']['off']['selector'],
+                        'type' => $request->input('product_page_off_type', 'css'),
+                        'selector' => $request->input('product_page_off_selector', ''),
                     ],
                     'guarantee' => [
-                        'type' => $data['selectors']['product_page']['guarantee']['type'],
-                        'selector' => $data['selectors']['product_page']['guarantee']['selector'],
+                        'type' => $request->input('product_page_guarantee_type', 'css'),
+                        'selector' => $request->input('product_page_guarantee_selector', ''),
                     ],
                     'product_id' => [
-                        'type' => $data['selectors']['product_page']['product_id']['type'],
-                        'selector' => $data['selectors']['product_page']['product_id']['selector'],
-                        'attribute' => $data['selectors']['product_page']['product_id']['attribute'],
+                        'type' => $request->input('product_page_product_id_type', 'css'),
+                        'selector' => $request->input('product_page_product_id_selector', ''),
+                        'attribute' => $request->input('product_page_product_id_attribute', ''),
                     ],
                 ],
             ],
@@ -222,24 +234,129 @@ class ConfigController extends Controller
                 'off' => 'cleanOff',
                 'guarantee' => 'cleanGuarantee',
             ],
-            'method_settings' => [
-                'method_1' => [
-                    'enabled' => true,
-                    'pagination' => [
-                        'type' => $data['pagination']['type'],
-                        'parameter' => $data['pagination']['parameter'],
-                        'separator' => $data['pagination']['separator'],
-                        'suffix' => $data['pagination']['suffix'] ?? '',
-                        'max_pages' => (int) $data['pagination']['max_pages'],
-                        'use_sample_url' => filter_var($data['pagination']['use_sample_url'], FILTER_VALIDATE_BOOLEAN),
-                        'sample_url' => $data['pagination']['use_sample_url'] ? ($data['pagination']['sample_url'] ?? '') : '',
-                        'use_webdriver' => false,
-                        'use_dynamic_pagination' => false,
-                        'force_trailing_slash' => true,
-                        'ignore_redirects' => true,
-                    ],
-                ],
+            'availability_keywords' => [
+                'positive' => $this->formatArrayInput($request->input('availability_keywords_positive')),
+                'negative' => $this->formatArrayInput($request->input('availability_keywords_negative')),
+            ],
+            'price_keywords' => [
+                'unpriced' => $this->formatArrayInput($request->input('price_keywords_unpriced')),
             ],
         ];
+
+        // Add product_id fallback script patterns
+        if ($request->has('product_id_fallback_script_patterns')) {
+            $config['product_id_fallback_script_patterns'] = $this->formatArrayInput($request->input('product_id_fallback_script_patterns'));
+        }
+
+        // Add main_page product_id if required
+        if ($request->input('product_id_source') === 'main_page') {
+            $config['selectors']['main_page']['product_id'] = [
+                'type' => $request->input('main_page_product_id_type', 'css'),
+                'selector' => $request->input('main_page_product_id_selector', ''),
+                'attribute' => $request->input('main_page_product_id_attribute', ''),
+            ];
+        }
+
+        // Method specific configurations
+        if ($method == 2) {
+            // Add Method 2 specific fields
+            $config['share_product_id_from_method_2'] = $request->has('share_product_id_from_method_2');
+            $config['scrool'] = (int)$request->input('scrool', 10);
+            $config['container'] = $request->input('container', '');
+
+            // Add Method 2 navigation settings
+            $config['method_2'] = [
+                'enabled' => true,
+                'navigation' => $this->buildNavigationConfig($request),
+            ];
+        } else if ($method == 3) {
+            // Add Method 3 specific fields
+            $config['scrool'] = (int)$request->input('scrool', 10);
+            $config['container'] = $request->input('container', '');
+            $config['basescroll'] = (int)$request->input('basescroll', 10);
+
+            // Add Method 3 navigation settings
+            $config['method_3'] = [
+                'enabled' => true,
+                'navigation' => $this->buildNavigationConfig($request, true),
+            ];
+        }
+
+        return $config;
+    }
+
+    /**
+     * Build navigation configuration from request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  bool  $isMethod3
+     * @return array
+     */
+    private function buildNavigationConfig(Request $request, $isMethod3 = false)
+    {
+        $navigation = [
+            'use_webdriver' => true,
+            'pagination' => [
+                'method' => $request->input('pagination_method', 'next_button'),
+            ],
+        ];
+
+        // Common pagination settings
+        if ($request->input('pagination_method') === 'next_button') {
+            $navigation['pagination']['next_button'] = [
+                'selector' => $request->input('pagination_next_button_selector', ''),
+            ];
+
+            if (!$isMethod3) {
+                $navigation['pagination']['next_button']['max_clicks'] =
+                    (int)$request->input('pagination_max_pages', 3);
+            }
+        } else if ($request->input('pagination_method') === 'url') {
+            $navigation['pagination']['url'] = [
+                'type' => $request->input('pagination_url_type', 'query'),
+                'parameter' => $request->input('pagination_url_parameter', 'page'),
+                'separator' => $request->input('pagination_url_separator', '='),
+                'suffix' => $request->input('pagination_url_suffix', ''),
+                'max_pages' => (int)$request->input('pagination_max_pages', 3),
+                'use_sample_url' => $request->has('pagination_use_sample_url'),
+                'sample_url' => $request->input('pagination_sample_url', ''),
+                'use_webdriver' => true,
+            ];
+        }
+
+        // Method specific settings
+        if ($isMethod3) {
+            $navigation['max_iterations'] = (int)$request->input('pagination_max_pages', 3);
+            $navigation['timing'] = [
+                'scroll_delay' => (int)$request->input('scroll_delay', 5000),
+            ];
+        } else {
+            $navigation['max_pages'] = (int)$request->input('pagination_max_pages', 3);
+            $navigation['scroll_delay'] = (int)$request->input('scroll_delay', 5000);
+        }
+
+        return $navigation;
+    }
+
+    /**
+     * Format array input from string or array.
+     *
+     * @param  mixed  $input
+     * @return array
+     */
+    private function formatArrayInput($input)
+    {
+        if (empty($input)) {
+            return [];
+        }
+
+        if (is_array($input)) {
+            return array_filter($input, function ($value) {
+                return !empty($value);
+            });
+        }
+
+        $items = explode(',', $input);
+        return array_map('trim', $items);
     }
 }

@@ -3,52 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مدیریت کانفیگ‌ها</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>لیست تنظیمات</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
-<header class="bg-blue-600 text-white p-4">
-    <h1 class="text-2xl font-bold">مدیریت کانفیگ‌ها</h1>
-</header>
-<main class="container mx-auto p-6 flex-grow">
+<body>
+<div class="container mt-5">
+    <h1 class="mb-4">لیست تنظیمات</h1>
+
     @if (session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
+        <div class="alert alert-success">
             {{ session('success') }}
         </div>
     @endif
-    <div class="mb-4">
-        <a href="{{ route('configs.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">ایجاد کانفیگ جدید</a>
-    </div>
-    <div class="bg-white shadow-md rounded-lg overflow-hidden">
-        <table class="w-full">
-            <thead class="bg-gray-200">
+
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    <a href="{{ route('configs.create') }}" class="btn btn-primary mb-3">ایجاد تنظیم جدید</a>
+
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>نام</th>
+            <th>روش</th>
+            <th>عملیات</th>
+        </tr>
+        </thead>
+        <tbody>
+        @forelse ($configs as $config)
             <tr>
-                <th class="px-4 py-2">نام سایت</th>
-                <th class="px-4 py-2">متد</th>
-                <th class="px-4 py-2">عملیات</th>
+                <td>{{ $config['name'] }}</td>
+                <td>
+                    @switch($config['data']['method'])
+                        @case(1) روش 1 @break
+                        @case(2) روش 2 @break
+                        @case(3) روش 3 @break
+                    @endswitch
+                </td>
+                <td>
+                    <a href="{{ route('configs.edit', $config['name']) }}" class="btn btn-sm btn-warning">ویرایش</a>
+                    <form action="{{ route('configs.destroy', $config['name']) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('آیا مطمئن هستید که می‌خواهید حذف کنید؟')">حذف</button>
+                    </form>
+                </td>
             </tr>
-            </thead>
-            <tbody>
-            @foreach ($configs as $config)
-                <tr class="border-b">
-                    <td class="px-4 py-2">{{ $config['filename'] }}</td>
-                    <td class="px-4 py-2">{{ $config['content']['method'] }}</td>
-                    <td class="px-4 py-2 flex space-x-2">
-                        <a href="{{ route('configs.edit', $config['filename']) }}" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">ویرایش</a>
-                        <form action="{{ route('configs.destroy', $config['filename']) }}" method="POST" onsubmit="return confirm('آیا مطمئن هستید؟')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">حذف</button>
-                        </form>
-                    </td>
-                </tr>
-            @endforeach
-            </tbody>
-        </table>
-    </div>
-</main>
-<footer class="bg-gray-800 text-white text-center p-4">
-    <p>© ۱۴۰۴ مدیریت کانفیگ</p>
-</footer>
+        @empty
+            <tr>
+                <td colspan="3" class="text-center">هیچ تنظیمی یافت نشد.</td>
+            </tr>
+        @endforelse
+        </tbody>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
