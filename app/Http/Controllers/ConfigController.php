@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class ConfigController extends Controller
@@ -77,7 +78,7 @@ class ConfigController extends Controller
 
         File::put($this->configPath . '/' . $name . '.json', json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
-        return redirect()->route('configs.index')->with('success', 'Config created successfully!');
+        return redirect()->route('configs.index')->with('success', 'کانفیگ با موفقیت ایجاد شد!');
     }
 
     /**
@@ -91,7 +92,7 @@ class ConfigController extends Controller
         $filePath = $this->configPath . '/' . $name . '.json';
 
         if (!File::exists($filePath)) {
-            return redirect()->route('configs.index')->with('error', 'Config not found!');
+            return redirect()->route('configs.index')->with('error', 'کانفیگ پیدا نشد!');
         }
 
         $config = json_decode(File::get($filePath), true);
@@ -111,7 +112,7 @@ class ConfigController extends Controller
         $filePath = $this->configPath . '/' . $name . '.json';
 
         if (!File::exists($filePath)) {
-            return redirect()->route('configs.index')->with('error', 'Config not found!');
+            return redirect()->route('configs.index')->with('error', 'کانفیگ پیدا نشد!');
         }
 
         $validator = Validator::make($request->all(), [
@@ -129,7 +130,7 @@ class ConfigController extends Controller
 
         File::put($filePath, json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
-        return redirect()->route('configs.index')->with('success', 'Config updated successfully!');
+        return redirect()->route('configs.index')->with('success', 'کانفیگ با موفقیت به‌روزرسانی شد!');
     }
 
     /**
@@ -144,10 +145,10 @@ class ConfigController extends Controller
 
         if (File::exists($filePath)) {
             File::delete($filePath);
-            return redirect()->route('configs.index')->with('success', 'Config deleted successfully!');
+            return redirect()->route('configs.index')->with('success', 'کانفیگ با موفقیت حذف شد!');
         }
 
-        return redirect()->route('configs.index')->with('error', 'Config not found!');
+        return redirect()->route('configs.index')->with('error', 'کانفیگ پیدا نشد!');
     }
 
     /**
@@ -169,8 +170,8 @@ class ConfigController extends Controller
             'request_delay_max' => (int)$request->input('request_delay_max', 5000),
             'timeout' => (int)$request->input('timeout', 120),
             'max_retries' => (int)$request->input('max_retries', 2),
-            'concurrency' => (int)$request->input('concurrency', 1),
-            'batch_size' => (int)$request->input('batch_size', 1),
+            'concurrency' => (int)$request->input('concurrency', 10),
+            'batch_size' => (int)$request->input('batch_size', 10),
             'request_delay' => (int)$request->input('request_delay', 3000),
             'user_agent' => $request->input('user_agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/91.0.4472.124'),
             'verify_ssl' => $request->has('verify_ssl'),
@@ -180,6 +181,9 @@ class ConfigController extends Controller
             'product_id_method' => $request->input('product_id_method', 'selector'),
             'product_id_source' => $request->input('product_id_source', 'product_page'),
             'product_id_url_pattern' => $request->input('product_id_url_pattern', ''),
+            'product_id_fallback_script_patterns' => $this->formatArrayInput($request->input('product_id_fallback_script_patterns', ['product_id:\\s*\"(\\d+)\"', 'product_id:\\s*(\\d+)'])),
+            'category_method' => $request->input('category_method', 'selector'),
+            'category_word_count' => (int)$request->input('category_word_count', 1),
             'guarantee_method' => $request->input('guarantee_method', 'title'),
             'guarantee_keywords' => $this->formatArrayInput($request->input('guarantee_keywords')),
             'selectors' => [
@@ -188,6 +192,15 @@ class ConfigController extends Controller
                         'type' => $request->input('main_page_product_links_type', 'css'),
                         'selector' => $request->input('main_page_product_links_selector', ''),
                         'attribute' => $request->input('main_page_product_links_attribute', 'href'),
+                    ],
+                    'image' => [
+                        'type' => $request->input('main_page_image_type', 'css'),
+                        'selector' => $request->input('main_page_image_selector', 'li.product img'),
+                        'attribute' => $request->input('main_page_image_attribute', 'src'),
+                    ],
+                    'guarantee' => [
+                        'type' => $request->input('main_page_guarantee_type', 'css'),
+                        'selector' => $request->input('main_page_guarantee_selector', 'div.product-seller-row:nth-child(2) > div:nth-child(2) > div:nth-child(1)'),
                     ],
                 ],
                 'product_page' => [
@@ -243,11 +256,6 @@ class ConfigController extends Controller
             ],
         ];
 
-        // Add product_id fallback script patterns
-        if ($request->has('product_id_fallback_script_patterns')) {
-            $config['product_id_fallback_script_patterns'] = $this->formatArrayInput($request->input('product_id_fallback_script_patterns'));
-        }
-
         // Add main_page product_id if required
         if ($request->input('product_id_source') === 'main_page') {
             $config['selectors']['main_page']['product_id'] = [
@@ -257,32 +265,60 @@ class ConfigController extends Controller
             ];
         }
 
-        // Method specific configurations
+        // Configure method-specific settings
+        $this->configureMethodSettings($config, $request, $method);
+
+        return $config;
+    }
+
+    /**
+     * Configure method-specific settings.
+     *
+     * @param  array  &$config
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $method
+     */
+    private function configureMethodSettings(&$config, $request, $method)
+    {
+        // Method 1 settings
+        $config['method_settings']['method_1'] = [
+            'enabled' => $method == 1,
+            'pagination' => [
+                'type' => $request->input('pagination_type', 'query'),
+                'parameter' => $request->input('pagination_parameter', 'page'),
+                'separator' => $request->input('pagination_separator', '='),
+                'suffix' => $request->input('pagination_suffix', ''),
+                'max_pages' => (int)$request->input('pagination_max_pages', 3),
+                'use_sample_url' => $request->has('pagination_use_sample_url'),
+                'sample_url' => $request->input('pagination_sample_url', ''),
+                'use_webdriver' => false,
+                'use_dynamic_pagination' => false,
+                'force_trailing_slash' => true,
+                'ignore_redirects' => true,
+            ],
+        ];
+
+        // Method 2 settings
         if ($method == 2) {
-            // Add Method 2 specific fields
-            $config['share_product_id_from_method_2'] = $request->has('share_product_id_from_method_2');
-            $config['scrool'] = (int)$request->input('scrool', 10);
-            $config['container'] = $request->input('container', '');
-
-            // Add Method 2 navigation settings
-            $config['method_2'] = [
+            $config['method_settings']['method_2'] = [
                 'enabled' => true,
-                'navigation' => $this->buildNavigationConfig($request),
-            ];
-        } else if ($method == 3) {
-            // Add Method 3 specific fields
-            $config['scrool'] = (int)$request->input('scrool', 10);
-            $config['container'] = $request->input('container', '');
-            $config['basescroll'] = (int)$request->input('basescroll', 10);
-
-            // Add Method 3 navigation settings
-            $config['method_3'] = [
-                'enabled' => true,
-                'navigation' => $this->buildNavigationConfig($request, true),
+                'share_product_id_from_method_2' => $request->has('share_product_id_from_method_2'),
+                'scrool' => (int)$request->input('scrool', 10),
+                'container' => $request->input('container', ''),
+                'navigation' => $this->buildNavigationConfig($request, false),
             ];
         }
 
-        return $config;
+        // Method 3 settings
+        if ($method == 3) {
+            $config['method_settings']['method_3'] = [
+                'enabled' => true,
+                'scrool' => (int)$request->input('scrool', 10),
+                'container' => $request->input('container', ''),
+                'basescroll' => (int)$request->input('basescroll', 10),
+                'navigation' => $this->buildNavigationConfig($request, true),
+            ];
+        }
     }
 
     /**
