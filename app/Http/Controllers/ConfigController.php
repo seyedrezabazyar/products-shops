@@ -14,8 +14,17 @@ class ConfigController extends Controller
     {
         $this->configPath = storage_path('app/private');
 
-        if (!Storage::exists('private')) {
-            Storage::makeDirectory('private', 0755);
+        // ایجاد دایرکتوری‌های مورد نیاز
+        $directories = [
+            storage_path('app/private'),
+            storage_path('app/private/private'),
+            storage_path('logs/scrapers'),
+        ];
+
+        foreach ($directories as $directory) {
+            if (!file_exists($directory)) {
+                mkdir($directory, 0755, true);
+            }
         }
     }
 
@@ -39,6 +48,28 @@ class ConfigController extends Controller
         }
 
         return view('configs.index', compact('configs'));
+    }
+
+    /**
+     * Delete a log file.
+     *
+     * @param  string  $logfile
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteLog($logfile)
+    {
+        $logPath = storage_path('logs/scrapers/' . $logfile);
+
+        if (!file_exists($logPath)) {
+            return redirect()->back()->with('error', 'فایل لاگ یافت نشد.');
+        }
+
+        // حذف فایل
+        if (unlink($logPath)) {
+            return redirect()->back()->with('success', 'فایل لاگ با موفقیت حذف شد.');
+        } else {
+            return redirect()->back()->with('error', 'خطا در حذف فایل لاگ.');
+        }
     }
 
     /**
@@ -413,12 +444,6 @@ class ConfigController extends Controller
         return $pagination;
     }
 
-    /**
-     * Build navigation configuration for methods 2 and 3.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array
-     */
     private function buildNavigationConfig(Request $request)
     {
         $navigation = [
@@ -448,4 +473,227 @@ class ConfigController extends Controller
 
         return $navigation;
     }
+
+
+
+    /**
+     * Run the scraper for the specified config.
+     *
+     * @param  string  $filename
+     * @return \Illuminate\Http\Response
+     */
+    public function runScraper($filename)
+    {
+        // مسیر کامل فایل کانفیگ
+        $configPath = storage_path('app/private/' . $filename . '.json');
+
+        // بررسی وجود فایل
+        if (!file_exists($configPath)) {
+            return redirect()->route('configs.index')->with('error', 'فایل کانفیگ یافت نشد!');
+        }
+
+        // ایجاد مسیر برای ذخیره لاگ‌ها
+        $logDirectory = storage_path('logs/scrapers');
+        if (!file_exists($logDirectory)) {
+            mkdir($logDirectory, 0755, true);
+        }
+
+        // نام فایل لاگ بر اساس نام کانفیگ و تاریخ
+        $logFileName = $filename . '_' . date('Y-m-d_H-i-s') . '.log';
+        $logFile = $logDirectory . '/' . $logFileName;
+
+        // ایجاد یک فایل لاگ خالی با هدر UTF-8
+        file_put_contents($logFile, "اجرای اسکرپر برای کانفیگ {$filename} در تاریخ " . date('Y-m-d H:i:s') . " شروع شد...\n");
+
+        // اجرای دستور به صورت غیر همزمان و ذخیره PID
+        $cmd = sprintf(
+            'nohup php %s scrape:start --config=%s >> %s 2>&1 & echo $!',
+            base_path('artisan'),
+            $configPath,
+            $logFile
+        );
+
+        $pid = exec($cmd);
+
+        // ایجاد دایرکتوری runs اگر وجود ندارد
+        if (!Storage::exists('private/runs')) {
+            Storage::makeDirectory('private/runs', 0755);
+        }
+
+        // ذخیره اطلاعات اجرا در فایل
+        $runInfo = [
+            'filename' => $filename,
+            'log_file' => $logFileName,
+            'started_at' => date('Y-m-d H:i:s'),
+            'pid' => (int)$pid,
+            'status' => 'running'
+        ];
+
+        // نام فایل اطلاعات اجرا
+        $runFileName = $filename . '_' . date('Y-m-d_H-i-s') . '.json';
+        Storage::put('private/runs/' . $runFileName, json_encode($runInfo, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+        return redirect()->route('configs.index')->with('success', 'اسکرپر برای کانفیگ ' . $filename . ' با موفقیت اجرا شد. می‌توانید لاگ‌ها را مشاهده کنید.');
+    }
+
+    /**
+     * Show logs for the specified config.
+     *
+     * @param  string  $filename
+     * @return \Illuminate\Http\Response
+     */
+    public function showLogs($filename)
+    {
+        // مسیر دایرکتوری لاگ‌ها
+        $logDirectory = storage_path('logs/scrapers');
+
+        // لیست فایل‌های لاگ مربوط به این کانفیگ
+        $logFiles = [];
+
+        if (file_exists($logDirectory)) {
+            $allFiles = scandir($logDirectory);
+
+            foreach ($allFiles as $file) {
+                if (strpos($file, $filename . '_') === 0 && pathinfo($file, PATHINFO_EXTENSION) === 'log') {
+                    // استخراج تاریخ از نام فایل
+                    $datePart = str_replace($filename . '_', '', pathinfo($file, PATHINFO_FILENAME));
+
+                    $logFiles[] = [
+                        'filename' => $file,
+                        'date' => $datePart,
+                        'full_path' => $logDirectory . '/' . $file,
+                        'size' => filesize($logDirectory . '/' . $file),
+                        'last_modified' => filemtime($logDirectory . '/' . $file)
+                    ];
+                }
+            }
+
+            // مرتب‌سازی بر اساس تاریخ تغییر (جدیدترین در ابتدا)
+            usort($logFiles, function($a, $b) {
+                return $b['last_modified'] - $a['last_modified'];
+            });
+        }
+
+        return view('configs.logs', compact('logFiles', 'filename'));
+    }
+
+    /**
+     * Get the content of a log file.
+     *
+     * @param  string  $logfile
+     * @return \Illuminate\Http\Response
+     */
+    public function getLogContent($logfile)
+    {
+        $logPath = storage_path('logs/scrapers/' . $logfile);
+
+        if (!file_exists($logPath)) {
+            return response('فایل لاگ یافت نشد.', 404);
+        }
+
+        // خواندن محتوای فایل با پشتیبانی از UTF-8
+        $content = file_get_contents($logPath);
+
+        // تشخیص اینکه آیا فایل با BOM شروع می‌شود یا خیر
+        if (substr($content, 0, 3) === "\xEF\xBB\xBF") {
+            // حذف BOM
+            $content = substr($content, 3);
+        }
+
+        return response($content)
+            ->header('Content-Type', 'text/plain; charset=UTF-8');
+    }
+
+
+    /**
+     * Stop the running scraper for the specified config.
+     *
+     * @param  string  $filename
+     * @return \Illuminate\Http\Response
+     */
+    public function stopScraper($filename)
+    {
+        // بررسی وجود فایل‌های اجرای در حال اجرا
+        $runsDirectory = storage_path('app/private/runs');
+        $runningProcesses = [];
+
+        if (file_exists($runsDirectory)) {
+            $files = scandir($runsDirectory);
+
+            foreach ($files as $file) {
+                if (strpos($file, $filename . '_') === 0 && pathinfo($file, PATHINFO_EXTENSION) === 'json') {
+                    $runInfo = json_decode(file_get_contents($runsDirectory . '/' . $file), true);
+
+                    if (isset($runInfo['pid']) && isset($runInfo['status']) && $runInfo['status'] === 'running') {
+                        $runningProcesses[] = $runInfo;
+                    }
+                }
+            }
+        }
+
+        $stopped = false;
+
+        // توقف پروسه‌های در حال اجرا
+        foreach ($runningProcesses as $process) {
+            $pid = $process['pid'];
+
+            // بررسی وجود پروسه
+            if ($this->isProcessRunning($pid)) {
+                // توقف پروسه
+                exec("kill -9 {$pid} 2>&1", $output, $result);
+
+                if ($result === 0) {
+                    $stopped = true;
+
+                    // بروزرسانی وضعیت در فایل
+                    $runInfo = $process;
+                    $runInfo['status'] = 'stopped';
+                    $runInfo['stopped_at'] = date('Y-m-d H:i:s');
+
+                    $runFilePath = $runsDirectory . '/' . basename($process['log_file'], '.log') . '.json';
+                    file_put_contents($runFilePath, json_encode($runInfo, JSON_PRETTY_PRINT));
+
+                    // اضافه کردن پیام به فایل لاگ
+                    $logPath = storage_path('logs/scrapers/' . $process['log_file']);
+                    if (file_exists($logPath)) {
+                        file_put_contents($logPath, "\n[" . date('Y-m-d H:i:s') . "] اسکرپر به صورت دستی متوقف شد.\n", FILE_APPEND);
+                    }
+                }
+            }
+        }
+
+        // همچنین به دنبال پروسه‌های php artisan با نام فایل کانفیگ بگردیم
+        $command = "ps aux | grep 'scrape:start.*{$filename}' | grep -v grep | awk '{print $2}'";
+        exec($command, $output);
+
+        if (!empty($output)) {
+            foreach ($output as $pid) {
+                exec("kill -9 {$pid} 2>&1");
+                $stopped = true;
+            }
+        }
+
+        if ($stopped) {
+            return redirect()->route('configs.index')->with('success', 'اسکرپر با موفقیت متوقف شد.');
+        } else {
+            return redirect()->route('configs.index')->with('error', 'هیچ اسکرپر در حال اجرایی برای این کانفیگ یافت نشد.');
+        }
+    }
+
+    /**
+     * Check if a process is running by PID.
+     *
+     * @param  int  $pid
+     * @return bool
+     */
+    private function isProcessRunning($pid)
+    {
+        if (empty($pid)) {
+            return false;
+        }
+
+        exec("ps -p {$pid}", $output, $result);
+        return $result === 0;
+    }
+
 }

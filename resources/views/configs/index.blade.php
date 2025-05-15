@@ -34,7 +34,16 @@
             background-color: #0f172a;
             color: #e2e8f0;
         }
+        .btn-stop {
+            background-color: #ef4444;
+            color: white;
+            transition: all 0.2s ease;
+        }
 
+        .btn-stop:hover {
+            background-color: #dc2626;
+            transform: translateY(-1px);
+        }
         .custom-shadow {
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
@@ -78,6 +87,16 @@
 
         .btn-success:hover {
             background-color: #059669;
+        }
+
+        .btn-play {
+            background-color: #8b5cf6;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .btn-play:hover {
+            background-color: #7c3aed;
         }
 
         .config-card {
@@ -144,6 +163,67 @@
                 opacity: .7;
             }
         }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 50;
+        }
+
+        .modal-content {
+            position: relative;
+            margin: 10% auto;
+            max-width: 600px;
+            background-color: #1e293b;
+            border-radius: 0.75rem;
+            border: 1px solid #334155;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            padding: 1.5rem;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .log-console {
+            background-color: #0f172a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+            color: #e2e8f0;
+        }
+
+        .running-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #10b981;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+        .btn-play {
+            background-color: #8b5cf6;
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .btn-play:hover {
+            background-color: #7c3aed;
+            transform: translateY(-1px);
+        }
     </style>
 </head>
 <body class="min-h-screen py-10">
@@ -172,6 +252,16 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span>{{ session('success') }}</span>
+            </div>
+        @endif
+
+        <!-- Error Message -->
+        @if(session('error'))
+            <div class="bg-red-900/30 border border-red-500 text-red-200 px-6 py-4 rounded-lg mb-6 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{ session('error') }}</span>
             </div>
         @endif
 
@@ -211,18 +301,51 @@
                                 </div>
                             </div>
 
+                            <!-- در قسمت کارت‌ها، در بخش عملیات هر کارت -->
+                            <!-- در قسمت کارت‌ها، در بخش عملیات هر کارت -->
                             <div class="flex justify-between pt-4 border-t border-dark-600">
-                                <a href="{{ route('configs.edit', $config['filename']) }}" class="btn-secondary px-4 py-2 rounded-lg text-sm flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                    </svg>
-                                    ویرایش
-                                </a>
+                                <div class="flex flex-wrap gap-2">
+                                    <a href="{{ route('configs.edit', $config['filename']) }}" class="btn-secondary px-3 py-2 rounded-lg text-sm flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                        </svg>
+                                        ویرایش
+                                    </a>
+
+                                    <form action="{{ route('configs.run', $config['filename']) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        <button type="submit" class="btn-play px-3 py-2 rounded-lg text-sm flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            </svg>
+                                            اجرا
+                                        </button>
+                                    </form>
+
+                                    <form action="{{ route('configs.stop', $config['filename']) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        <button type="submit" class="btn-stop px-3 py-2 rounded-lg text-sm flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10h6v6H9z" />
+                                            </svg>
+                                            توقف
+                                        </button>
+                                    </form>
+
+                                    <a href="{{ route('configs.logs', $config['filename']) }}" class="btn-secondary px-3 py-2 rounded-lg text-sm flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                        لاگ‌ها
+                                    </a>
+                                </div>
 
                                 <form action="{{ route('configs.destroy', $config['filename']) }}" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این کانفیگ اطمینان دارید؟')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn-danger px-4 py-2 rounded-lg text-sm flex items-center">
+                                    <button type="submit" class="btn-danger px-3 py-2 rounded-lg text-sm flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
@@ -288,14 +411,42 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                                     {{ count($config['content']['products_urls']) }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex">
-                                    <a href="{{ route('configs.edit', $config['filename']) }}" class="btn-secondary px-3 py-1 rounded text-sm ml-2">
+                                <!-- همچنین در بخش جدول، ستون عملیات را به شکل زیر اصلاح کنید -->
+                                <!-- همچنین در بخش جدول، ستون عملیات را به شکل زیر اصلاح کنید -->
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium flex flex-wrap gap-1">
+                                    <a href="{{ route('configs.edit', $config['filename']) }}" class="btn-secondary px-2 py-1 rounded text-sm">
                                         ویرایش
                                     </a>
+
+                                    <form action="{{ route('configs.run', $config['filename']) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        <button type="submit" class="btn-play px-2 py-1 rounded text-sm flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                            </svg>
+                                            اجرا
+                                        </button>
+                                    </form>
+
+                                    <form action="{{ route('configs.stop', $config['filename']) }}" method="POST" class="inline-block">
+                                        @csrf
+                                        <button type="submit" class="btn-stop px-2 py-1 rounded text-sm flex items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 10h6v6H9z" />
+                                            </svg>
+                                            توقف
+                                        </button>
+                                    </form>
+
+                                    <a href="{{ route('configs.logs', $config['filename']) }}" class="btn-secondary px-2 py-1 rounded text-sm">
+                                        لاگ‌ها
+                                    </a>
+
                                     <form action="{{ route('configs.destroy', $config['filename']) }}" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این کانفیگ اطمینان دارید؟')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn-danger px-3 py-1 rounded text-sm">
+                                        <button type="submit" class="btn-danger px-2 py-1 rounded text-sm">
                                             حذف
                                         </button>
                                     </form>
@@ -317,5 +468,87 @@
         </div>
     </div>
 </div>
+
+<!-- Modal for log display -->
+<div id="logModal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2 class="text-xl font-bold text-blue-400 mb-4">لاگ اجرای اسکرپر</h2>
+        <div class="flex items-center mb-2">
+            <span class="running-indicator"></span>
+            <span class="text-green-400">در حال اجرا...</span>
+        </div>
+        <div id="logContent" class="log-console">در حال بارگذاری لاگ...</div>
+    </div>
+</div>
+
+<script>
+    // Modal functionality
+    const modal = document.getElementById('logModal');
+    const closeModal = document.querySelector('.close-modal');
+
+    if (closeModal) {
+        closeModal.addEventListener('click', function() {
+            modal.style.display = 'none';
+            if (modal.dataset.intervalId) {
+                clearInterval(parseInt(modal.dataset.intervalId));
+            }
+        });
+    }
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+            if (modal.dataset.intervalId) {
+                clearInterval(parseInt(modal.dataset.intervalId));
+            }
+        }
+    });
+
+    // Function to show modal with log content
+    function showLogModal(logFile) {
+        const logContent = document.getElementById('logContent');
+        logContent.textContent = 'در حال بارگذاری لاگ...';
+        modal.style.display = 'block';
+
+        // Fetch log content periodically
+        fetchLogContent(logFile);
+        const interval = setInterval(() => {
+            fetchLogContent(logFile);
+        }, 2000);
+
+        // Store interval ID to clear it when modal is closed
+        modal.dataset.intervalId = interval;
+    }
+
+    // Function to fetch log content
+    function fetchLogContent(logFile) {
+        fetch(`/configs/logs/${logFile}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('خطا در دریافت لاگ');
+                }
+                return response.text();
+            })
+            .then(data => {
+                const logContent = document.getElementById('logContent');
+                logContent.textContent = data;
+                logContent.scrollTop = logContent.scrollHeight;
+            })
+            .catch(error => {
+                console.error('Error fetching log:', error);
+                const logContent = document.getElementById('logContent');
+                logContent.textContent = 'خطا در دریافت لاگ: ' + error.message;
+            });
+    }
+
+    // Check if there's a log file in session and show modal
+    @if(session('log_file'))
+    document.addEventListener('DOMContentLoaded', function() {
+        showLogModal("{{ session('log_file') }}");
+    });
+    @endif
+</script>
 </body>
 </html>
