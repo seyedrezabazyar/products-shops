@@ -16,14 +16,8 @@
             {{ session('success') }}
         </div>
     @endif
-    <div class="mb-4 flex items-center space-x-4">
-        <label class="text-gray-700 font-bold">انتخاب متد:</label>
-        <select id="method-select" class="px-3 py-2 border rounded">
-            <option value="1">متد ۱</option>
-            <option value="2">متد ۲</option>
-            <option value="3">متد ۳</option>
-        </select>
-        <a id="create-link" href="{{ route('configs.create') }}?method=1" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">ایجاد کانفیگ جدید</a>
+    <div class="mb-4">
+        <a href="{{ route('configs.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">ایجاد کانفیگ جدید</a>
     </div>
     <div class="bg-white shadow-md rounded-lg overflow-hidden">
         <table class="w-full">
@@ -56,10 +50,5 @@
 <footer class="bg-gray-800 text-white text-center p-4">
     <p>© ۱۴۰۴ مدیریت کانفیگ</p>
 </footer>
-<script>
-    document.getElementById('method-select').addEventListener('change', function() {
-        document.getElementById('create-link').href = '{{ route("configs.create") }}?method=' + this.value;
-    });
-</script>
 </body>
 </html>
