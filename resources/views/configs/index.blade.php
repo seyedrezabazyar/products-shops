@@ -304,11 +304,14 @@
                 <i class="fas fa-cogs text-2xl text-sepia-600 ml-3"></i>
                 <h1 class="text-3xl font-bold classic-title">مدیریت کانفیگ‌ها</h1>
             </div>
-            <a href="{{ route('configs.create') }}" class="btn-gold px-6 py-3 rounded flex items-center shadow-lg hover:shadow-xl transition-all duration-300">
+            <a href="{{ route('configs.create') }}"
+               class="btn-gold px-6 py-3 rounded flex items-center shadow-lg hover:shadow-xl transition-all duration-300">
                 <i class="fas fa-plus-circle ml-2"></i>
                 ایجاد کانفیگ جدید
             </a>
+
         </div>
+
 
         <!-- Success Message -->
         @if(session('success'))
@@ -332,9 +335,19 @@
                 <span class="ornament">نمای کارت‌ها</span>
             </h2>
 
-            @if(count($configs) > 0)
+            @php
+                // Sort configs by last_run_at (descending, most recent first)
+                $sortedConfigs = $configs;
+                usort($sortedConfigs, function ($a, $b) {
+                    $aTime = isset($a['last_run_at']) ? $a['last_run_at'] : '0000-00-00';
+                    $bTime = isset($b['last_run_at']) ? $b['last_run_at'] : '0000-00-00';
+                    return strcmp($bTime, $aTime); // Descending order
+                });
+            @endphp
+
+            @if(count($sortedConfigs) > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @foreach($configs as $config)
+                    @foreach($sortedConfigs as $config)
                         <div class="config-card p-6">
                             <div class="flex justify-between items-start mb-4 pb-3 border-b border-sepia-200">
                                 <h3 class="text-lg font-bold text-sepia-900">{{ $config['filename'] }}</h3>
@@ -351,43 +364,53 @@
 
                                 <div class="flex items-center">
                                     <i class="fas fa-shopping-cart text-sepia-500 ml-2"></i>
-                                    <span class="text-sm">{{ count($config['content']['products_urls']) }} URL محصول</span>
+                                    <span
+                                        class="text-sm">{{ count($config['content']['products_urls']) }} URL محصول</span>
                                 </div>
                             </div>
 
                             <div class="flex flex-wrap justify-between gap-2 pt-4 border-t border-sepia-200">
                                 <div class="flex flex-wrap gap-2">
-                                    <a href="{{ route('configs.edit', $config['filename']) }}" class="btn-classic px-3 py-2 rounded text-sm flex items-center">
+                                    <a href="{{ route('configs.edit', $config['filename']) }}"
+                                       class="btn-classic px-3 py-2 rounded text-sm flex items-center">
                                         <i class="fas fa-edit ml-1"></i>
                                         ویرایش
                                     </a>
 
-                                    <form action="{{ route('configs.run', $config['filename']) }}" method="POST" class="inline-block">
+                                    <form action="{{ route('configs.run', $config['filename']) }}" method="POST"
+                                          class="inline-block">
                                         @csrf
-                                        <button type="submit" class="btn-success px-3 py-2 rounded text-sm flex items-center">
+                                        <button type="submit"
+                                                class="btn-success px-3 py-2 rounded text-sm flex items-center">
                                             <i class="fas fa-play ml-1"></i>
                                             اجرا
                                         </button>
                                     </form>
 
-                                    <form action="{{ route('configs.stop', $config['filename']) }}" method="POST" class="inline-block">
+                                    <form action="{{ route('configs.stop', $config['filename']) }}" method="POST"
+                                          class="inline-block">
                                         @csrf
-                                        <button type="submit" class="btn-danger px-3 py-2 rounded text-sm flex items-center">
+                                        <button type="submit"
+                                                class="btn-danger px-3 py-2 rounded text-sm flex items-center">
                                             <i class="fas fa-stop ml-1"></i>
                                             توقف
                                         </button>
                                     </form>
 
-                                    <a href="{{ route('configs.logs', $config['filename']) }}" class="btn-classic px-3 py-2 rounded text-sm flex items-center">
+                                    <a href="{{ route('configs.logs', $config['filename']) }}"
+                                       class="btn-classic px-3 py-2 rounded text-sm flex items-center">
                                         <i class="fas fa-file-alt ml-1"></i>
                                         لاگ‌ها
                                     </a>
                                 </div>
 
-                                <form action="{{ route('configs.destroy', $config['filename']) }}" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این کانفیگ اطمینان دارید؟')">
+                                <form action="{{ route('configs.destroy', $config['filename']) }}" method="POST"
+                                      class="inline-block"
+                                      onsubmit="return confirm('آیا از حذف این کانفیگ اطمینان دارید؟')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn-danger px-3 py-2 rounded text-sm flex items-center">
+                                    <button type="submit"
+                                            class="btn-danger px-3 py-2 rounded text-sm flex items-center">
                                         <i class="fas fa-trash-alt ml-1"></i>
                                         حذف
                                     </button>
@@ -400,7 +423,7 @@
                 <div class="empty-state rounded p-10 flex flex-col items-center justify-center">
                     <i class="fas fa-folder-open text-5xl text-sepia-400 mb-4"></i>
                     <h3 class="text-xl font-bold text-sepia-700 mb-2">هیچ کانفیگی یافت نشد</h3>
-                    <p class="text-sepia-600 mb-6 text-center">برای شروع، یک کانفیگ جدید ایجاد کنید.</p>
+                    <p class="text-sepia-600 mb-6 text-center">برای شروع، یک کانفیگ جدید ایجاد کنید。</p>
                     <a href="{{ route('configs.create') }}" class="btn-gold px-6 py-3 rounded flex items-center">
                         <i class="fas fa-plus-circle ml-2"></i>
                         ایجاد کانفیگ جدید
@@ -415,7 +438,17 @@
                 <span class="ornament">نمای جدول</span>
             </h2>
 
-            @if(count($configs) > 0)
+            @php
+                // Sort configs by method (ascending: 1, 2, 3)
+                $sortedConfigs = $configs;
+                usort($sortedConfigs, function ($a, $b) {
+                    $aMethod = $a['content']['method'] ?? 0;
+                    $bMethod = $b['content']['method'] ?? 0;
+                    return $aMethod <=> $bMethod; // Ascending order
+                });
+            @endphp
+
+            @if(count($sortedConfigs) > 0)
                 <div class="overflow-x-auto rounded">
                     <table class="classic-table">
                         <thead>
@@ -428,7 +461,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($configs as $config)
+                        @foreach($sortedConfigs as $config)
                             <tr>
                                 <td class="px-6 py-4">
                                     <div class="font-medium text-sepia-900">{{ $config['filename'] }}</div>
@@ -445,33 +478,41 @@
                                     {{ count($config['content']['products_urls']) }}
                                 </td>
                                 <td class="px-6 py-4 text-right flex flex-wrap gap-2">
-                                    <a href="{{ route('configs.edit', $config['filename']) }}" class="btn-classic px-2 py-1 rounded text-xs">
+                                    <a href="{{ route('configs.edit', $config['filename']) }}"
+                                       class="btn-classic px-2 py-1 rounded text-xs">
                                         <i class="fas fa-edit ml-1"></i>
                                         ویرایش
                                     </a>
 
-                                    <form action="{{ route('configs.run', $config['filename']) }}" method="POST" class="inline-block">
+                                    <form action="{{ route('configs.run', $config['filename']) }}" method="POST"
+                                          class="inline-block">
                                         @csrf
-                                        <button type="submit" class="btn-success px-2 py-1 rounded text-xs flex items-center">
+                                        <button type="submit"
+                                                class="btn-success px-2 py-1 rounded text-xs flex items-center">
                                             <i class="fas fa-play ml-1"></i>
                                             اجرا
                                         </button>
                                     </form>
 
-                                    <form action="{{ route('configs.stop', $config['filename']) }}" method="POST" class="inline-block">
+                                    <form action="{{ route('configs.stop', $config['filename']) }}" method="POST"
+                                          class="inline-block">
                                         @csrf
-                                        <button type="submit" class="btn-danger px-2 py-1 rounded text-xs flex items-center">
+                                        <button type="submit"
+                                                class="btn-danger px-2 py-1 rounded text-xs flex items-center">
                                             <i class="fas fa-stop ml-1"></i>
                                             توقف
                                         </button>
                                     </form>
 
-                                    <a href="{{ route('configs.logs', $config['filename']) }}" class="btn-classic px-2 py-1 rounded text-xs">
+                                    <a href="{{ route('configs.logs', $config['filename']) }}"
+                                       class="btn-classic px-2 py-1 rounded text-xs">
                                         <i class="fas fa-file-alt ml-1"></i>
                                         لاگ‌ها
                                     </a>
 
-                                    <form action="{{ route('configs.destroy', $config['filename']) }}" method="POST" class="inline-block" onsubmit="return confirm('آیا از حذف این کانفیگ اطمینان دارید؟')">
+                                    <form action="{{ route('configs.destroy', $config['filename']) }}" method="POST"
+                                          class="inline-block"
+                                          onsubmit="return confirm('آیا از حذف این کانفیگ اطمینان دارید؟')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="btn-danger px-2 py-1 rounded text-xs">
@@ -489,7 +530,7 @@
                 <div class="empty-state rounded p-8 flex flex-col items-center justify-center">
                     <i class="fas fa-table text-4xl text-sepia-400 mb-3"></i>
                     <h3 class="text-lg font-bold text-sepia-700 mb-1">جدول خالی است</h3>
-                    <p class="text-sepia-600 text-sm">داده‌ای برای نمایش وجود ندارد.</p>
+                    <p class="text-sepia-600 text-sm">داده‌ای برای نمایش وجود ندارد。</p>
                 </div>
             @endif
         </div>
@@ -499,7 +540,7 @@
 <!-- Modal for log display -->
 <div id="logModal" class="modal">
     <div class="modal-content">
-        <span class="close-modal">&times;</span>
+        <span class="close-modal">×</span>
         <h2 class="text-xl font-bold text-sepia-800 mb-4 text-center">لاگ اجرای اسکرپر</h2>
         <div class="flex items-center mb-4">
             <span class="running-indicator"></span>
@@ -508,6 +549,16 @@
         <div id="logContent" class="log-console">در حال بارگذاری لاگ...</div>
     </div>
 </div>
+<form action="{{ route('configs.logs.deleteAll') }}" method="POST" class="md:mr-4 mt-4 md:mt-0"
+      onsubmit="return confirm('آیا از حذف تمامی فایل‌های لاگ مرتبط با ربات اطمینان دارید؟ این عملیات قابل بازگشت نیست.')">
+    @csrf
+    @method('DELETE')
+    <button type="submit"
+            class="btn-danger px-6 py-3 rounded flex items-center shadow-lg hover:shadow-xl transition-all duration-300">
+        <i class="fas fa-trash-alt ml-2"></i>
+        حذف تمام لاگ‌ها
+    </button>
+</form>
 
 <script>
     // Modal functionality
@@ -515,7 +566,7 @@
     const closeModal = document.querySelector('.close-modal');
 
     if (closeModal) {
-        closeModal.addEventListener('click', function() {
+        closeModal.addEventListener('click', function () {
             modal.style.display = 'none';
             if (modal.dataset.intervalId) {
                 clearInterval(parseInt(modal.dataset.intervalId));
@@ -524,7 +575,7 @@
     }
 
     // Close modal when clicking outside
-    window.addEventListener('click', function(event) {
+    window.addEventListener('click', function (event) {
         if (event.target === modal) {
             modal.style.display = 'none';
             if (modal.dataset.intervalId) {
@@ -572,7 +623,7 @@
 
     // Check if there's a log file in session and show modal
     @if(session('log_file'))
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         showLogModal("{{ session('log_file') }}");
     });
     @endif

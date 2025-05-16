@@ -2,12 +2,13 @@
 
 use App\Http\Controllers\ConfigController;
 use Illuminate\Support\Facades\Route;
+
 // روت برای اجرای اسکرپر
 Route::post('/configs/{filename}/run', [App\Http\Controllers\ConfigController::class, 'runScraper'])->name('configs.run');
 
 // روت برای نمایش لاگ‌ها
 Route::get('/configs/{filename}/logs', [App\Http\Controllers\ConfigController::class, 'showLogs'])->name('configs.logs');
-
+Route::delete('/configs/logs/delete-all', [ConfigController::class, 'deleteAllLogs'])->name('configs.logs.deleteAll');
 // روت برای دریافت محتوای یک لاگ خاص
 Route::get('/configs/log-content/{logfile}', [App\Http\Controllers\ConfigController::class, 'getLogContent'])->name('configs.log-content');
 // روت برای توقف اسکرپر

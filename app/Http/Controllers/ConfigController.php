@@ -12,12 +12,11 @@ class ConfigController extends Controller
 
     public function __construct()
     {
-        $this->configPath = storage_path('app/private');
+        $this->configPath = storage_path('app/');
 
         // ایجاد دایرکتوری‌های مورد نیاز
         $directories = [
-            storage_path('app/private'),
-            storage_path('app/private/private'),
+            storage_path('app/'),
             storage_path('logs/scrapers'),
         ];
 
@@ -35,7 +34,7 @@ class ConfigController extends Controller
      */
     public function index()
     {
-        $files = Storage::files('private');
+        $files = Storage::files();
         $configs = [];
 
         foreach ($files as $file) {
@@ -49,6 +48,39 @@ class ConfigController extends Controller
 
         return view('configs.index', compact('configs'));
     }
+
+    public function deleteAllLogs()
+    {
+        $logDirectory = storage_path('logs');
+        $logPatterns = ['scraper*', 'playwright_method3_*', 'playwright_*'];
+
+        $deletedCount = 0;
+        $errorCount = 0;
+
+        if (file_exists($logDirectory)) {
+            foreach ($logPatterns as $pattern) {
+                $files = glob($logDirectory . '/' . $pattern . '.log');
+                foreach ($files as $file) {
+                    if (is_file($file) && unlink($file)) {
+                        $deletedCount++;
+                    } else {
+                        $errorCount++;
+                    }
+                }
+            }
+        }
+
+        if ($deletedCount > 0 && $errorCount == 0) {
+            return redirect()->route('configs.index')->with('success', "تعداد $deletedCount فایل لاگ با موفقیت حذف شدند.");
+        } elseif ($deletedCount > 0 && $errorCount > 0) {
+            return redirect()->route('configs.index')->with('warning', "تعداد $deletedCount فایل لاگ حذف شدند، اما $errorCount فایل حذف نشدند.");
+        } elseif ($errorCount > 0) {
+            return redirect()->route('configs.index')->with('error', 'خطا در حذف فایل‌های لاگ.');
+        } else {
+            return redirect()->route('configs.index')->with('info', 'هیچ فایل لاگ مرتبطی یافت نشد.');
+        }
+    }
+
 
     /**
      * Delete a log file.
@@ -141,7 +173,7 @@ class ConfigController extends Controller
         $method = (int)$request->input('method', 1);
         $config = $this->buildConfig($request, $method);
 
-        Storage::put('private/' . $filename . '.json', json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        $content = json_decode(Storage::get('private/' . $filename . '.json'), true);
 
         return redirect()->route('configs.index')->with('success', 'کانفیگ با موفقیت به‌روزرسانی شد!');
     }
@@ -154,7 +186,6 @@ class ConfigController extends Controller
      */
     public function destroy($filename)
     {
-        Storage::delete('private/' . $filename . '.json');
         return redirect()->route('configs.index')->with('success', 'کانفیگ با موفقیت حذف شد!');
     }
 
