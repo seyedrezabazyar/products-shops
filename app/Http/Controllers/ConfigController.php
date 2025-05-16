@@ -53,7 +53,7 @@ class ConfigController extends Controller
     /**
      * Delete a log file.
      *
-     * @param  string  $logfile
+     * @param string $logfile
      * @return \Illuminate\Http\Response
      */
     public function deleteLog($logfile)
@@ -85,7 +85,7 @@ class ConfigController extends Controller
     /**
      * Store a newly created config in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -112,7 +112,7 @@ class ConfigController extends Controller
     /**
      * Show the form for editing the specified config.
      *
-     * @param  string  $filename
+     * @param string $filename
      * @return \Illuminate\Http\Response
      */
     public function edit($filename)
@@ -124,8 +124,8 @@ class ConfigController extends Controller
     /**
      * Update the specified config in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  string  $filename
+     * @param \Illuminate\Http\Request $request
+     * @param string $filename
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $filename)
@@ -149,7 +149,7 @@ class ConfigController extends Controller
     /**
      * Remove the specified config from storage.
      *
-     * @param  string  $filename
+     * @param string $filename
      * @return \Illuminate\Http\Response
      */
     public function destroy($filename)
@@ -161,7 +161,7 @@ class ConfigController extends Controller
     /**
      * Get validator for request data.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Contracts\Validation\Validator
      */
     private function getValidator(Request $request)
@@ -241,8 +241,8 @@ class ConfigController extends Controller
     /**
      * Build config from request data.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $method
+     * @param \Illuminate\Http\Request $request
+     * @param int $method
      * @return array
      */
     private function buildConfig(Request $request, $method)
@@ -475,11 +475,10 @@ class ConfigController extends Controller
     }
 
 
-
     /**
      * Run the scraper for the specified config.
      *
-     * @param  string  $filename
+     * @param string $filename
      * @return \Illuminate\Http\Response
      */
     public function runScraper($filename)
@@ -490,6 +489,35 @@ class ConfigController extends Controller
         // بررسی وجود فایل
         if (!file_exists($configPath)) {
             return redirect()->route('configs.index')->with('error', 'فایل کانفیگ یافت نشد!');
+        }
+
+        // بررسی آیا این کانفیگ در حال اجرا است یا خیر
+        $runFileName = $filename . '.json';
+        $runFilePath = 'private/runs/' . $runFileName;
+
+        if (Storage::exists($runFilePath)) {
+            $existingRun = json_decode(Storage::get($runFilePath), true);
+
+            // بررسی اینکه آیا اسکرپر در حال اجراست
+            if (isset($existingRun['status']) && $existingRun['status'] === 'running' && isset($existingRun['pid'])) {
+                // چک کردن اینکه پروسه هنوز در حال اجراست
+                if ($this->isProcessRunning($existingRun['pid'])) {
+                    return redirect()->route('configs.index')->with('error', 'اسکرپر برای کانفیگ ' . $filename . ' در حال حاضر در حال اجراست! لطفاً ابتدا آن را متوقف کنید.');
+                }
+
+                // چک کردن پروسه‌های مرتبط دیگر
+                $command = "ps aux | grep 'scrape:start.*{$filename}' | grep -v grep";
+                exec($command, $output);
+
+                if (!empty($output)) {
+                    return redirect()->route('configs.index')->with('error', 'اسکرپر برای کانفیگ ' . $filename . ' در حال حاضر در حال اجراست! لطفاً ابتدا آن را متوقف کنید.');
+                }
+
+                // اگر به اینجا رسیدیم، پروسه کرش کرده است
+                $existingRun['status'] = 'crashed';
+                $existingRun['stopped_at'] = date('Y-m-d H:i:s');
+                Storage::put($runFilePath, json_encode($existingRun, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+            }
         }
 
         // ایجاد مسیر برای ذخیره لاگ‌ها
@@ -515,31 +543,78 @@ class ConfigController extends Controller
 
         $pid = exec($cmd);
 
+        // اگر PID خالی باشد یا صفر باشد، اجرا با خطا مواجه شده است
+        if (empty($pid) || $pid == 0) {
+            // اضافه کردن پیام خطا به فایل لاگ
+            file_put_contents($logFile, "\n[" . date('Y-m-d H:i:s') . "] خطا در اجرای اسکرپر: PID نامعتبر\n", FILE_APPEND);
+            return redirect()->route('configs.index')->with('error', 'خطا در اجرای اسکرپر. لطفاً لاگ‌ها را بررسی کنید.');
+        }
+
         // ایجاد دایرکتوری runs اگر وجود ندارد
         if (!Storage::exists('private/runs')) {
             Storage::makeDirectory('private/runs', 0755);
         }
 
-        // ذخیره اطلاعات اجرا در فایل
-        $runInfo = [
-            'filename' => $filename,
-            'log_file' => $logFileName,
-            'started_at' => date('Y-m-d H:i:s'),
-            'pid' => (int)$pid,
-            'status' => 'running'
-        ];
+        // بررسی آیا قبلاً فایل run برای این کانفیگ ایجاد شده است
+        $runInfo = [];
 
-        // نام فایل اطلاعات اجرا
-        $runFileName = $filename . '_' . date('Y-m-d_H-i-s') . '.json';
-        Storage::put('private/runs/' . $runFileName, json_encode($runInfo, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        if (Storage::exists($runFilePath)) {
+            // اگر فایل قبلاً وجود دارد، آن را بخوانیم و به‌روزرسانی کنیم
+            $runInfo = json_decode(Storage::get($runFilePath), true);
+
+            // اضافه کردن تاریخچه اجرای قبلی
+            if (!isset($runInfo['history'])) {
+                $runInfo['history'] = [];
+            }
+
+            // اگر اطلاعات اجرای قبلی وجود دارد، آن را به تاریخچه اضافه کنیم
+            if (isset($runInfo['started_at']) && isset($runInfo['log_file'])) {
+                $previousRun = [
+                    'started_at' => $runInfo['started_at'],
+                    'log_file' => $runInfo['log_file']
+                ];
+
+                if (isset($runInfo['stopped_at'])) {
+                    $previousRun['stopped_at'] = $runInfo['stopped_at'];
+                }
+
+                if (isset($runInfo['status'])) {
+                    $previousRun['status'] = $runInfo['status'];
+                }
+
+                // اضافه کردن به تاریخچه
+                array_unshift($runInfo['history'], $previousRun);
+
+                // محدود کردن تعداد تاریخچه به 10 آیتم آخر
+                if (count($runInfo['history']) > 10) {
+                    $runInfo['history'] = array_slice($runInfo['history'], 0, 10);
+                }
+            }
+        }
+
+        // به‌روزرسانی اطلاعات اجرای فعلی
+        $runInfo['filename'] = $filename;
+        $runInfo['log_file'] = $logFileName;
+        $runInfo['started_at'] = date('Y-m-d H:i:s');
+        $runInfo['pid'] = (int)$pid;
+        $runInfo['status'] = 'running';
+
+        // اگر وضعیت قبلی توقف بود، آن را حذف کنیم
+        if (isset($runInfo['stopped_at'])) {
+            unset($runInfo['stopped_at']);
+        }
+
+        // ذخیره اطلاعات اجرا در فایل
+        Storage::put($runFilePath, json_encode($runInfo, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
         return redirect()->route('configs.index')->with('success', 'اسکرپر برای کانفیگ ' . $filename . ' با موفقیت اجرا شد. می‌توانید لاگ‌ها را مشاهده کنید.');
     }
 
+
     /**
      * Show logs for the specified config.
      *
-     * @param  string  $filename
+     * @param string $filename
      * @return \Illuminate\Http\Response
      */
     public function showLogs($filename)
@@ -569,7 +644,7 @@ class ConfigController extends Controller
             }
 
             // مرتب‌سازی بر اساس تاریخ تغییر (جدیدترین در ابتدا)
-            usort($logFiles, function($a, $b) {
+            usort($logFiles, function ($a, $b) {
                 return $b['last_modified'] - $a['last_modified'];
             });
         }
@@ -580,7 +655,7 @@ class ConfigController extends Controller
     /**
      * Get the content of a log file.
      *
-     * @param  string  $logfile
+     * @param string $logfile
      * @return \Illuminate\Http\Response
      */
     public function getLogContent($logfile)
@@ -608,57 +683,34 @@ class ConfigController extends Controller
     /**
      * Stop the running scraper for the specified config.
      *
-     * @param  string  $filename
+     * @param string $filename
      * @return \Illuminate\Http\Response
      */
     public function stopScraper($filename)
     {
-        // بررسی وجود فایل‌های اجرای در حال اجرا
-        $runsDirectory = storage_path('app/private/runs');
-        $runningProcesses = [];
+        // بررسی وجود فایل اجرا
+        $runFilePath = 'private/runs/' . $filename . '.json';
 
-        if (file_exists($runsDirectory)) {
-            $files = scandir($runsDirectory);
-
-            foreach ($files as $file) {
-                if (strpos($file, $filename . '_') === 0 && pathinfo($file, PATHINFO_EXTENSION) === 'json') {
-                    $runInfo = json_decode(file_get_contents($runsDirectory . '/' . $file), true);
-
-                    if (isset($runInfo['pid']) && isset($runInfo['status']) && $runInfo['status'] === 'running') {
-                        $runningProcesses[] = $runInfo;
-                    }
-                }
-            }
+        if (!Storage::exists($runFilePath)) {
+            return redirect()->route('configs.index')->with('error', 'هیچ اسکرپر در حال اجرایی برای این کانفیگ یافت نشد.');
         }
 
+        $runInfo = json_decode(Storage::get($runFilePath), true);
+
+        if (!isset($runInfo['pid']) || !isset($runInfo['status']) || $runInfo['status'] !== 'running') {
+            return redirect()->route('configs.index')->with('error', 'اسکرپر در حال حاضر در حال اجرا نیست.');
+        }
+
+        $pid = $runInfo['pid'];
         $stopped = false;
 
-        // توقف پروسه‌های در حال اجرا
-        foreach ($runningProcesses as $process) {
-            $pid = $process['pid'];
+        // بررسی وجود پروسه
+        if ($this->isProcessRunning($pid)) {
+            // توقف پروسه
+            exec("kill -9 {$pid} 2>&1", $output, $result);
 
-            // بررسی وجود پروسه
-            if ($this->isProcessRunning($pid)) {
-                // توقف پروسه
-                exec("kill -9 {$pid} 2>&1", $output, $result);
-
-                if ($result === 0) {
-                    $stopped = true;
-
-                    // بروزرسانی وضعیت در فایل
-                    $runInfo = $process;
-                    $runInfo['status'] = 'stopped';
-                    $runInfo['stopped_at'] = date('Y-m-d H:i:s');
-
-                    $runFilePath = $runsDirectory . '/' . basename($process['log_file'], '.log') . '.json';
-                    file_put_contents($runFilePath, json_encode($runInfo, JSON_PRETTY_PRINT));
-
-                    // اضافه کردن پیام به فایل لاگ
-                    $logPath = storage_path('logs/scrapers/' . $process['log_file']);
-                    if (file_exists($logPath)) {
-                        file_put_contents($logPath, "\n[" . date('Y-m-d H:i:s') . "] اسکرپر به صورت دستی متوقف شد.\n", FILE_APPEND);
-                    }
-                }
+            if ($result === 0) {
+                $stopped = true;
             }
         }
 
@@ -667,23 +719,37 @@ class ConfigController extends Controller
         exec($command, $output);
 
         if (!empty($output)) {
-            foreach ($output as $pid) {
-                exec("kill -9 {$pid} 2>&1");
+            foreach ($output as $extraPid) {
+                exec("kill -9 {$extraPid} 2>&1");
                 $stopped = true;
             }
         }
 
         if ($stopped) {
+            // به‌روزرسانی وضعیت در فایل
+            $runInfo['status'] = 'stopped';
+            $runInfo['stopped_at'] = date('Y-m-d H:i:s');
+
+            Storage::put($runFilePath, json_encode($runInfo, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+            // اضافه کردن پیام به فایل لاگ
+            if (isset($runInfo['log_file'])) {
+                $logPath = storage_path('logs/scrapers/' . $runInfo['log_file']);
+                if (file_exists($logPath)) {
+                    file_put_contents($logPath, "\n[" . date('Y-m-d H:i:s') . "] اسکرپر به صورت دستی متوقف شد.\n", FILE_APPEND);
+                }
+            }
+
             return redirect()->route('configs.index')->with('success', 'اسکرپر با موفقیت متوقف شد.');
         } else {
-            return redirect()->route('configs.index')->with('error', 'هیچ اسکرپر در حال اجرایی برای این کانفیگ یافت نشد.');
+            return redirect()->route('configs.index')->with('error', 'پروسه اسکرپر یافت نشد، اما وضعیت آن به متوقف شده تغییر کرد.');
         }
     }
 
     /**
      * Check if a process is running by PID.
      *
-     * @param  int  $pid
+     * @param int $pid
      * @return bool
      */
     private function isProcessRunning($pid)

@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FailedLink;
+use App\Models\Product;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
-use Symfony\Component\DomCrawler\Crawler;
-use Illuminate\Support\Facades\Storage;
-use App\Models\Product;
-use App\Models\FailedLink; // اضافه کردن مدل جدید
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\DomCrawler\Crawler;
+
+// اضافه کردن مدل جدید
 
 class StartController
 {
@@ -49,8 +50,6 @@ class StartController
             ],
         ]);
     }
-
-
 
 
     private function scrapeMethodThree(): array
@@ -629,7 +628,6 @@ JAVASCRIPT;
     }
 
 
-
     private function scrapeMethodOneForUrl(string $baseUrl): array
     {
         if ($this->config['method_settings']['method_1']['pagination']['use_webdriver']) {
@@ -909,6 +907,7 @@ JAVASCRIPT;
             'pages_processed' => $totalPagesProcessed
         ];
     }
+
     private function scrapeWithPlaywright(int $method, string $productUrl): array
     {
         if ($method !== 2) {
@@ -1483,6 +1482,7 @@ JAVASCRIPT;
 
         $this->log("Specific migrations completed for database $dbName", self::COLOR_GREEN);
     }
+
     private function getMigrationClassName(string $file): string
     {
         $contents = file_get_contents($file);
@@ -1491,7 +1491,6 @@ JAVASCRIPT;
         }
         throw new \Exception("Could not determine migration class name for $file");
     }
-
 
 
     private function processPagesInBatches(array $links, int $processingMethod = null): array
@@ -1711,11 +1710,13 @@ JAVASCRIPT;
     {
         $this->outputCallback = $callback;
     }
+
     private function clearDatabase(): void
     {
         DB::table('products')->truncate();
         $this->log("Database cleared successfully.", self::COLOR_GREEN);
     }
+
     private function randomUserAgent(): string
     {
         $agents = [
@@ -2085,6 +2086,7 @@ JAVASCRIPT;
         ];
         return $agents[array_rand($agents)];
     }
+
     public function setRequestDelay(int $delay): void
     {
         $this->config['request_delay_min'] = $delay;
@@ -2130,7 +2132,7 @@ JAVASCRIPT;
             } else {
                 $this->log("No links to process.", self::COLOR_YELLOW);
             }
-        }elseif ($this->config['method'] === 3) {
+        } elseif ($this->config['method'] === 3) {
             $this->log("Using method 3 to collect and process links...", self::COLOR_GREEN);
             $result = $this->scrapeMethodThree();
             $links = $result['links'] ?? [];
@@ -2159,6 +2161,7 @@ JAVASCRIPT;
             'pages_processed' => $pagesProcessed
         ];
     }
+
     public function scrapeMultiple(): array
     {
         $this->log("Starting scraper...", self::COLOR_GREEN);
@@ -2208,6 +2211,7 @@ JAVASCRIPT;
             'products' => $products
         ];
     }
+
     private function saveAllProducts($output): void
     {
         $productsPerPage = 100; // تعداد محصولات در هر صفحه
@@ -2274,7 +2278,6 @@ JAVASCRIPT;
     {
         $maxRetries = $this->config['max_retries'] ?? 3;
         $attempt = 1;
-
 
 
         while ($attempt <= $maxRetries) {
@@ -2349,11 +2352,11 @@ JAVASCRIPT;
     }
 
 
-
     private function exponentialBackoff(int $attempt): int
     {
-        return (int) (100 * pow(2, $attempt - 1)); // تأخیر تصاعدی: 100ms, 200ms, 400ms
+        return (int)(100 * pow(2, $attempt - 1)); // تأخیر تصاعدی: 100ms, 200ms, 400ms
     }
+
     private function normalizeUrl(string $url): string
     {
         // تجزیه URL به اجزای آن
@@ -2381,6 +2384,7 @@ JAVASCRIPT;
         $this->log("Normalized URL: $url -> $normalizedUrl", self::COLOR_YELLOW);
         return $normalizedUrl;
     }
+
     private function isRedirectedToUnexpectedPage(string $originalUrl, string $finalUrl, int $currentPage, array $pagination): bool
     {
         $param = $pagination['parameter'] ?? 'page';
@@ -2397,6 +2401,7 @@ JAVASCRIPT;
 
         return false;
     }
+
     private function getFinalUrl($response, string $originalUrl): string
     {
         // چک کردن تاریخچه ریدایرکت‌ها
@@ -2409,6 +2414,7 @@ JAVASCRIPT;
         // اگه ریدایرکتی نبود، URL اصلی همون نهاییه
         return $originalUrl;
     }
+
     private function extractPaginationPatternFromSample(string $sampleUrl, array $pagination): string
     {
         $param = $pagination['parameter'] ?? 'page';
@@ -2431,6 +2437,7 @@ JAVASCRIPT;
 
         return $basePart;
     }
+
     private function buildPaginationUrl(string $baseUrl, int $page, array $pagination): string
     {
         $param = $pagination['parameter'] ?? 'page';
@@ -2498,6 +2505,7 @@ JAVASCRIPT;
 
         return false;
     }
+
     private function scrapeMethodTwo(): array
     {
         if (!$this->config['method_settings']['method_2']['enabled']) {
@@ -2539,107 +2547,6 @@ JAVASCRIPT;
         ];
     }
 
-
-    private function handlePageRefresh(RemoteWebDriver $driver, string $nextButtonSelector, int $successfulClicks, array &$links, int $refreshAttempts, int $maxRefreshAttempts): void
-    {
-        $driver->navigate()->refresh();
-        $this->log("Page refreshed (Attempt $refreshAttempts/$maxRefreshAttempts)", self::COLOR_GREEN);
-        $this->waitForPageLoad($driver);
-
-        for ($i = 0; $i < $successfulClicks; $i++) {
-            try {
-                $nextButton = $this->findElementSafely($driver, $nextButtonSelector);
-                if ($nextButton && $nextButton->isDisplayed() && $nextButton->isEnabled()) {
-                    $this->scrollToElement($driver, $nextButton);
-                    $this->clickElement($driver, $nextButton);
-                    $this->log("Replayed click " . ($i + 1) . " of $successfulClicks after refresh", self::COLOR_GREEN);
-                    $this->waitForPageLoad($driver);
-                } else {
-                    $this->log("Next button not found or not clickable after replaying click " . ($i + 1) . ". Stopping replay.", self::COLOR_YELLOW);
-                    break;
-                }
-            } catch (\Exception $e) {
-                $this->log("Error replaying click " . ($i + 1) . ": " . $e->getMessage(), self::COLOR_RED);
-                break;
-            }
-        }
-
-        $this->collectLinks($driver, $links);
-
-        try {
-            $nextButton = $this->findElementSafely($driver, $nextButtonSelector);
-            if ($nextButton && $nextButton->isDisplayed() && $nextButton->isEnabled()) {
-                $this->scrollToElement($driver, $nextButton);
-                $this->clickElement($driver, $nextButton);
-                $this->log("Clicked 'Next' button after refresh (Continuing from click " . ($successfulClicks + 1) . ")", self::COLOR_GREEN);
-                $this->waitForPageLoad($driver);
-            } else {
-                $this->log("No more pages to load after refresh.", self::COLOR_GREEN);
-            }
-        } catch (\Exception $e) {
-            $this->log("Next button still not found or clickable after refresh: " . $e->getMessage(), self::COLOR_RED);
-        }
-    }
-    private function findElementSafely(RemoteWebDriver $driver, string $selector): ?RemoteWebElement
-    {
-        try {
-            return $driver->findElement(WebDriverBy::cssSelector($selector));
-        } catch (\Exception $e) {
-            $this->log("Failed to find element with selector '$selector': " . $e->getMessage(), self::COLOR_YELLOW);
-            return null;
-        }
-    }
-    private function scrollToElement(RemoteWebDriver $driver, RemoteWebElement $element): void
-    {
-        try {
-            $driver->executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", [$element]);
-            $driver->executeScript("window.scrollBy(0, -100);"); // اسکرول کمی به بالا برای جلوگیری از همپوشانی هدر
-            sleep(1);
-            $this->log("Scrolled to element", self::COLOR_YELLOW);
-        } catch (\Exception $e) {
-            $this->log("Scroll failed: " . $e->getMessage(), self::COLOR_RED);
-        }
-    }
-    private function clickElement(RemoteWebDriver $driver, RemoteWebElement $element): void
-    {
-        try {
-            $element->click();
-            $this->log("Clicked element successfully", self::COLOR_GREEN);
-        } catch (\Exception $e) {
-            $this->log("Regular click failed: " . $e->getMessage() . ". Attempting JavaScript click...", self::COLOR_YELLOW);
-            try {
-                $driver->executeScript("arguments[0].click();", [$element]);
-                $this->log("JavaScript click successful", self::COLOR_GREEN);
-            } catch (\Exception $e) {
-                throw new \Exception("Both regular and JavaScript clicks failed: " . $e->getMessage());
-            }
-        }
-    }
-    private function collectLinks(RemoteWebDriver $driver, array &$links): void
-    {
-        $html = $driver->getPageSource();
-        $crawler = new Crawler($html);
-        $linkSelector = $this->config['selectors']['main_page']['product_links']['selector'];
-        $crawler->filter($linkSelector)->each(function (Crawler $node) use (&$links) {
-            $href = $node->attr($this->config['selectors']['main_page']['product_links']['attribute']);
-            if (!$this->isInvalidLink($href)) {
-                $fullUrl = $this->makeAbsoluteUrl($href);
-                if (!$this->isUnwantedDomain($fullUrl) && strpos($fullUrl, '/products/') !== false && !in_array($fullUrl, $links)) {
-                    $links[] = $fullUrl;
-                    $this->log("Added link: $fullUrl", self::COLOR_GREEN);
-                }
-            }
-        });
-    }
-    private function waitForPageLoad(RemoteWebDriver $driver): void
-    {
-        $driver->wait(10, 500)->until(
-            function () use ($driver) {
-                return $driver->executeScript("return document.readyState") === "complete";
-            }
-        );
-        sleep(rand(2, 5));
-    }
     private function fetchProductLinks(): array
     {
         $method = $this->config['method'] ?? 1;
@@ -2758,6 +2665,7 @@ JAVASCRIPT;
             'pages_processed' => $totalPagesProcessed
         ];
     }
+
     private function retryFailedLinks(): void
     {
         $maxAttempts = $this->config['max_retry_attempts'] ?? 3;
@@ -2811,6 +2719,7 @@ JAVASCRIPT;
             $link->delete();
         }
     }
+
     private function saveProductToDatabase(array $productData): void
     {
         $this->log("Raw availability before saving: {$productData['availability']}", self::COLOR_YELLOW);
@@ -2843,6 +2752,7 @@ JAVASCRIPT;
         $totalProducts = count($this->config['products_urls'] ?? []);
         $this->logProduct($productData, $totalProducts);
     }
+
     private function validateProductData(array $productData): bool
     {
         if (empty($productData['title'])) {
@@ -2883,7 +2793,6 @@ JAVASCRIPT;
         $this->log("Product data validated successfully for URL: {$productData['page_url']}", self::COLOR_GREEN);
         return true;
     }
-
 
     private function extractProductData(string $url, ?string $body = null, ?string $mainPageImage = null, ?string $mainPageProductId = null): ?array
     {
@@ -2942,7 +2851,6 @@ JAVASCRIPT;
                         $this->log("Raw $field extracted: '$value'", self::COLOR_YELLOW);
 
 
-
                         if ($field === 'price') {
                             // منطق اختصاصی برای فیلد price
                             $priceSelectors = is_array($selector['selector']) ? $selector['selector'] : [$selector['selector']];
@@ -2994,7 +2902,7 @@ JAVASCRIPT;
                                 $data[$field] = $this->config['keep_price_format'] ?? false ? '' : '0';
                                 $this->log("No valid price found, setting default: '{$data[$field]}'", self::COLOR_YELLOW);
                             }
-                        }elseif ($field === 'availability') {
+                        } elseif ($field === 'availability') {
                             $transform = $this->config['data_transformers'][$field] ?? null;
                             if ($transform && method_exists($this, $transform)) {
                                 $data[$field] = (int)$this->$transform($value, $crawler);
@@ -3074,6 +2982,7 @@ JAVASCRIPT;
             return null;
         }
     }
+
     private function extractGuaranteeFromSelector(Crawler $crawler, array $selector, ?string $title = null): string
     {
         $method = $this->config['guarantee_method'] ?? 'selector';
@@ -3102,11 +3011,13 @@ JAVASCRIPT;
         $this->log("No guarantee found", self::COLOR_YELLOW);
         return '';
     }
+
     private function saveBatch(array $batchProducts, int $batchNumber): void
     {
 
         $this->log("Batch $batchNumber with " . count($batchProducts) . " products processed (no file saved)", self::COLOR_GREEN);
     }
+
     private function extractData(Crawler $crawler, array $selector, ?string $field = null): string
     {
         $selectors = is_array($selector['selector']) ? $selector['selector'] : [$selector['selector']];
@@ -3132,6 +3043,7 @@ JAVASCRIPT;
         }
         return $value;
     }
+
     private function getElements(Crawler $crawler, array $selector): Crawler
     {
         $selectors = is_array($selector['selector']) ? $selector['selector'] : [$selector['selector']];
@@ -3155,10 +3067,12 @@ JAVASCRIPT;
         $this->log("No elements found for selectors: " . json_encode($selectors), self::COLOR_YELLOW);
         return $crawlerResult;
     }
+
     private function isInvalidLink(?string $href): bool
     {
         return empty($href) || $href === '#' || stripos($href, 'javascript:') === 0;
     }
+
     private function makeAbsoluteUrl(string $href): string
     {
         // چک کردن لینک‌های نامعتبر
@@ -3185,6 +3099,7 @@ JAVASCRIPT;
         $fullUrl = "$baseUrl/$href";
         return urldecode($fullUrl);
     }
+
     private function cleanPrice(string $price): int
     {
         $this->log("Raw price input to cleanPrice: '$price'", self::COLOR_YELLOW); // دیباگ
@@ -3196,6 +3111,7 @@ JAVASCRIPT;
         $this->log("Cleaned price: '$cleaned'", self::COLOR_YELLOW); // دیباگ
         return $cleaned;
     }
+
     private function cleanPriceWithFormat(string $price): string
     {
         $this->log("Raw price input to cleanPriceWithFormat: '$price'", self::COLOR_YELLOW);
@@ -3217,6 +3133,7 @@ JAVASCRIPT;
         }
         return '';
     }
+
     private function parseAvailability(string $text, Crawler $crawler): int
     {
         $availabilityMode = $this->config['availability_mode'] ?? 'keyword';
@@ -3320,6 +3237,7 @@ JAVASCRIPT;
             return 0;
         }
     }
+
     private function cleanOff(string $text): int
     {
         $this->log("Raw off value: '$text'", self::COLOR_YELLOW);
@@ -3338,12 +3256,14 @@ JAVASCRIPT;
         $this->log("No valid number found in off value, returning 0", self::COLOR_RED);
         return 0;
     }
+
     private function cleanGuarantee(string $text): string
     {
         $text = trim($text);
         $this->log("Cleaned guarantee: '$text'", self::COLOR_GREEN);
         return $text; // کل متن رو بدون تغییر خاص برمی‌گردونیم
     }
+
     private function extractProductIdFromUrl(string $url, string $title, Crawler $crawler): string
     {
         if ($this->config['product_id_method'] === 'url') {
@@ -3589,6 +3509,7 @@ JAVASCRIPT;
             }
         }
     }
+
     private function validateConfig(): void
     {
         $requiredFields = [

@@ -1,0 +1,5 @@
+[2025-05-16 10:43:15] Playwright output: Error waiting for links: page.waitForSelector: Timeout 30000ms exceeded.
+[2025-05-16 10:43:15] Playwright output: Call log:
+[2025-05-16 10:43:15] Playwright output: [2m  - waiting for locator('a[href*="/product"]') to be visible[22m
+[2025-05-16 10:43:15] Playwright output: 
+[2025-05-16 10:43:15] page9 -> 0 link find

@@ -1,0 +1,636 @@
+[2025-05-16 11:26:26] page2 -> 12 link find
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/آسیاب-برقی-استیل-یونیک/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a2%d8%b3%db%8c%d8%a7%d8%a8-%d8%a8%d8%b1%d9%82%db%8c-%d8%a7%d8%b3%d8%aa%db%8c%d9%84-%db%8c%d9%88%d9%86%db%8c%da%a9/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-8%</span><span class="out-of-stock product-label">فروخته شده</span></div><img fetchpriority="high" width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/آسیاب-برقی-استیل-سونیکا-0
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/آسیاب-برقی-استیل-یونیک/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/آسیاب-برقی-استیل-یونیک/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 5583 for https://homepink.ir/product/آسیاب-برقی-استیل-یونیک/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/آسیاب-برقی-استیل-یونیک/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/آسیاب-نیما-مدل-nm8300/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a2%d8%b3%db%8c%d8%a7%d8%a8-%d9%86%db%8c%d9%85%d8%a7-%d9%85%d8%af%d9%84-nm8300/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-8%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/08/LYmsWOYmwZdXEa3u-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt 
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/آسیاب-نیما-مدل-nm8300/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/آسیاب-نیما-مدل-nm8300/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 5583 for https://homepink.ir/product/آسیاب-نیما-مدل-nm8300/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/آسیاب-نیما-مدل-nm8300/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/آویز-جادویی-شلوار-و-لباس/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a2%d9%88%db%8c%d8%b2-%d8%ac%d8%a7%d8%af%d9%88%db%8c%db%8c-%d8%b4%d9%84%d9%88%d8%a7%d8%b1-%d9%88-%d9%84%d8%a8%d8%a7%d8%b3/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-22%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/آویز-جادویی-شلوار-و-لباس-0-300x300.jpg
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/آویز-جادویی-شلوار-و-لباس/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/آویز-جادویی-شلوار-و-لباس/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 5583 for https://homepink.ir/product/آویز-جادویی-شلوار-و-لباس/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/آویز-جادویی-شلوار-و-لباس/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/آویز-دستمال-و-حوله-کابینتی-استیل/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a2%d9%88%db%8c%d8%b2-%d8%af%d8%b3%d8%aa%d9%85%d8%a7%d9%84-%d9%88-%d8%ad%d9%88%d9%84%d9%87-%da%a9%d8%a7%d8%a8%db%8c%d9%86%d8%aa%db%8c-%d8%a7%d8%b3%d8%aa%db%8c%d9%84/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-15%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/c23403962a6a8c101b906a0bed93ee7c8de0979e_1630218339-300x300.jpg" class="attachment
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/آویز-دستمال-و-حوله-کابینتی-استیل/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/آویز-دستمال-و-حوله-کابینتی-استیل/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 5583 for https://homepink.ir/product/آویز-دستمال-و-حوله-کابینتی-استیل/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/آویز-دستمال-و-حوله-کابینتی-استیل/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/آویز-زیور-آلات-مدل-شاخ-گوزن/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a2%d9%88%db%8c%d8%b2-%d8%b2%db%8c%d9%88%d8%b1-%d8%a2%d9%84%d8%a7%d8%aa-%d9%85%d8%af%d9%84-%d8%b4%d8%a7%d8%ae-%da%af%d9%88%d8%b2%d9%86/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-8%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/آویز-زیور-آلات-مدل-شاخ-گوزن-0-300x300.jpg" class="attachment-woocommerce_thumbnail size-woo
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/آویز-زیور-آلات-مدل-شاخ-گوزن/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/آویز-زیور-آلات-مدل-شاخ-گوزن/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 5583 for https://homepink.ir/product/آویز-زیور-آلات-مدل-شاخ-گوزن/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/آویز-زیور-آلات-مدل-شاخ-گوزن/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/آویز-وسایل-طرح-گربه-پنهان-cat/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a2%d9%88%db%8c%d8%b2-%d9%88%d8%b3%d8%a7%db%8c%d9%84-%d8%b7%d8%b1%d8%ad-%da%af%d8%b1%d8%a8%d9%87-%d9%be%d9%86%d9%87%d8%a7%d9%86-cat/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-9%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/آویز-وسایل-طرح-گربه-پنهان-cat-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocomm
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/آویز-وسایل-طرح-گربه-پنهان-cat/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/آویز-وسایل-طرح-گربه-پنهان-cat/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 5583 for https://homepink.ir/product/آویز-وسایل-طرح-گربه-پنهان-cat/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/آویز-وسایل-طرح-گربه-پنهان-cat/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/آینه-چسبی-نشکن-glass-مدل-بیضی/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a2%db%8c%d9%86%d9%87-%da%86%d8%b3%d8%a8%db%8c-%d9%86%d8%b4%da%a9%d9%86-glass-%d9%85%d8%af%d9%84-%d8%a8%db%8c%d8%b6%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-10%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/آینه-چسبی-نشکن-glass-0-300x300.jpg" class="att
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/آینه-چسبی-نشکن-glass-مدل-بیضی/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/آینه-چسبی-نشکن-glass-مدل-بیضی/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 5583 for https://homepink.ir/product/آینه-چسبی-نشکن-glass-مدل-بیضی/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/آینه-چسبی-نشکن-glass-مدل-بیضی/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/آینه-نشکن-چسبی/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a2%db%8c%d9%86%d9%87-%d9%86%d8%b4%da%a9%d9%86-%da%86%d8%b3%d8%a8%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-14%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/اینه-چسبی-3-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt dec
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/آینه-نشکن-چسبی/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/آینه-نشکن-چسبی/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 5583 for https://homepink.ir/product/آینه-نشکن-چسبی/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/آینه-نشکن-چسبی/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اب-انارگیر-دستی-ستاره/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%a8-%d8%a7%d9%86%d8%a7%d8%b1%da%af%db%8c%d8%b1-%d8%af%d8%b3%d8%aa%db%8c-%d8%b3%d8%aa%d8%a7%d8%b1%d9%87/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-6%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2023/12/دستگاه-آب-انار-گیری-دستی-2-300x300.jpg" class="attac
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اب-انارگیر-دستی-ستاره/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اب-انارگیر-دستی-ستاره/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 5583 for https://homepink.ir/product/اب-انارگیر-دستی-ستاره/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اب-انارگیر-دستی-ستاره/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اب-مرکبات-گیرشارژی/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%a8-%d9%85%d8%b1%da%a9%d8%a8%d8%a7%d8%aa-%da%af%db%8c%d8%b1%d8%b4%d8%a7%d8%b1%da%98%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-6%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/Multifunctional-Portable-Juicer-USB-charging-1-300x300.png" class="attachment-woocomm
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اب-مرکبات-گیرشارژی/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اب-مرکبات-گیرشارژی/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 5583 for https://homepink.ir/product/اب-مرکبات-گیرشارژی/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اب-مرکبات-گیرشارژی/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اباژور-کریستالی-رومیزی-مدل-شارژی-سفید/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%a8%d8%a7%da%98%d9%88%d8%b1-%da%a9%d8%b1%db%8c%d8%b3%d8%aa%d8%a7%d9%84%db%8c-%d8%b1%d9%88%d9%85%db%8c%d8%b2%db%8c-%d9%85%d8%af%d9%84-%d8%b4%d8%a7%d8%b1%da%98%db%8c-%d8%b3%d9%81%db%8c%d8%af/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-24%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/u
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اباژور-کریستالی-رومیزی-مدل-شارژی-سفید/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اباژور-کریستالی-رومیزی-مدل-شارژی-سفید/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 5583 for https://homepink.ir/product/اباژور-کریستالی-رومیزی-مدل-شارژی-سفید/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اباژور-کریستالی-رومیزی-مدل-شارژی-سفید/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اتوی-بخار-دستی-توبی-tobi/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%aa%d9%88%db%8c-%d8%a8%d8%ae%d8%a7%d8%b1-%d8%af%d8%b3%d8%aa%db%8c-%d8%aa%d9%88%d8%a8%db%8c-tobi/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-14%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/07/BFglMvpmHsSusrY5-300x300.jpg" class="attachment-woocommerce_thumbnail size-woo
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اتوی-بخار-دستی-توبی-tobi/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اتوی-بخار-دستی-توبی-tobi/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 5583 for https://homepink.ir/product/اتوی-بخار-دستی-توبی-tobi/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اتوی-بخار-دستی-توبی-tobi/
+[2025-05-16 11:26:26] Built pagination URL from sample: https://homepink.ir/shop/page/3/
+[2025-05-16 11:26:26] Fetching page: https://homepink.ir/shop/page/3/
+[2025-05-16 11:26:26] Attempt 1 of 2 to fetch URL: https://homepink.ir/shop/page/3/
+[2025-05-16 11:26:26] Received response with status code: 200 for https://homepink.ir/shop/page/3/
+[2025-05-16 11:26:26] Normalized URL: https://homepink.ir/shop/page/3/ -> https://homepink.ir/shop/page/3/
+[2025-05-16 11:26:26] Normalized URL: https://homepink.ir/shop/page/3/ -> https://homepink.ir/shop/page/3/
+[2025-05-16 11:26:26] Response body length: 210387 bytes for https://homepink.ir/shop/page/3/
+[2025-05-16 11:26:26] page3 -> 12 link find
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اجاق-برقی-هات-پلیت-1000-وات/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%ac%d8%a7%d9%82-%d8%a8%d8%b1%d9%82%db%8c-%d9%87%d8%a7%d8%aa-%d9%be%d9%84%db%8c%d8%aa-1000-%d9%88%d8%a7%d8%aa/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-15%</span><span class="out-of-stock product-label">فروخته شده</span></div><img fetchpriority="high" width="256" height="256" src="https://homepink.ir/wp-content/uploads/2024/06/4LNAzig1wkmz44JWvf0ZfZX9Fh3sHJ2j1N6UE6QADItR
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اجاق-برقی-هات-پلیت-1000-وات/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اجاق-برقی-هات-پلیت-1000-وات/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 9332 for https://homepink.ir/product/اجاق-برقی-هات-پلیت-1000-وات/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اجاق-برقی-هات-پلیت-1000-وات/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اجاق-گاز-سفری/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%ac%d8%a7%d9%82-%da%af%d8%a7%d8%b2-%d8%b3%d9%81%d8%b1%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-9%</span><span class="out-of-stock product-label">فروخته شده</span></div><img loading="lazy" width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/اجاق-گاز-سفری-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumb
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اجاق-گاز-سفری/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اجاق-گاز-سفری/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 9332 for https://homepink.ir/product/اجاق-گاز-سفری/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اجاق-گاز-سفری/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اجاق-گاز-کوهنوردی-کوار-kovar/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%ac%d8%a7%d9%82-%da%af%d8%a7%d8%b2-%da%a9%d9%88%d9%87%d9%86%d9%88%d8%b1%d8%af%db%8c-%da%a9%d9%88%d8%a7%d8%b1-kovar/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-8%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/a4a25f650553b8abddf2dd2625492638fee8d246_1709700835-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumb
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اجاق-گاز-کوهنوردی-کوار-kovar/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اجاق-گاز-کوهنوردی-کوار-kovar/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 9332 for https://homepink.ir/product/اجاق-گاز-کوهنوردی-کوار-kovar/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اجاق-گاز-کوهنوردی-کوار-kovar/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اجاق-گازمسافرتی-بادگیردار/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%ac%d8%a7%d9%82-%da%af%d8%a7%d8%b2%d9%85%d8%b3%d8%a7%d9%81%d8%b1%d8%aa%db%8c-%d8%a8%d8%a7%d8%af%da%af%db%8c%d8%b1%d8%af%d8%a7%d8%b1/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-18%</span></div><img width="280" height="280" src="https://homepink.ir/wp-content/uploads/2024/06/280x280-7-1.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt decoding="async" src
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اجاق-گازمسافرتی-بادگیردار/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اجاق-گازمسافرتی-بادگیردار/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 9332 for https://homepink.ir/product/اجاق-گازمسافرتی-بادگیردار/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اجاق-گازمسافرتی-بادگیردار/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اجاق-گازمسافرتی-جیهام-سامسونتی/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%ac%d8%a7%d9%82-%da%af%d8%a7%d8%b2%d9%85%d8%b3%d8%a7%d9%81%d8%b1%d8%aa%db%8c-%d8%ac%db%8c%d9%87%d8%a7%d9%85-%d8%b3%d8%a7%d9%85%d8%b3%d9%88%d9%86%d8%aa%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-23%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/اجاق-سفری
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اجاق-گازمسافرتی-جیهام-سامسونتی/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اجاق-گازمسافرتی-جیهام-سامسونتی/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 9332 for https://homepink.ir/product/اجاق-گازمسافرتی-جیهام-سامسونتی/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اجاق-گازمسافرتی-جیهام-سامسونتی/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اچار-دوطرفه-همه-کاره-تایگر/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%da%86%d8%a7%d8%b1-%d8%af%d9%88%d8%b7%d8%b1%d9%81%d9%87-%d9%87%d9%85%d9%87-%da%a9%d8%a7%d8%b1%d9%87-%d8%aa%d8%a7%db%8c%da%af%d8%b1/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-4%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/3526_1556735869-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt decoding="asy
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اچار-دوطرفه-همه-کاره-تایگر/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اچار-دوطرفه-همه-کاره-تایگر/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 9332 for https://homepink.ir/product/اچار-دوطرفه-همه-کاره-تایگر/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اچار-دوطرفه-همه-کاره-تایگر/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/ارگانایزر-لباس-پارچه-ای/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b1%da%af%d8%a7%d9%86%d8%a7%db%8c%d8%b2%d8%b1-%d9%84%d8%a8%d8%a7%d8%b3-%d9%be%d8%a7%d8%b1%da%86%d9%87-%d8%a7%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-10%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/ارگانایزر-لباس-پارچه-ای-0-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail"
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/ارگانایزر-لباس-پارچه-ای/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/ارگانایزر-لباس-پارچه-ای/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 9332 for https://homepink.ir/product/ارگانایزر-لباس-پارچه-ای/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/ارگانایزر-لباس-پارچه-ای/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/ارگانایزر-لباس-کودک/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b1%da%af%d8%a7%d9%86%d8%a7%db%8c%d8%b2%d8%b1-%d9%84%d8%a8%d8%a7%d8%b3-%da%a9%d9%88%d8%af%da%a9/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-7%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/ارگانایزر-لباس-کودک-0-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt decoding="async" srcse
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/ارگانایزر-لباس-کودک/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/ارگانایزر-لباس-کودک/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 9332 for https://homepink.ir/product/ارگانایزر-لباس-کودک/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/ارگانایزر-لباس-کودک/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/ارگانایزر-لباس-مای-هوم-سایز-large/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b1%da%af%d8%a7%d9%86%d8%a7%db%8c%d8%b2%d8%b1-%d9%84%d8%a8%d8%a7%d8%b3-%d9%85%d8%a7%db%8c-%d9%87%d9%88%d9%85-%d8%b3%d8%a7%db%8c%d8%b2-large/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-9%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/ارگانایزر-مای-هوم-300x300.gif" class="attachment-woocommerce_thumbnail size-woocommerce
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/ارگانایزر-لباس-مای-هوم-سایز-large/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/ارگانایزر-لباس-مای-هوم-سایز-large/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 9332 for https://homepink.ir/product/ارگانایزر-لباس-مای-هوم-سایز-large/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/ارگانایزر-لباس-مای-هوم-سایز-large/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/ارگانایزر-لباس-مای-هوم-سایز-xx-large/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b1%da%af%d8%a7%d9%86%d8%a7%db%8c%d8%b2%d8%b1-%d9%84%d8%a8%d8%a7%d8%b3-%d9%85%d8%a7%db%8c-%d9%87%d9%88%d9%85-%d8%b3%d8%a7%db%8c%d8%b2-xx-large/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-15%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/ارگانایزر-مای-هوم-300x300.gif" class="attachment-woocommerce_thumbnail size-woocomm
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/ارگانایزر-لباس-مای-هوم-سایز-xx-large/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/ارگانایزر-لباس-مای-هوم-سایز-xx-large/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 9332 for https://homepink.ir/product/ارگانایزر-لباس-مای-هوم-سایز-xx-large/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/ارگانایزر-لباس-مای-هوم-سایز-xx-large/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اره-دستی-جادویی-با-تیغه-3-بعدی-بسیار-تیز/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b1%d9%87-%d8%af%d8%b3%d8%aa%db%8c-%d8%ac%d8%a7%d8%af%d9%88%db%8c%db%8c-%d8%a8%d8%a7-%d8%aa%db%8c%d8%ba%d9%87-3-%d8%a8%d8%b9%d8%af%db%8c-%d8%a8%d8%b3%db%8c%d8%a7%d8%b1-%d8%aa%db%8c%d8%b2/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-37%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/upl
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اره-دستی-جادویی-با-تیغه-3-بعدی-بسیار-تیز/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اره-دستی-جادویی-با-تیغه-3-بعدی-بسیار-تیز/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 9332 for https://homepink.ir/product/اره-دستی-جادویی-با-تیغه-3-بعدی-بسیار-تیز/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اره-دستی-جادویی-با-تیغه-3-بعدی-بسیار-تیز/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اسپره-روغن-شیشه-ای-سر-استیل/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d9%be%d8%b1%d9%87-%d8%b1%d9%88%d8%ba%d9%86-%d8%b4%db%8c%d8%b4%d9%87-%d8%a7%db%8c-%d8%b3%d8%b1-%d8%a7%d8%b3%d8%aa%db%8c%d9%84/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-31%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/spray-roghan-1-min-300x300.jpg" class="attach
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اسپره-روغن-شیشه-ای-سر-استیل/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اسپره-روغن-شیشه-ای-سر-استیل/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 9332 for https://homepink.ir/product/اسپره-روغن-شیشه-ای-سر-استیل/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اسپره-روغن-شیشه-ای-سر-استیل/
+[2025-05-16 11:26:26] Built pagination URL from sample: https://homepink.ir/shop/page/4/
+[2025-05-16 11:26:26] Fetching page: https://homepink.ir/shop/page/4/
+[2025-05-16 11:26:26] Attempt 1 of 2 to fetch URL: https://homepink.ir/shop/page/4/
+[2025-05-16 11:26:26] Received response with status code: 200 for https://homepink.ir/shop/page/4/
+[2025-05-16 11:26:26] Normalized URL: https://homepink.ir/shop/page/4/ -> https://homepink.ir/shop/page/4/
+[2025-05-16 11:26:26] Normalized URL: https://homepink.ir/shop/page/4/ -> https://homepink.ir/shop/page/4/
+[2025-05-16 11:26:26] Response body length: 206811 bytes for https://homepink.ir/shop/page/4/
+[2025-05-16 11:26:26] page4 -> 12 link find
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اسپری-روغن-پاش-رژیمی/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d9%be%d8%b1%db%8c-%d8%b1%d9%88%d8%ba%d9%86-%d9%be%d8%a7%d8%b4-%d8%b1%da%98%db%8c%d9%85%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-14%</span></div><img fetchpriority="high" width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/07/3a62965413bd4425e5e9d2df4136e89e897b8575_1693349321-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_t
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اسپری-روغن-پاش-رژیمی/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اسپری-روغن-پاش-رژیمی/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 12139 for https://homepink.ir/product/اسپری-روغن-پاش-رژیمی/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اسپری-روغن-پاش-رژیمی/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اسپری-روغن-شیشه-ای/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d9%be%d8%b1%db%8c-%d8%b1%d9%88%d8%ba%d9%86-%d8%b4%db%8c%d8%b4%d9%87-%d8%a7%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-14%</span></div><img loading="lazy" width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/اسپری-روغن-شیشه-ای-0-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt decoding="async" src
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اسپری-روغن-شیشه-ای/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اسپری-روغن-شیشه-ای/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 12139 for https://homepink.ir/product/اسپری-روغن-شیشه-ای/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اسپری-روغن-شیشه-ای/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اسپری-عایق-رطوبتی-سونامی/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d9%be%d8%b1%db%8c-%d8%b9%d8%a7%db%8c%d9%82-%d8%b1%d8%b7%d9%88%d8%a8%d8%aa%db%8c-%d8%b3%d9%88%d9%86%d8%a7%d9%85%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-21%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="274" height="280" src="https://homepink.ir/wp-content/uploads/2024/06/280x280-4-2.jpg" class="attachment-woocommerce_thumbn
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اسپری-عایق-رطوبتی-سونامی/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اسپری-عایق-رطوبتی-سونامی/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 12139 for https://homepink.ir/product/اسپری-عایق-رطوبتی-سونامی/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اسپری-عایق-رطوبتی-سونامی/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اسپری-مرکبات-پلاستیکی/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d9%be%d8%b1%db%8c-%d9%85%d8%b1%da%a9%d8%a8%d8%a7%d8%aa-%d9%be%d9%84%d8%a7%d8%b3%d8%aa%db%8c%da%a9%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-27%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/اسپری-مرکبات-پلاستیکی-0-300x300.jpg" class="att
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اسپری-مرکبات-پلاستیکی/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اسپری-مرکبات-پلاستیکی/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 12139 for https://homepink.ir/product/اسپری-مرکبات-پلاستیکی/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اسپری-مرکبات-پلاستیکی/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اسپری-همه-کاره-چربی-زدا-و-پاک-کننده-sonami/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d9%be%d8%b1%db%8c-%d9%87%d9%85%d9%87-%da%a9%d8%a7%d8%b1%d9%87-%da%86%d8%b1%d8%a8%db%8c-%d8%b2%d8%af%d8%a7-%d9%88-%d9%be%d8%a7%da%a9-%da%a9%d9%86%d9%86%d8%af%d9%87-sonami/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-16%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اسپری-همه-کاره-چربی-زدا-و-پاک-کننده-sonami/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اسپری-همه-کاره-چربی-زدا-و-پاک-کننده-sonami/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 12139 for https://homepink.ir/product/اسپری-همه-کاره-چربی-زدا-و-پاک-کننده-sonami/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اسپری-همه-کاره-چربی-زدا-و-پاک-کننده-sonami/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اسپند-دود-کن-فندکی/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d9%be%d9%86%d8%af-%d8%af%d9%88%d8%af-%da%a9%d9%86-%d9%81%d9%86%d8%af%da%a9%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-11%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/اسپند-دود-کن-پرتابل-مدل-فندک۳-300x300.jpg" class="attachment-wooc
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اسپند-دود-کن-فندکی/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اسپند-دود-کن-فندکی/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 12139 for https://homepink.ir/product/اسپند-دود-کن-فندکی/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اسپند-دود-کن-فندکی/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اسپند-دودکن-برقی-مدل-استوانه-ای/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d9%be%d9%86%d8%af-%d8%af%d9%88%d8%af%da%a9%d9%86-%d8%a8%d8%b1%d9%82%db%8c-%d9%85%d8%af%d9%84-%d8%a7%d8%b3%d8%aa%d9%88%d8%a7%d9%86%d9%87-%d8%a7%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-4%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/IMG_20230604_171255_175-4-300x300.jpg" class="attachment-woocommerce_thumbnail size-wooco
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اسپند-دودکن-برقی-مدل-استوانه-ای/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اسپند-دودکن-برقی-مدل-استوانه-ای/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 12139 for https://homepink.ir/product/اسپند-دودکن-برقی-مدل-استوانه-ای/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اسپند-دودکن-برقی-مدل-استوانه-ای/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اسپند-دودکن-برقی-مدل-گرد/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d9%be%d9%86%d8%af-%d8%af%d9%88%d8%af%da%a9%d9%86-%d8%a8%d8%b1%d9%82%db%8c-%d9%85%d8%af%d9%84-%da%af%d8%b1%d8%af/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-5%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/dDVbNZ3AhNGIxYLtolYfRhH2MVOjvSVk0CCEfbU3.jpeg_512X512X70-300x300.jpeg" class="attachment-woocommerce_thumbnail size-woocommerc
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اسپند-دودکن-برقی-مدل-گرد/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اسپند-دودکن-برقی-مدل-گرد/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 12139 for https://homepink.ir/product/اسپند-دودکن-برقی-مدل-گرد/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اسپند-دودکن-برقی-مدل-گرد/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/استند-بشقاب-و-درب-قابلمه-مرسه/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d8%aa%d9%86%d8%af-%d8%a8%d8%b4%d9%82%d8%a7%d8%a8-%d9%88-%d8%af%d8%b1%d8%a8-%d9%82%d8%a7%d8%a8%d9%84%d9%85%d9%87-%d9%85%d8%b1%d8%b3%d9%87/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-6%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2023/05/استند-بشقاب-و-درب-قابلمه-مرسه۲-2-300x300.jpg" class="attachment-woocommerce_
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/استند-بشقاب-و-درب-قابلمه-مرسه/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/استند-بشقاب-و-درب-قابلمه-مرسه/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 12139 for https://homepink.ir/product/استند-بشقاب-و-درب-قابلمه-مرسه/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/استند-بشقاب-و-درب-قابلمه-مرسه/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/استند-پد-ارایشی-اکرولیک/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d8%aa%d9%86%d8%af-%d9%be%d8%af-%d8%a7%d8%b1%d8%a7%db%8c%d8%b4%db%8c-%d8%a7%da%a9%d8%b1%d9%88%d9%84%db%8c%da%a9/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-7%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/51OFcnhnu9L._AC_SX679_-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt decoding="async" sr
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/استند-پد-ارایشی-اکرولیک/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/استند-پد-ارایشی-اکرولیک/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 12139 for https://homepink.ir/product/استند-پد-ارایشی-اکرولیک/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/استند-پد-ارایشی-اکرولیک/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/استند-پنبه-و-گوش-پاک-کن/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d8%aa%d9%86%d8%af-%d9%be%d9%86%d8%a8%d9%87-%d9%88-%da%af%d9%88%d8%b4-%d9%be%d8%a7%da%a9-%da%a9%d9%86/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-7%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/استند-پنبه-و-گوش-پاک-کن-0-1-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt decodi
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/استند-پنبه-و-گوش-پاک-کن/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/استند-پنبه-و-گوش-پاک-کن/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 12139 for https://homepink.ir/product/استند-پنبه-و-گوش-پاک-کن/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/استند-پنبه-و-گوش-پاک-کن/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/استند-تفاله-گیر-چند-کاره-esi/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d8%aa%d9%86%d8%af-%d8%aa%d9%81%d8%a7%d9%84%d9%87-%da%af%db%8c%d8%b1-%da%86%d9%86%d8%af-%da%a9%d8%a7%d8%b1%d9%87-esi/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-8%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/20064233_1682189874_821-1-300x300.jpg" class="attachmen
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/استند-تفاله-گیر-چند-کاره-esi/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/استند-تفاله-گیر-چند-کاره-esi/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 12139 for https://homepink.ir/product/استند-تفاله-گیر-چند-کاره-esi/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/استند-تفاله-گیر-چند-کاره-esi/
+[2025-05-16 11:26:26] Built pagination URL from sample: https://homepink.ir/shop/page/5/
+[2025-05-16 11:26:26] Fetching page: https://homepink.ir/shop/page/5/
+[2025-05-16 11:26:26] Attempt 1 of 2 to fetch URL: https://homepink.ir/shop/page/5/
+[2025-05-16 11:26:26] Received response with status code: 200 for https://homepink.ir/shop/page/5/
+[2025-05-16 11:26:26] Normalized URL: https://homepink.ir/shop/page/5/ -> https://homepink.ir/shop/page/5/
+[2025-05-16 11:26:26] Normalized URL: https://homepink.ir/shop/page/5/ -> https://homepink.ir/shop/page/5/
+[2025-05-16 11:26:26] Response body length: 205654 bytes for https://homepink.ir/shop/page/5/
+[2025-05-16 11:26:26] page5 -> 12 link find
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/استند-توالت-فرنگی-مدل-2طبقه/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d8%aa%d9%86%d8%af-%d8%aa%d9%88%d8%a7%d9%84%d8%aa-%d9%81%d8%b1%d9%86%da%af%db%8c-%d9%85%d8%af%d9%84-2%d8%b7%d8%a8%d9%82%d9%87/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-8%</span><span class="out-of-stock product-label">فروخته شده</span></div><img fetchpriority="high" width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/استند-و-ارگان�
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/استند-توالت-فرنگی-مدل-2طبقه/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/استند-توالت-فرنگی-مدل-2طبقه/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 8203 for https://homepink.ir/product/استند-توالت-فرنگی-مدل-2طبقه/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/استند-توالت-فرنگی-مدل-2طبقه/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/استند-توالت-فرنگی/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d8%aa%d9%86%d8%af-%d8%aa%d9%88%d8%a7%d9%84%d8%aa-%d9%81%d8%b1%d9%86%da%af%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-4%</span><span class="out-of-stock product-label">فروخته شده</span></div><img loading="lazy" width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/استند-توالت-فرنگی-0-300x300.jpg" class="attachment-woocommerc
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/استند-توالت-فرنگی/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/استند-توالت-فرنگی/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 8203 for https://homepink.ir/product/استند-توالت-فرنگی/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/استند-توالت-فرنگی/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/استند-دیواری-سالوت-مدل-دو-گلدان/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d8%aa%d9%86%d8%af-%d8%af%db%8c%d9%88%d8%a7%d8%b1%db%8c-%d8%b3%d8%a7%d9%84%d9%88%d8%aa-%d9%85%d8%af%d9%84-%d8%af%d9%88-%da%af%d9%84%d8%af%d8%a7%d9%86/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-6%</span><span class="out-of-stock product-label">فروخته شده</span></div><img loading="lazy" width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/است�
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/استند-دیواری-سالوت-مدل-دو-گلدان/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/استند-دیواری-سالوت-مدل-دو-گلدان/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 8203 for https://homepink.ir/product/استند-دیواری-سالوت-مدل-دو-گلدان/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/استند-دیواری-سالوت-مدل-دو-گلدان/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/استند-فلزی-دوطبقه-لوکسینه-اصلی/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d8%aa%d9%86%d8%af-%d9%81%d9%84%d8%b2%db%8c-%d8%af%d9%88%d8%b7%d8%a8%d9%82%d9%87-%d9%84%d9%88%da%a9%d8%b3%db%8c%d9%86%d9%87-%d8%a7%d8%b5%d9%84%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-3%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/استند-فلزی-د�
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/استند-فلزی-دوطبقه-لوکسینه-اصلی/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/استند-فلزی-دوطبقه-لوکسینه-اصلی/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 8203 for https://homepink.ir/product/استند-فلزی-دوطبقه-لوکسینه-اصلی/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/استند-فلزی-دوطبقه-لوکسینه-اصلی/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/استند-فلزی-مخصوص-بخارپز-2طبقه/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d8%aa%d9%86%d8%af-%d9%81%d9%84%d8%b2%db%8c-%d9%85%d8%ae%d8%b5%d9%88%d8%b5-%d8%a8%d8%ae%d8%a7%d8%b1%d9%be%d8%b2-2%d8%b7%d8%a8%d9%82%d9%87/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-23%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="274" src="https://homepink.ir/wp-content/uploads/2024/06/16fcf868-94e4-4753-9159-5505ec4b0
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/استند-فلزی-مخصوص-بخارپز-2طبقه/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/استند-فلزی-مخصوص-بخارپز-2طبقه/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 8203 for https://homepink.ir/product/استند-فلزی-مخصوص-بخارپز-2طبقه/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/استند-فلزی-مخصوص-بخارپز-2طبقه/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/استند-کافی-دسته-دار-فلزی/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d8%aa%d9%86%d8%af-%da%a9%d8%a7%d9%81%db%8c-%d8%af%d8%b3%d8%aa%d9%87-%d8%af%d8%a7%d8%b1-%d9%81%d9%84%d8%b2%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-5%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/استند-کافی-دسته-دار-فلزی-0-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/استند-کافی-دسته-دار-فلزی/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/استند-کافی-دسته-دار-فلزی/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 8203 for https://homepink.ir/product/استند-کافی-دسته-دار-فلزی/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/استند-کافی-دسته-دار-فلزی/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/استندلوازم-ارایش-3کشو/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d8%aa%d9%86%d8%af%d9%84%d9%88%d8%a7%d8%b2%d9%85-%d8%a7%d8%b1%d8%a7%db%8c%d8%b4-3%da%a9%d8%b4%d9%88/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-4%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/IMG_۲۰۲۰۱۲۱۸_۲۰۰۰۱۱-300x300.jpg" class="attachment-woocomm
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/استندلوازم-ارایش-3کشو/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/استندلوازم-ارایش-3کشو/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 8203 for https://homepink.ir/product/استندلوازم-ارایش-3کشو/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/استندلوازم-ارایش-3کشو/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/استند-لوازم-آرایشی-سه-کشو/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d8%aa%d9%86%d8%af-%d9%84%d9%88%d8%a7%d8%b2%d9%85-%d8%a2%d8%b1%d8%a7%db%8c%d8%b4%db%8c-%d8%b3%d9%87-%da%a9%d8%b4%d9%88/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-3%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/استند-لوازم-آرایشی-سه-کشو-0-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_t
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/استند-لوازم-آرایشی-سه-کشو/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/استند-لوازم-آرایشی-سه-کشو/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 8203 for https://homepink.ir/product/استند-لوازم-آرایشی-سه-کشو/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/استند-لوازم-آرایشی-سه-کشو/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/استند-لوازم-ارایشی-4کشو/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d8%aa%d9%86%d8%af-%d9%84%d9%88%d8%a7%d8%b2%d9%85-%d8%a7%d8%b1%d8%a7%db%8c%d8%b4%db%8c-4%da%a9%d8%b4%d9%88/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-4%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/3396613-300x300.jpg" class="attachment-woocommerce_thumbnail size
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/استند-لوازم-ارایشی-4کشو/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/استند-لوازم-ارایشی-4کشو/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 8203 for https://homepink.ir/product/استند-لوازم-ارایشی-4کشو/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/استند-لوازم-ارایشی-4کشو/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/استند-نگهدارنده-درب-قابلمه-مشکی/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d8%aa%d9%86%d8%af-%d9%86%da%af%d9%87%d8%af%d8%a7%d8%b1%d9%86%d8%af%d9%87-%d8%af%d8%b1%d8%a8-%d9%82%d8%a7%d8%a8%d9%84%d9%85%d9%87-%d9%85%d8%b4%da%a9%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-4%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/استند-نگه
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/استند-نگهدارنده-درب-قابلمه-مشکی/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/استند-نگهدارنده-درب-قابلمه-مشکی/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 8203 for https://homepink.ir/product/استند-نگهدارنده-درب-قابلمه-مشکی/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/استند-نگهدارنده-درب-قابلمه-مشکی/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اسکاج-جادویی-2عددی/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%da%a9%d8%a7%d8%ac-%d8%ac%d8%a7%d8%af%d9%88%db%8c%db%8c-2%d8%b9%d8%af%d8%af%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-14%</span></div><img width="256" height="256" src="https://homepink.ir/wp-content/uploads/2024/01/udoIeLX5GOoJl5NNTwV1VHPeB5QjBPTU3ojcgADfrO8QGfshnJ-2.jpg_256X256X70-2.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt decoding=
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اسکاج-جادویی-2عددی/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اسکاج-جادویی-2عددی/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 8203 for https://homepink.ir/product/اسکاج-جادویی-2عددی/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اسکاج-جادویی-2عددی/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اسکاچ-سمباده-ای/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%da%a9%d8%a7%da%86-%d8%b3%d9%85%d8%a8%d8%a7%d8%af%d9%87-%d8%a7%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-33%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/اسکاچ-سمباده-ای-0-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt decoding="async" srcset="https://homepink.ir/wp-conte
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اسکاچ-سمباده-ای/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اسکاچ-سمباده-ای/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 8203 for https://homepink.ir/product/اسکاچ-سمباده-ای/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اسکاچ-سمباده-ای/
+[2025-05-16 11:26:26] Built pagination URL from sample: https://homepink.ir/shop/page/6/
+[2025-05-16 11:26:26] Fetching page: https://homepink.ir/shop/page/6/
+[2025-05-16 11:26:26] Attempt 1 of 2 to fetch URL: https://homepink.ir/shop/page/6/
+[2025-05-16 11:26:26] Received response with status code: 200 for https://homepink.ir/shop/page/6/
+[2025-05-16 11:26:26] Normalized URL: https://homepink.ir/shop/page/6/ -> https://homepink.ir/shop/page/6/
+[2025-05-16 11:26:26] Normalized URL: https://homepink.ir/shop/page/6/ -> https://homepink.ir/shop/page/6/
+[2025-05-16 11:26:26] Response body length: 205549 bytes for https://homepink.ir/shop/page/6/
+[2025-05-16 11:26:26] page6 -> 12 link find
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اسلایسر-سیب-زمینی-زوکی/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d9%84%d8%a7%db%8c%d8%b3%d8%b1-%d8%b3%db%8c%d8%a8-%d8%b2%d9%85%db%8c%d9%86%db%8c-%d8%b2%d9%88%da%a9%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-5%</span><span class="out-of-stock product-label">فروخته شده</span></div><img fetchpriority="high" width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/اسلایسر-سیب-زمینی-زوکی-0-3
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اسلایسر-سیب-زمینی-زوکی/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اسلایسر-سیب-زمینی-زوکی/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 4937 for https://homepink.ir/product/اسلایسر-سیب-زمینی-زوکی/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اسلایسر-سیب-زمینی-زوکی/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اسلایسر-هندوانه/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d9%84%d8%a7%db%8c%d8%b3%d8%b1-%d9%87%d9%86%d8%af%d9%88%d8%a7%d9%86%d9%87/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-21%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/اسلایسر-هندوانه-0-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt decoding="async" srcset="https://homepink.ir/wp
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اسلایسر-هندوانه/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اسلایسر-هندوانه/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 4937 for https://homepink.ir/product/اسلایسر-هندوانه/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اسلایسر-هندوانه/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اسلایسر-و-خرد-کن-موز-banana-slicer/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%d9%84%d8%a7%db%8c%d8%b3%d8%b1-%d9%88-%d8%ae%d8%b1%d8%af-%da%a9%d9%86-%d9%85%d9%88%d8%b2-banana-slicer/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-28%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/10/200a1144fa5a655ed33c436b30c07f1ca7472c18_1608800365-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" al
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اسلایسر-و-خرد-کن-موز-banana-slicer/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اسلایسر-و-خرد-کن-موز-banana-slicer/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 4937 for https://homepink.ir/product/اسلایسر-و-خرد-کن-موز-banana-slicer/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اسلایسر-و-خرد-کن-موز-banana-slicer/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اسیاب-برقی-استیل-300وات/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d8%b3%db%8c%d8%a7%d8%a8-%d8%a8%d8%b1%d9%82%db%8c-%d8%a7%d8%b3%d8%aa%db%8c%d9%84-300%d9%88%d8%a7%d8%aa/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-5%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/853750153_1713878388_2-300x300.jpg" class="attachment-woocommerce_thumbnail
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اسیاب-برقی-استیل-300وات/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اسیاب-برقی-استیل-300وات/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 4937 for https://homepink.ir/product/اسیاب-برقی-استیل-300وات/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اسیاب-برقی-استیل-300وات/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/افتابگیر-خودرو-مدل-چتری/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d9%81%d8%aa%d8%a7%d8%a8%da%af%db%8c%d8%b1-%d8%ae%d9%88%d8%af%d8%b1%d9%88-%d9%85%d8%af%d9%84-%da%86%d8%aa%d8%b1%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-5%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/c2e3bc255d117d794c2ce0411118c532f8ee61c7_1695844728-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumb
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/افتابگیر-خودرو-مدل-چتری/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/افتابگیر-خودرو-مدل-چتری/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 4937 for https://homepink.ir/product/افتابگیر-خودرو-مدل-چتری/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/افتابگیر-خودرو-مدل-چتری/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/انبر-روغن-گیر-استیل/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d9%86%d8%a8%d8%b1-%d8%b1%d9%88%d8%ba%d9%86-%da%af%db%8c%d8%b1-%d8%a7%d8%b3%d8%aa%db%8c%d9%84/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-12%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/انبر-روغن-گیر-استیل-0-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt decoding="async" srcset="ht
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/انبر-روغن-گیر-استیل/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/انبر-روغن-گیر-استیل/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 4937 for https://homepink.ir/product/انبر-روغن-گیر-استیل/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/انبر-روغن-گیر-استیل/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/انبرروغن-گیر-ماهی-وکوکو-استیل/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d9%86%d8%a8%d8%b1%d8%b1%d9%88%d8%ba%d9%86-%da%af%db%8c%d8%b1-%d9%85%d8%a7%d9%87%db%8c-%d9%88%da%a9%d9%88%da%a9%d9%88-%d8%a7%d8%b3%d8%aa%db%8c%d9%84/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-2%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2023/09/214-300x300-1-2.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt dec
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/انبرروغن-گیر-ماهی-وکوکو-استیل/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/انبرروغن-گیر-ماهی-وکوکو-استیل/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 4937 for https://homepink.ir/product/انبرروغن-گیر-ماهی-وکوکو-استیل/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/انبرروغن-گیر-ماهی-وکوکو-استیل/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اویز-حمام-دوطبقه-مرسه/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d9%88%db%8c%d8%b2-%d8%ad%d9%85%d8%a7%d9%85-%d8%af%d9%88%d8%b7%d8%a8%d9%82%d9%87-%d9%85%d8%b1%d8%b3%d9%87/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-10%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/72329-300x300.jpg" class="attachment-woocommerce_thumbnail size-woocomm
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اویز-حمام-دوطبقه-مرسه/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اویز-حمام-دوطبقه-مرسه/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 4937 for https://homepink.ir/product/اویز-حمام-دوطبقه-مرسه/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اویز-حمام-دوطبقه-مرسه/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اویز-کفگیروملاقه-کابینتی-فلزی/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d9%88%db%8c%d8%b2-%da%a9%d9%81%da%af%db%8c%d8%b1%d9%88%d9%85%d9%84%d8%a7%d9%82%d9%87-%da%a9%d8%a7%d8%a8%db%8c%d9%86%d8%aa%db%8c-%d9%81%d9%84%d8%b2%db%8c/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-13%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/4550_1647526400-300x300
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اویز-کفگیروملاقه-کابینتی-فلزی/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اویز-کفگیروملاقه-کابینتی-فلزی/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 4937 for https://homepink.ir/product/اویز-کفگیروملاقه-کابینتی-فلزی/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اویز-کفگیروملاقه-کابینتی-فلزی/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اویز-مخصوص-شلوار-وشال/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d9%88%db%8c%d8%b2-%d9%85%d8%ae%d8%b5%d9%88%d8%b5-%d8%b4%d9%84%d9%88%d8%a7%d8%b1-%d9%88%d8%b4%d8%a7%d9%84/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-15%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/5229209-300x300.webp" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt decoding="async" srcset="https://homepink.ir
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اویز-مخصوص-شلوار-وشال/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اویز-مخصوص-شلوار-وشال/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 4937 for https://homepink.ir/product/اویز-مخصوص-شلوار-وشال/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اویز-مخصوص-شلوار-وشال/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اویزجاجورابی-داخل-کمد-16خانه/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%d9%88%db%8c%d8%b2%d8%ac%d8%a7%d8%ac%d9%88%d8%b1%d8%a7%d8%a8%db%8c-%d8%af%d8%a7%d8%ae%d9%84-%da%a9%d9%85%d8%af-16%d8%ae%d8%a7%d9%86%d9%87/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-18%</span></div><img width="300" height="300" src="https://homepink.ir/wp-content/uploads/2024/06/sockholder-1.jpg" class="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt decoding="async"
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اویزجاجورابی-داخل-کمد-16خانه/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اویزجاجورابی-داخل-کمد-16خانه/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 4937 for https://homepink.ir/product/اویزجاجورابی-داخل-کمد-16خانه/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اویزجاجورابی-داخل-کمد-16خانه/
+[2025-05-16 11:26:26] Parent node found for link: https://homepink.ir/product/اینه-چسبی-نشکن-بیضی-سایز-3020/
+[2025-05-16 11:26:26] Trying image selector: li.product img
+[2025-05-16 11:26:26] Parent node HTML: 
+		<a href="https://homepink.ir/product/%d8%a7%db%8c%d9%86%d9%87-%da%86%d8%b3%d8%a8%db%8c-%d9%86%d8%b4%da%a9%d9%86-%d8%a8%db%8c%d8%b6%db%8c-%d8%b3%d8%a7%db%8c%d8%b2-3020/" class="product-image-link">
+			<div class="product-labels labels-rounded"><span class="onsale product-label">-20%</span><span class="out-of-stock product-label">فروخته شده</span></div><img width="225" height="225" src="https://homepink.ir/wp-content/uploads/2023/12/images-5.jpg" class="attachment-woocommerce_thumbnail
+[2025-05-16 11:26:26] Image elements found: 0
+[2025-05-16 11:26:26] No image found with selector 'li.product img' for https://homepink.ir/product/اینه-چسبی-نشکن-بیضی-سایز-3020/
+[2025-05-16 11:26:26] No product_id found with link attribute 'data-product_id' for https://homepink.ir/product/اینه-چسبی-نشکن-بیضی-سایز-3020/
+[2025-05-16 11:26:26] Extracted product_id from selector 'div.wd-product > div > div > div > div > div > a': 4937 for https://homepink.ir/product/اینه-چسبی-نشکن-بیضی-سایز-3020/
+[2025-05-16 11:26:26] Added link: https://homepink.ir/product/اینه-چسبی-نشکن-بیضی-سایز-3020/
+[2025-05-16 11:26:26] Built pagination URL from sample: https://homepink.ir/shop/page/7/
+[2025-05-16 11:26:26] Fetching page: https://homepink.ir/shop/page/7/
+[2025-05-16 11:26:26] Attempt 1 of 2 to fetch URL: https://homepink.ir/shop/page/7/
