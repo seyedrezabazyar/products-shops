@@ -11,8 +11,6 @@ use GuzzleHttp\Psr7\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\DomCrawler\Crawler;
 
-// اضافه کردن مدل جدید
-
 class StartController
 {
     private array $config;
@@ -50,7 +48,6 @@ class StartController
             ],
         ]);
     }
-
 
     private function scrapeMethodThree(): array
     {
@@ -627,7 +624,6 @@ JAVASCRIPT;
         ];
     }
 
-
     private function scrapeMethodOneForUrl(string $baseUrl): array
     {
         if ($this->config['method_settings']['method_1']['pagination']['use_webdriver']) {
@@ -805,7 +801,6 @@ JAVASCRIPT;
         ];
     }
 
-
     private function extractCategoryFromTitle(string $title, int $wordCount = 1): string
     {
         $this->log("Extracting category from title: '$title' with word count: $wordCount", self::COLOR_YELLOW);
@@ -821,91 +816,6 @@ JAVASCRIPT;
 
         $this->log("Extracted category: '$category'", self::COLOR_GREEN);
         return $category;
-    }
-
-    private function scrapeMethodOne(): array
-    {
-        if ($this->config['method_settings']['method_1']['pagination']['use_webdriver']) {
-            return $this->scrapeWithPlaywright(1);
-        }
-
-        $allLinks = [];
-        $totalPagesProcessed = 0;
-
-        foreach ($this->config['products_urls'] as $baseUrl) {
-            $links = [];
-            $currentPage = 1;
-            $hasMorePages = true;
-
-            while ($hasMorePages && $currentPage <= $this->config['method_settings']['method_1']['pagination']['max_pages']) {
-                $pageUrl = $this->buildPaginationUrl($baseUrl, $currentPage, $this->config['method_settings']['method_1']['pagination']);
-                $this->log("Fetching page: $pageUrl", self::COLOR_GREEN);
-                $body = $this->fetchPageContent($pageUrl, false);
-
-                if ($body === null) {
-                    $this->log("Failed to fetch page $currentPage", self::COLOR_RED);
-                    break;
-                }
-
-                $crawler = new Crawler($body);
-                $linkSelector = $this->config['selectors']['main_page']['product_links']['selector'];
-                $imageSelector = $this->config['selectors']['main_page']['image']['selector'] ?? '';
-                $productIdSelector = $this->config['selectors']['main_page']['product_id']['selector'] ?? '';
-                $linksFound = $crawler->filter($linkSelector)->count();
-
-                $crawler->filter($linkSelector)->each(function (Crawler $node, $index) use (&$links, $crawler, $imageSelector, $productIdSelector) {
-                    $href = $node->attr($this->config['selectors']['main_page']['product_links']['attribute']);
-                    if (!$this->isInvalidLink($href)) {
-                        $fullUrl = $this->makeAbsoluteUrl($href);
-                        if (!$this->isUnwantedDomain($fullUrl)) {
-                            $image = '';
-                            if ($imageSelector && $this->config['image_method'] === 'main_page') {
-                                $imageElement = $node->ancestors()->filter('li.product')->first()->filter($imageSelector);
-                                if ($imageElement->count() > 0) {
-                                    $image = $imageElement->attr($this->config['selectors']['main_page']['image']['attribute'] ?? 'src');
-                                    $image = $this->makeAbsoluteUrl($image);
-                                }
-                            }
-
-                            $productId = '';
-                            if ($this->config['product_id_source'] === 'main_page' && $productIdSelector) {
-                                $parent = $node->ancestors()->filter('li.product')->first();
-                                if ($parent->count() > 0) {
-                                    $productIdElement = $parent->filter($productIdSelector);
-                                    if ($productIdElement->count() > 0) {
-                                        $productId = $productIdElement->attr($this->config['selectors']['main_page']['product_id']['attribute'] ?? 'data-product_id');
-                                        $this->log("Extracted product_id from main page: $productId for $fullUrl", self::COLOR_GREEN);
-                                    } else {
-                                        $this->log("No product_id found with selector '$productIdSelector' for $fullUrl", self::COLOR_YELLOW);
-                                    }
-                                } else {
-                                    $this->log("No li.product parent found for $fullUrl", self::COLOR_YELLOW);
-                                }
-                            }
-
-                            $links[] = [
-                                'url' => $fullUrl,
-                                'image' => $image,
-                                'product_id' => $productId
-                            ];
-                        }
-                    }
-                });
-
-                $totalPagesProcessed++;
-                if ($linksFound === 0) {
-                    break;
-                }
-                $currentPage++;
-            }
-
-            $allLinks = array_merge($allLinks, $links);
-        }
-
-        return [
-            'links' => array_unique($allLinks, SORT_REGULAR),
-            'pages_processed' => $totalPagesProcessed
-        ];
     }
 
     private function scrapeWithPlaywright(int $method, string $productUrl): array
@@ -1492,7 +1402,6 @@ JAVASCRIPT;
         throw new \Exception("Could not determine migration class name for $file");
     }
 
-
     private function processPagesInBatches(array $links, int $processingMethod = null): array
     {
         $this->log("Processing " . count($links) . " product links in batches...", self::COLOR_GREEN);
@@ -1689,7 +1598,6 @@ JAVASCRIPT;
         ];
     }
 
-
     private function saveFailedLink(string $url, string $errorMessage): void
     {
         try {
@@ -1709,12 +1617,6 @@ JAVASCRIPT;
     public function setOutputCallback(callable $callback): void
     {
         $this->outputCallback = $callback;
-    }
-
-    private function clearDatabase(): void
-    {
-        DB::table('products')->truncate();
-        $this->log("Database cleared successfully.", self::COLOR_GREEN);
     }
 
     private function randomUserAgent(): string
@@ -2093,7 +1995,6 @@ JAVASCRIPT;
         $this->config['request_delay_max'] = $delay;
     }
 
-
     public function scrape(): array
     {
         $this->log("Starting scrape process...", self::COLOR_GREEN);
@@ -2118,7 +2019,7 @@ JAVASCRIPT;
             }
         } elseif ($this->config['method'] === 1) {
             $this->log("Using method 1 to collect and process links...", self::COLOR_GREEN);
-            $result = $this->scrapeMethodOne();
+            $result = $this->scrapeMethodOneForUrl();
             $links = $result['links'] ?? [];
             $this->log("Links structure: " . json_encode($links, JSON_PRETTY_PRINT), self::COLOR_YELLOW);
             $pagesProcessed = $result['pages_processed'] ?? 0;
@@ -2212,68 +2113,6 @@ JAVASCRIPT;
         ];
     }
 
-    private function saveAllProducts($output): void
-    {
-        $productsPerPage = 100; // تعداد محصولات در هر صفحه
-        $totalProducts = count($output['products']);
-        $totalPages = ceil($totalProducts / $productsPerPage);
-
-        foreach ($output['products'] as $product) {
-            try {
-                \App\Models\Product::updateOrCreate(
-                    ['page_url' => $product['page_url']], // شرط منحصربه‌فرد
-                    [
-                        'title' => $product['title'],
-                        'price' => $product['price'],
-                        'product_id' => $product['product_id'] === '' ? 'نامعلوم' : $product['product_id'],
-                        'availability' => (int)$product['availability'],
-                        'off' => (float)$product['off'],
-                        'image' => $product['image'], // بعداً برای چند تصویر اصلاح می‌کنیم
-                        'guarantee' => $product['guarantee'],
-                        'category' => $product['category'], // بعداً برای چند دسته‌بندی اصلاح می‌کنیم
-                    ]
-                );
-                //$this->log("Saved product: {$product['title']} to database", self::COLOR_GREEN);
-            } catch (\Exception $e) {
-                $this->log("Failed to save product {$product['title']}: {$e->getMessage()}", self::COLOR_RED);
-            }
-        }
-
-        $this->log("Total products saved: $totalProducts across $totalPages pages", self::COLOR_GREEN);
-    }
-
-    private function scrapeProductPage($url): ?array
-    {
-        $this->log("Scraping product page: $url", self::COLOR_YELLOW);
-
-        try {
-            $response = $this->httpClient->get($url);
-            $html = $response->getBody()->getContents();
-            $crawler = new \Symfony\Component\DomCrawler\Crawler($html);
-
-            $titleSelector = $this->config['selectors']['product_page']['title']['selector'] ?? 'h1.product-title';
-            $priceSelector = $this->config['selectors']['product_page']['price']['selector'] ?? '.final-price';
-
-            $title = $crawler->filter($titleSelector)->first()->text();
-            $price = $crawler->filter($priceSelector)->first()->text();
-
-            if (empty($title) || empty($price)) {
-                $this->log("Failed to extract required data from $url", self::COLOR_RED);
-                return null;
-            }
-
-            return [
-                'title' => trim($title),
-                'price' => trim($price),
-                'url' => $url
-            ];
-        } catch (\Exception $e) {
-            $this->log("Error scraping product page $url: {$e->getMessage()}", self::COLOR_RED);
-            return null;
-        }
-    }
-
-
     private function fetchPageContent(string $url, bool $useDeep, bool $isProductPage = true): ?string
     {
         $maxRetries = $this->config['max_retries'] ?? 3;
@@ -2351,7 +2190,6 @@ JAVASCRIPT;
         return null;
     }
 
-
     private function exponentialBackoff(int $attempt): int
     {
         return (int)(100 * pow(2, $attempt - 1)); // تأخیر تصاعدی: 100ms, 200ms, 400ms
@@ -2383,36 +2221,6 @@ JAVASCRIPT;
 
         $this->log("Normalized URL: $url -> $normalizedUrl", self::COLOR_YELLOW);
         return $normalizedUrl;
-    }
-
-    private function isRedirectedToUnexpectedPage(string $originalUrl, string $finalUrl, int $currentPage, array $pagination): bool
-    {
-        $param = $pagination['parameter'] ?? 'page';
-        $separator = $pagination['separator'] ?? '=';
-
-        // اگه URL نهایی با URL درخواستی فرق داره و شماره صفحه توی URL نهایی نیست
-        if ($originalUrl !== $finalUrl) {
-            $expectedPattern = "{$param}{$separator}{$currentPage}";
-            if (strpos($finalUrl, $expectedPattern) === false) {
-                $this->log("Redirect detected: $originalUrl -> $finalUrl", self::COLOR_YELLOW);
-                return true; // ریدایرکت به صفحه‌ای که انتظارش رو نداشتیم
-            }
-        }
-
-        return false;
-    }
-
-    private function getFinalUrl($response, string $originalUrl): string
-    {
-        // چک کردن تاریخچه ریدایرکت‌ها
-        $redirectHistory = $response->getHeader('X-Guzzle-Redirect-History');
-        if (!empty($redirectHistory)) {
-            // آخرین URL توی تاریخچه، URL نهاییه
-            return end($redirectHistory);
-        }
-
-        // اگه ریدایرکتی نبود، URL اصلی همون نهاییه
-        return $originalUrl;
     }
 
     private function extractPaginationPatternFromSample(string $sampleUrl, array $pagination): string
@@ -2504,47 +2312,6 @@ JAVASCRIPT;
         }
 
         return false;
-    }
-
-    private function scrapeMethodTwo(): array
-    {
-        if (!$this->config['method_settings']['method_2']['enabled']) {
-            $this->log("Method 2 is not enabled in config.", self::COLOR_RED);
-            return ['links' => [], 'pages_processed' => 0];
-        }
-
-        if (!$this->config['method_settings']['method_2']['navigation']['use_webdriver']) {
-            $this->log("Method 2 requires a WebDriver (use_webdriver must be true).", self::COLOR_RED);
-            return ['links' => [], 'pages_processed' => 0];
-        }
-
-        $allLinks = [];
-        $totalPagesProcessed = 0;
-        $processedUrls = []; // برای جلوگیری از پردازش تکراری
-
-        $this->log("Found " . count($this->config['products_urls']) . " products_urls to process", self::COLOR_PURPLE);
-
-
-        // حذف لینک‌های تکراری بر اساس normalized_url
-        $uniqueLinks = [];
-        $urlSet = [];
-        foreach ($allLinks as $link) {
-            $url = is_array($link) ? $link['url'] : $link;
-            $normalizedUrl = $link['normalized_url'] ?? $this->normalizeUrl($url);
-            if (!in_array($normalizedUrl, $urlSet)) {
-                $urlSet[] = $normalizedUrl;
-                unset($link['normalized_url']); // حذف فیلد موقتی
-                $uniqueLinks[] = $link;
-            }
-        }
-
-        $this->log("Total unique links collected from all products_urls: " . count($uniqueLinks), self::COLOR_GREEN);
-        $this->log("Total pages processed across all products_urls: $totalPagesProcessed", self::COLOR_GREEN);
-
-        return [
-            'links' => array_values($uniqueLinks),
-            'pages_processed' => $totalPagesProcessed
-        ];
     }
 
     private function fetchProductLinks(): array
@@ -3012,12 +2779,6 @@ JAVASCRIPT;
         return '';
     }
 
-    private function saveBatch(array $batchProducts, int $batchNumber): void
-    {
-
-        $this->log("Batch $batchNumber with " . count($batchProducts) . " products processed (no file saved)", self::COLOR_GREEN);
-    }
-
     private function extractData(Crawler $crawler, array $selector, ?string $field = null): string
     {
         $selectors = is_array($selector['selector']) ? $selector['selector'] : [$selector['selector']];
@@ -3343,12 +3104,6 @@ JAVASCRIPT;
 
         $this->log("Failed to extract product_id, returning empty string for $url", self::COLOR_RED);
         return '';
-    }
-
-
-    private function stripAnsiColors(string $message): string
-    {
-        return preg_replace('/\033\[[0-9;]*m/', '', $message);
     }
 
     private function generateAsciiTable(array $headers, array $rows): string
