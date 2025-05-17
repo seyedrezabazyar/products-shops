@@ -3398,7 +3398,6 @@ JAVASCRIPT;
         return $table;
     }
 
-    // تابع کمکی برای padding کاراکترهای یونیکد
     private function mb_str_pad(string $input, int $pad_length, string $pad_string = ' ', int $pad_type = STR_PAD_RIGHT): string
     {
         $input_length = mb_strwidth($input, 'UTF-8');

@@ -39,74 +39,14 @@ class ConfigController extends Controller
 
         foreach ($files as $file) {
             if (pathinfo($file, PATHINFO_EXTENSION) === 'json') {
-                $filename = pathinfo($file, PATHINFO_FILENAME);
-                $content = json_decode(Storage::get($file), true);
-
-                // اطلاعات محصولات از دیتابیس
-                $total_products = 0;
-                $total_pages = 0;
-                $available_products = 0;
-                try {
-                    $this->setupDynamicConnection($filename);
-                    $total_products = \App\Models\Product::count();
-                    $products_per_page = 100; // مشابه ProductController
-                    $total_pages = ceil($total_products / $products_per_page);
-                    $available_products = \App\Models\Product::where('availability', 1)->count();
-                } catch (\Exception $e) {
-                    \Log::error("Failed to fetch product data for config {$filename}: {$e->getMessage()}");
-                    // در صورت خطا، مقادیر صفر باقی می‌مانند
-                }
-
-                // اطلاعات آخرین اجرا
-                $last_run_at = null;
-                $run_file_path = "private/runs/{$filename}.json";
-                if (Storage::exists($run_file_path)) {
-                    $run_info = json_decode(Storage::get($run_file_path), true);
-                    $last_run_at = $run_info['started_at'] ?? null;
-                }
-
                 $configs[] = [
-                    'filename' => $filename,
-                    'content' => array_merge($content, [
-                        'total_products' => $total_products,
-                        'total_pages' => $total_pages,
-                        'available_products' => $available_products,
-                    ]),
-                    'last_run_at' => $last_run_at,
+                    'filename' => pathinfo($file, PATHINFO_FILENAME),
+                    'content' => json_decode(Storage::get($file), true)
                 ];
             }
         }
 
         return view('configs.index', compact('configs'));
-    }
-
-    private function setupDynamicConnection(string $store): void
-    {
-        if (!preg_match('/^[a-zA-Z0-9_]+$/', $store)) {
-            \Log::error("Invalid database name: {$store}");
-            throw new \Exception("نام دیتابیس نامعتبر است: {$store}");
-        }
-
-        \Config::set('database.connections.dynamic', [
-            'driver' => 'mysql',
-            'host' => config('database.connections.mysql.host'),
-            'port' => config('database.connections.mysql.port'),
-            'database' => $store,
-            'username' => config('database.connections.mysql.username'),
-            'password' => config('database.connections.mysql.password'),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-        ]);
-
-        \DB::purge('dynamic');
-
-        try {
-            \DB::connection('dynamic')->getPdo();
-            \Log::info("Successfully connected to database: {$store}");
-        } catch (\Exception $e) {
-            \Log::error("Failed to connect to database {$store}: {$e->getMessage()}");
-            throw new \Exception("دیتابیس '{$store}' یافت نشد یا خطایی رخ داد: {$e->getMessage()}");
-        }
     }
 
     public function deleteAllLogs()
@@ -710,6 +650,42 @@ class ConfigController extends Controller
         return redirect()->route('configs.index')->with('success', 'اسکرپر برای کانفیگ ' . $filename . ' با موفقیت اجرا شد. می‌توانید لاگ‌ها را مشاهده کنید.');
     }
 
+
+    public function history()
+    {
+        $files = Storage::files();
+        $configs = [];
+
+        foreach ($files as $file) {
+            if (pathinfo($file, PATHINFO_EXTENSION) === 'json') {
+                $filename = pathinfo($file, PATHINFO_FILENAME);
+                $configData = [
+                    'filename' => $filename,
+                    'content' => json_decode(Storage::get($file), true)
+                ];
+
+                // بارگذاری تاریخچه اجرا
+                $runFilePath = 'private/runs/' . $filename . '.json';
+                if (Storage::exists($runFilePath)) {
+                    $runInfo = json_decode(Storage::get($runFilePath), true);
+                    if (isset($runInfo['history'])) {
+                        $configData['history'] = $runInfo['history'];
+                    }
+                }
+
+                $configs[] = $configData;
+            }
+        }
+
+        // مرتب‌سازی بر اساس جدیدترین تاریخچه
+        usort($configs, function ($a, $b) {
+            $aTime = isset($a['history'][0]['started_at']) ? $a['history'][0]['started_at'] : '0000-00-00';
+            $bTime = isset($b['history'][0]['started_at']) ? $b['history'][0]['started_at'] : '0000-00-00';
+            return strcmp($bTime, $aTime); // نزولی
+        });
+
+        return view('configs.history', compact('configs'));
+    }
 
     /**
      * Show logs for the specified config.

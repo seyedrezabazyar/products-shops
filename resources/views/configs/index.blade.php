@@ -297,6 +297,7 @@
 </head>
 <body class="min-h-screen py-10">
 <div class="container mx-auto px-4">
+
     <div class="max-w-6xl mx-auto classic-panel p-8">
         <!-- Header -->
         <div class="flex flex-col md:flex-row justify-between items-center mb-8 pb-6 classic-header">
@@ -309,7 +310,6 @@
                 <i class="fas fa-plus-circle ml-2"></i>
                 ایجاد کانفیگ جدید
             </a>
-
         </div>
 
 

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/configs/{filename}/run', [App\Http\Controllers\ConfigController::class, 'runScraper'])->name('configs.run');
 Route::get('/configs/{filename}/logs', [App\Http\Controllers\ConfigController::class, 'showLogs'])->name('configs.logs');
 Route::delete('/configs/logs/delete-all', [ConfigController::class, 'deleteAllLogs'])->name('configs.logs.deleteAll');
+Route::get('/configs/history', [ConfigController::class, 'history'])->name('configs.history');
 Route::get('/configs/log-content/{logfile}', [App\Http\Controllers\ConfigController::class, 'getLogContent'])->name('configs.log-content');
 Route::post('/configs/{filename}/stop', [App\Http\Controllers\ConfigController::class, 'stopScraper'])->name('configs.stop');
 Route::delete('/configs/logs/{logfile}/delete', [App\Http\Controllers\ConfigController::class, 'deleteLog'])->name('configs.logs.delete');
