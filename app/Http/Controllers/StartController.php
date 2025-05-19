@@ -21,7 +21,6 @@ class StartController
     private int $processedCount = 0;
     private int $failedLinks = 0;
     private array $sharedProductIds = [];
-
     private const COLOR_GREEN = "\033[1;92m";
     private const COLOR_RED = "\033[1;91m";
     private const COLOR_PURPLE = "\033[1;95m";
@@ -2617,13 +2616,16 @@ JAVASCRIPT;
                         $value = $this->extractData($crawler, $selector);
                         $this->log("Raw $field extracted: '$value'", self::COLOR_YELLOW);
 
-
-                        if ($field === 'price') {
-                            // منطق اختصاصی برای فیلد price
+                        if ($field === 'title') {
+                            $data[$field] = $value;
+                            // اعمال پیشوند به عنوان
+                            $data[$field] = $this->applyTitlePrefix($data[$field], $url);
+                            $this->log("Title after applying prefix: {$data[$field]}", self::COLOR_GREEN);
+                        } elseif ($field === 'price') {
+                            // منطق قیمت بدون تغییر
                             $priceSelectors = is_array($selector['selector']) ? $selector['selector'] : [$selector['selector']];
                             $value = '';
 
-                            // ابتدا سلکتور اول را امتحان می‌کنیم
                             if (isset($priceSelectors[0])) {
                                 $this->log("Trying primary price selector: '{$priceSelectors[0]}'", self::COLOR_YELLOW);
                                 $elements = $selector['type'] === 'css' ? $crawler->filter($priceSelectors[0]) : $crawler->filterXPath($priceSelectors[0]);
@@ -2635,7 +2637,6 @@ JAVASCRIPT;
                                 }
                             }
 
-                            // اگر سلکتور اول خالی بود یا نتیجه‌ای نداشت، سلکتور دوم را امتحان می‌کنیم
                             if (empty($value) && isset($priceSelectors[1])) {
                                 $this->log("Trying secondary price selector: '{$priceSelectors[1]}'", self::COLOR_YELLOW);
                                 $elements = $selector['type'] === 'css' ? $crawler->filter($priceSelectors[1]) : $crawler->filterXPath($priceSelectors[1]);
@@ -2647,7 +2648,6 @@ JAVASCRIPT;
                                 }
                             }
 
-                            // پردازش قیمت استخراج‌شده
                             $priceKeywords = $this->config['price_keywords']['unpriced'] ?? [];
                             $isUnpriced = false;
                             foreach ($priceKeywords as $keyword) {
@@ -2697,14 +2697,13 @@ JAVASCRIPT;
                 }
             }
 
-            // استخراج دسته‌بندی از عنوان اگر روش روی title تنظیم شده باشد
+            // بقیه کد بدون تغییر باقی می‌ماند
             if (($this->config['category_method'] ?? 'selector') === 'title' && !empty($data['title'])) {
                 $wordCount = $this->config['category_word_count'] ?? 1;
                 $data['category'] = $this->extractCategoryFromTitle($data['title'], $wordCount);
-                $this->log("Extracted category from title: {$data['category']}", self::COLOR_GREEN);
+                $this->log("Extracted category from title: {$data[$field]}", self::COLOR_GREEN);
             }
 
-            // بقیه منطق متد بدون تغییر باقی می‌ماند
             if ($data['availability'] === '') {
                 $addToCartSelector = $this->config['selectors']['product_page']['add_to_cart_button'] ?? null;
                 $outOfStockSelector = $this->config['selectors']['product_page']['out_of_stock'] ?? null;
@@ -3264,6 +3263,38 @@ JAVASCRIPT;
         }
     }
 
+    private function applyTitlePrefix(string $title, string $url): string
+    {
+        $title = trim($title);
+        $prefixRules = $this->config['title_prefix_rules'] ?? [];
+        $productsUrls = $this->config['products_urls'] ?? [];
+
+        // بررسی اینکه آیا URL محصول از یکی از products_urls استخراج شده است
+        foreach ($productsUrls as $productUrl) {
+            if (isset($prefixRules[$productUrl])) {
+                $prefix = $prefixRules[$productUrl]['prefix'] ?? '';
+
+                if (empty($prefix)) {
+                    $this->log("No prefix defined for rule on URL: $productUrl", self::COLOR_YELLOW);
+                    return $title;
+                }
+
+                // بررسی اینکه آیا عنوان با پیشوند شروع می‌شود
+                if (!str_starts_with($title, $prefix)) {
+                    $newTitle = $prefix . ' ' . $title;
+                    $this->log("Added prefix '$prefix' to title: '$newTitle' for URL: $url", self::COLOR_GREEN);
+                    return $newTitle;
+                } else {
+                    $this->log("Title already starts with prefix '$prefix': '$title' for URL: $url", self::COLOR_YELLOW);
+                    return $title;
+                }
+            }
+        }
+
+        $this->log("No title prefix rule matched for URL: $url", self::COLOR_YELLOW);
+        return $title;
+    }
+
     private function validateConfig(): void
     {
         $requiredFields = [
@@ -3320,24 +3351,20 @@ JAVASCRIPT;
             throw new \Exception("Validation Error: Both 'main_page' and 'product_page' selectors are required.");
         }
 
-
         if (!in_array($this->config['method'], [1, 2, 3])) {
             throw new \Exception('Validation Error: Invalid method value. Must be 1, 2, or 3.');
         }
 
-        // اعتبارسنجی processing_method
         if (isset($this->config['processing_method']) && !in_array($this->config['processing_method'], [1, 2, 3])) {
             throw new \Exception('Validation Error: Invalid processing_method value. Must be 1, 2, or 3.');
         }
 
-        // اعتبارسنجی category_method و category_word_count
         if (isset($this->config['category_method']) && $this->config['category_method'] === 'title') {
             if (!isset($this->config['category_word_count']) || !is_int($this->config['category_word_count']) || $this->config['category_word_count'] < 1) {
                 throw new \Exception("Validation Error: 'category_word_count' must be a positive integer when 'category_method' is 'title'.");
             }
         }
 
-        // اعتبارسنجی تنظیمات صفحه‌بندی برای method_1
         if ($this->config['method'] === 1) {
             if (!isset($this->config['method_settings']['method_1']['pagination']['ignore_redirects'])) {
                 $this->log("Warning: 'ignore_redirects' not set in method_1.pagination. Defaulting to false.", self::COLOR_YELLOW);
@@ -3349,11 +3376,6 @@ JAVASCRIPT;
             }
         }
 
-        if (!empty($this->config['output_dir'])) {
-            $this->log("Warning: output_dir is set but file saving is disabled.", self::COLOR_YELLOW);
-            unset($this->config['output_dir']);
-        }
-
         if (isset($this->config['selectors']['main_page']['product_links']['product_id'])) {
             $productIdAttr = $this->config['selectors']['main_page']['product_links']['product_id'];
             if (empty($productIdAttr)) {
@@ -3361,6 +3383,26 @@ JAVASCRIPT;
             }
         }
 
+        // اعتبارسنجی title_prefix_rules
+        if (isset($this->config['title_prefix_rules'])) {
+            if (!is_array($this->config['title_prefix_rules'])) {
+                throw new \Exception("Validation Error: 'title_prefix_rules' must be an array.");
+            }
+            $productsUrls = $this->config['products_urls'] ?? [];
+            foreach ($this->config['title_prefix_rules'] as $url => $rule) {
+                if (!is_string($url) || empty($url)) {
+                    throw new \Exception("Validation Error: Each key in 'title_prefix_rules' must be a valid non-empty URL string.");
+                }
+                if (!in_array($url, $productsUrls)) {
+                    throw new \Exception("Validation Error: URL '$url' in 'title_prefix_rules' must match one of the 'products_urls'.");
+                }
+                if (!isset($rule['prefix']) || !is_string($rule['prefix']) || empty($rule['prefix'])) {
+                    throw new \Exception("Validation Error: 'prefix' in 'title_prefix_rules' for URL '$url' is required and must be a non-empty string.");
+                }
+            }
+        }
+
         $this->log('Configuration validated successfully.', self::COLOR_GREEN);
     }
+
 }

@@ -12,12 +12,13 @@ class ConfigController extends Controller
 
     public function __construct()
     {
-        $this->configPath = storage_path('app/');
+        $this->configPath = storage_path('app/private/');
 
         // ایجاد دایرکتوری‌های مورد نیاز
         $directories = [
-            storage_path('app/'),
-            storage_path('logs/scrapers'),
+            storage_path('app/private/'),
+            storage_path('app/private/runs/'),
+            storage_path('logs/scrapers/'),
         ];
 
         foreach ($directories as $directory) {
@@ -34,7 +35,7 @@ class ConfigController extends Controller
      */
     public function index()
     {
-        $files = Storage::files();
+        $files = Storage::files('private');
         $configs = [];
 
         foreach ($files as $file) {
@@ -51,7 +52,7 @@ class ConfigController extends Controller
 
     public function deleteAllLogs()
     {
-        $logDirectory = storage_path('logs');
+        $logDirectory = storage_path('logs/');
         $logPatterns = ['scraper*', 'playwright_method3_*', 'playwright_*'];
 
         $deletedCount = 0;
@@ -80,7 +81,6 @@ class ConfigController extends Controller
             return redirect()->route('configs.index')->with('info', 'هیچ فایل لاگ مرتبطی یافت نشد.');
         }
     }
-
 
     /**
      * Delete a log file.
@@ -149,7 +149,7 @@ class ConfigController extends Controller
      */
     public function edit($filename)
     {
-        $filePath = "{$filename}.json";
+        $filePath = "private/{$filename}.json";
         if (!Storage::exists($filePath)) {
             return redirect()->route('configs.index')->with('error', 'فایل کانفیگ یافت نشد.');
         }
@@ -182,7 +182,8 @@ class ConfigController extends Controller
         $method = (int)$request->input('method', 1);
         $config = $this->buildConfig($request, $method);
 
-        $content = json_decode(Storage::get('private/' . $filename . '.json'), true);
+        // به‌روزرسانی فایل کانفیگ
+        Storage::put('private/' . $filename . '.json', json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
         return redirect()->route('configs.index')->with('success', 'کانفیگ با موفقیت به‌روزرسانی شد!');
     }
@@ -195,6 +196,12 @@ class ConfigController extends Controller
      */
     public function destroy($filename)
     {
+        $filePath = "private/{$filename}.json";
+        if (!Storage::exists($filePath)) {
+            return redirect()->route('configs.index')->with('error', 'فایل کانفیگ یافت نشد.');
+        }
+
+        Storage::delete($filePath);
         return redirect()->route('configs.index')->with('success', 'کانفیگ با موفقیت حذف شد!');
     }
 
@@ -238,16 +245,15 @@ class ConfigController extends Controller
             $rules['pagination.parameter'] = 'required|string';
             $rules['pagination.separator'] = 'required|string';
             $rules['pagination.max_pages'] = 'required|integer|min:1';
-            $rules['pagination.use_sample_url'] = 'boolean';
-            $rules['pagination.sample_url'] = 'required_if:pagination.use_sample_url,1|url';
+            $rules['pagination.use_sample_url'] = 'nullable|boolean';
+            $rules['pagination.sample_url'] = 'nullable|required_if:pagination.use_sample_url,1|url';
         } else {
             // Method 2 & 3 specific validations
             if ($method == 2) {
                 $rules['share_product_id_from_method_2'] = 'boolean';
-                $rules['container'] = 'required|string'; // کانتینر فقط برای متد 2 اجباری است
+                $rules['container'] = 'required|string';
                 $rules['scrool'] = 'integer|min:1';
             } else if ($method == 3) {
-                // متد 3 - کانتینر اختیاری است
                 $rules['container'] = 'nullable|string';
                 $rules['scrool'] = 'integer|min:1';
             }
@@ -262,13 +268,15 @@ class ConfigController extends Controller
                     $rules['pagination_url_parameter'] = 'required|string';
                     $rules['pagination_url_separator'] = 'required|string';
                     $rules['pagination_max_pages'] = 'required|integer|min:1';
-                    $rules['pagination_use_sample_url'] = 'boolean';
-                    $rules['pagination_sample_url'] = 'required_if:pagination_use_sample_url,1|url';
+                    $rules['pagination_use_sample_url'] = 'nullable|boolean';
+                    $rules['pagination_sample_url'] = 'nullable|required_if:pagination_use_sample_url,1|url';
                 }
             }
         }
 
-        // Add validation for product_id in main_page if selected
+        $rules['title_prefix_rules.url.*'] = 'nullable|url';
+        $rules['title_prefix_rules.prefix.*'] = 'nullable|string|max:255';
+
         if ($request->input('product_id_source') == 'main_page') {
             $rules['selectors.main_page.product_id.type'] = 'required|string';
             $rules['selectors.main_page.product_id.selector'] = 'required|string';
@@ -287,7 +295,6 @@ class ConfigController extends Controller
      */
     private function buildConfig(Request $request, $method)
     {
-        // Base config (common for all methods)
         $config = [
             'method' => $method,
             'processing_method' => $method == 3 ? 3 : 1,
@@ -373,7 +380,6 @@ class ConfigController extends Controller
             ],
         ];
 
-        // Add product_id to main_page if selected
         if ($request->input('product_id_source') == 'main_page') {
             $config['selectors']['main_page']['product_id'] = [
                 'type' => $request->input('selectors.main_page.product_id.type'),
@@ -382,9 +388,23 @@ class ConfigController extends Controller
             ];
         }
 
-        // Method-specific settings
+        $titlePrefixRules = [];
+        $urls = $request->input('title_prefix_rules.url', []);
+        $prefixes = $request->input('title_prefix_rules.prefix', []);
+
+        foreach ($urls as $index => $url) {
+            if (!empty($url) && !empty($prefixes[$index])) {
+                $titlePrefixRules[$url] = [
+                    'prefix' => $prefixes[$index],
+                ];
+            }
+        }
+
+        if (!empty($titlePrefixRules)) {
+            $config['title_prefix_rules'] = $titlePrefixRules;
+        }
+
         if ($method == 1) {
-            // Method 1 settings
             $config['method_settings'] = [
                 'method_1' => [
                     'enabled' => true,
@@ -404,14 +424,11 @@ class ConfigController extends Controller
                 ],
             ];
         } else {
-            // Method 2 & 3 common settings
             if ($method == 2) {
-                // Method 2 specific settings
                 $config['share_product_id_from_method_2'] = filter_var($request->input('share_product_id_from_method_2', false), FILTER_VALIDATE_BOOLEAN);
                 $config['container'] = $request->input('container', '');
                 $config['scrool'] = (int)$request->input('scrool', 10);
 
-                // Build pagination for method 2
                 $pagination = $this->buildPaginationConfig($request);
 
                 $config['method_settings'] = [
@@ -426,7 +443,6 @@ class ConfigController extends Controller
                     ],
                 ];
             } elseif ($method == 3) {
-                // Method 3 specific settings
                 $container = $request->input('container');
                 if (!empty($container)) {
                     $config['container'] = $container;
@@ -434,7 +450,6 @@ class ConfigController extends Controller
 
                 $config['scrool'] = (int)$request->input('scrool', 10);
 
-                // Build pagination for method 3
                 $pagination = $this->buildPaginationConfig($request);
 
                 $config['method_settings'] = [
@@ -463,12 +478,10 @@ class ConfigController extends Controller
         ];
 
         if ($request->input('pagination_method') == 'next_button') {
-            // Next button pagination
             $pagination['next_button'] = [
                 'selector' => $request->input('pagination_next_button_selector', '')
             ];
         } else {
-            // URL pagination
             $pagination['url'] = [
                 'type' => $request->input('pagination_url_type', 'query'),
                 'parameter' => $request->input('pagination_url_parameter', 'page'),
@@ -493,12 +506,10 @@ class ConfigController extends Controller
         ];
 
         if ($request->input('pagination_method') == 'next_button') {
-            // Next button pagination
             $navigation['pagination']['next_button'] = [
                 'selector' => $request->input('pagination_next_button_selector', '')
             ];
         } else {
-            // URL pagination
             $navigation['pagination']['url'] = [
                 'type' => $request->input('pagination_url_type', 'query'),
                 'parameter' => $request->input('pagination_url_parameter', 'page'),
@@ -514,7 +525,6 @@ class ConfigController extends Controller
         return $navigation;
     }
 
-
     /**
      * Run the scraper for the specified config.
      *
@@ -523,29 +533,23 @@ class ConfigController extends Controller
      */
     public function runScraper($filename)
     {
-        // مسیر کامل فایل کانفیگ
         $configPath = storage_path('app/private/' . $filename . '.json');
 
-        // بررسی وجود فایل
         if (!file_exists($configPath)) {
             return redirect()->route('configs.index')->with('error', 'فایل کانفیگ یافت نشد!');
         }
 
-        // بررسی آیا این کانفیگ در حال اجرا است یا خیر
         $runFileName = $filename . '.json';
         $runFilePath = 'private/runs/' . $runFileName;
 
         if (Storage::exists($runFilePath)) {
             $existingRun = json_decode(Storage::get($runFilePath), true);
 
-            // بررسی اینکه آیا اسکرپر در حال اجراست
             if (isset($existingRun['status']) && $existingRun['status'] === 'running' && isset($existingRun['pid'])) {
-                // چک کردن اینکه پروسه هنوز در حال اجراست
                 if ($this->isProcessRunning($existingRun['pid'])) {
                     return redirect()->route('configs.index')->with('error', 'اسکرپر برای کانفیگ ' . $filename . ' در حال حاضر در حال اجراست! لطفاً ابتدا آن را متوقف کنید.');
                 }
 
-                // چک کردن پروسه‌های مرتبط دیگر
                 $command = "ps aux | grep 'scrape:start.*{$filename}' | grep -v grep";
                 exec($command, $output);
 
@@ -553,27 +557,22 @@ class ConfigController extends Controller
                     return redirect()->route('configs.index')->with('error', 'اسکرپر برای کانفیگ ' . $filename . ' در حال حاضر در حال اجراست! لطفاً ابتدا آن را متوقف کنید.');
                 }
 
-                // اگر به اینجا رسیدیم، پروسه کرش کرده است
                 $existingRun['status'] = 'crashed';
                 $existingRun['stopped_at'] = date('Y-m-d H:i:s');
                 Storage::put($runFilePath, json_encode($existingRun, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
             }
         }
 
-        // ایجاد مسیر برای ذخیره لاگ‌ها
         $logDirectory = storage_path('logs/scrapers');
         if (!file_exists($logDirectory)) {
             mkdir($logDirectory, 0755, true);
         }
 
-        // نام فایل لاگ بر اساس نام کانفیگ و تاریخ
         $logFileName = $filename . '_' . date('Y-m-d_H-i-s') . '.log';
         $logFile = $logDirectory . '/' . $logFileName;
 
-        // ایجاد یک فایل لاگ خالی با هدر UTF-8
         file_put_contents($logFile, "اجرای اسکرپر برای کانفیگ {$filename} در تاریخ " . date('Y-m-d H:i:s') . " شروع شد...\n");
 
-        // اجرای دستور به صورت غیر همزمان و ذخیره PID
         $cmd = sprintf(
             'nohup php %s scrape:start --config=%s >> %s 2>&1 & echo $!',
             base_path('artisan'),
@@ -583,31 +582,24 @@ class ConfigController extends Controller
 
         $pid = exec($cmd);
 
-        // اگر PID خالی باشد یا صفر باشد، اجرا با خطا مواجه شده است
         if (empty($pid) || $pid == 0) {
-            // اضافه کردن پیام خطا به فایل لاگ
             file_put_contents($logFile, "\n[" . date('Y-m-d H:i:s') . "] خطا در اجرای اسکرپر: PID نامعتبر\n", FILE_APPEND);
             return redirect()->route('configs.index')->with('error', 'خطا در اجرای اسکرپر. لطفاً لاگ‌ها را بررسی کنید.');
         }
 
-        // ایجاد دایرکتوری runs اگر وجود ندارد
         if (!Storage::exists('private/runs')) {
             Storage::makeDirectory('private/runs', 0755);
         }
 
-        // بررسی آیا قبلاً فایل run برای این کانفیگ ایجاد شده است
         $runInfo = [];
 
         if (Storage::exists($runFilePath)) {
-            // اگر فایل قبلاً وجود دارد، آن را بخوانیم و به‌روزرسانی کنیم
             $runInfo = json_decode(Storage::get($runFilePath), true);
 
-            // اضافه کردن تاریخچه اجرای قبلی
             if (!isset($runInfo['history'])) {
                 $runInfo['history'] = [];
             }
 
-            // اگر اطلاعات اجرای قبلی وجود دارد، آن را به تاریخچه اضافه کنیم
             if (isset($runInfo['started_at']) && isset($runInfo['log_file'])) {
                 $previousRun = [
                     'started_at' => $runInfo['started_at'],
@@ -622,38 +614,32 @@ class ConfigController extends Controller
                     $previousRun['status'] = $runInfo['status'];
                 }
 
-                // اضافه کردن به تاریخچه
                 array_unshift($runInfo['history'], $previousRun);
 
-                // محدود کردن تعداد تاریخچه به 10 آیتم آخر
                 if (count($runInfo['history']) > 10) {
                     $runInfo['history'] = array_slice($runInfo['history'], 0, 10);
                 }
             }
         }
 
-        // به‌روزرسانی اطلاعات اجرای فعلی
         $runInfo['filename'] = $filename;
         $runInfo['log_file'] = $logFileName;
         $runInfo['started_at'] = date('Y-m-d H:i:s');
         $runInfo['pid'] = (int)$pid;
         $runInfo['status'] = 'running';
 
-        // اگر وضعیت قبلی توقف بود، آن را حذف کنیم
         if (isset($runInfo['stopped_at'])) {
             unset($runInfo['stopped_at']);
         }
 
-        // ذخیره اطلاعات اجرا در فایل
         Storage::put($runFilePath, json_encode($runInfo, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
         return redirect()->route('configs.index')->with('success', 'اسکرپر برای کانفیگ ' . $filename . ' با موفقیت اجرا شد. می‌توانید لاگ‌ها را مشاهده کنید.');
     }
 
-
     public function history()
     {
-        $files = Storage::files();
+        $files = Storage::files('private');
         $configs = [];
 
         foreach ($files as $file) {
@@ -664,7 +650,6 @@ class ConfigController extends Controller
                     'content' => json_decode(Storage::get($file), true)
                 ];
 
-                // بارگذاری تاریخچه اجرا
                 $runFilePath = 'private/runs/' . $filename . '.json';
                 if (Storage::exists($runFilePath)) {
                     $runInfo = json_decode(Storage::get($runFilePath), true);
@@ -677,11 +662,10 @@ class ConfigController extends Controller
             }
         }
 
-        // مرتب‌سازی بر اساس جدیدترین تاریخچه
         usort($configs, function ($a, $b) {
             $aTime = isset($a['history'][0]['started_at']) ? $a['history'][0]['started_at'] : '0000-00-00';
             $bTime = isset($b['history'][0]['started_at']) ? $b['history'][0]['started_at'] : '0000-00-00';
-            return strcmp($bTime, $aTime); // نزولی
+            return strcmp($bTime, $aTime);
         });
 
         return view('configs.history', compact('configs'));
@@ -695,10 +679,8 @@ class ConfigController extends Controller
      */
     public function showLogs($filename)
     {
-        // مسیر دایرکتوری لاگ‌ها
         $logDirectory = storage_path('logs/scrapers');
 
-        // لیست فایل‌های لاگ مربوط به این کانفیگ
         $logFiles = [];
 
         if (file_exists($logDirectory)) {
@@ -706,7 +688,6 @@ class ConfigController extends Controller
 
             foreach ($allFiles as $file) {
                 if (strpos($file, $filename . '_') === 0 && pathinfo($file, PATHINFO_EXTENSION) === 'log') {
-                    // استخراج تاریخ از نام فایل
                     $datePart = str_replace($filename . '_', '', pathinfo($file, PATHINFO_FILENAME));
 
                     $logFiles[] = [
@@ -719,7 +700,6 @@ class ConfigController extends Controller
                 }
             }
 
-            // مرتب‌سازی بر اساس تاریخ تغییر (جدیدترین در ابتدا)
             usort($logFiles, function ($a, $b) {
                 return $b['last_modified'] - $a['last_modified'];
             });
@@ -742,19 +722,15 @@ class ConfigController extends Controller
             return response('فایل لاگ یافت نشد.', 404);
         }
 
-        // خواندن محتوای فایل با پشتیبانی از UTF-8
         $content = file_get_contents($logPath);
 
-        // تشخیص اینکه آیا فایل با BOM شروع می‌شود یا خیر
         if (substr($content, 0, 3) === "\xEF\xBB\xBF") {
-            // حذف BOM
             $content = substr($content, 3);
         }
 
         return response($content)
             ->header('Content-Type', 'text/plain; charset=UTF-8');
     }
-
 
     /**
      * Stop the running scraper for the specified config.
@@ -764,7 +740,6 @@ class ConfigController extends Controller
      */
     public function stopScraper($filename)
     {
-        // بررسی وجود فایل اجرا
         $runFilePath = 'private/runs/' . $filename . '.json';
 
         if (!Storage::exists($runFilePath)) {
@@ -780,9 +755,7 @@ class ConfigController extends Controller
         $pid = $runInfo['pid'];
         $stopped = false;
 
-        // بررسی وجود پروسه
         if ($this->isProcessRunning($pid)) {
-            // توقف پروسه
             exec("kill -9 {$pid} 2>&1", $output, $result);
 
             if ($result === 0) {
@@ -790,7 +763,6 @@ class ConfigController extends Controller
             }
         }
 
-        // همچنین به دنبال پروسه‌های php artisan با نام فایل کانفیگ بگردیم
         $command = "ps aux | grep 'scrape:start.*{$filename}' | grep -v grep | awk '{print $2}'";
         exec($command, $output);
 
@@ -802,13 +774,11 @@ class ConfigController extends Controller
         }
 
         if ($stopped) {
-            // به‌روزرسانی وضعیت در فایل
             $runInfo['status'] = 'stopped';
             $runInfo['stopped_at'] = date('Y-m-d H:i:s');
 
             Storage::put($runFilePath, json_encode($runInfo, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
-            // اضافه کردن پیام به فایل لاگ
             if (isset($runInfo['log_file'])) {
                 $logPath = storage_path('logs/scrapers/' . $runInfo['log_file']);
                 if (file_exists($logPath)) {
@@ -837,5 +807,4 @@ class ConfigController extends Controller
         exec("ps -p {$pid}", $output, $result);
         return $result === 0;
     }
-
 }

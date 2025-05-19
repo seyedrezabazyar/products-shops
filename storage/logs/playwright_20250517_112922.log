@@ -1,6 +1,0 @@
-[STDOUT] Launching browser...
-[STDOUT] Browser launched successfully.
-[STDOUT] Creating new browser context with user agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/91.0.4472.124
-[STDOUT] Browser context and page created successfully.
-[STDOUT] Using pagination method: url
-[STDOUT] Processing page 1 at URL: https://abnamaaral.com/product-category/pool-fittings/brass-fittings...

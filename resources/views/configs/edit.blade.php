@@ -141,6 +141,105 @@
             color: #996400;
             font-weight: 600;
         }
+
+        /* استایل‌های تم دارک */
+        body.dark {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23808080' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        body.dark .card {
+            background-color: #3a3a3a;
+            border-color: #555;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark .input-field {
+            background-color: #444;
+            border-color: #666;
+            color: #e0e0e0;
+        }
+
+        body.dark .input-field:focus {
+            border-color: #888;
+            box-shadow: 0 0 0 2px rgba(136, 136, 136, 0.3);
+        }
+
+        body.dark .btn-primary {
+            background-color: #666;
+        }
+
+        body.dark .btn-primary:hover {
+            background-color: #777;
+        }
+
+        body.dark .btn-secondary {
+            background-color: #555;
+            color: #e0e0e0;
+        }
+
+        body.dark .btn-secondary:hover {
+            background-color: #666;
+        }
+
+        body.dark .btn-danger {
+            background-color: #ef4444;
+        }
+
+        body.dark .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        body.dark .section-header {
+            border-color: #555;
+            color: #bbb;
+        }
+
+        body.dark .method-box {
+            background-color: #444;
+            border-color: #666;
+        }
+
+        body.dark .method-box.selected {
+            background-color: rgba(136, 136, 136, 0.2);
+            border-color: #888;
+        }
+
+        body.dark .method-box.selected .method-circle {
+            background-color: #888;
+            border-color: #777;
+        }
+
+        body.dark .method-box.selected .method-title {
+            color: #bbb;
+        }
+
+        body.dark .method-circle {
+            background-color: #555;
+            border-color: #666;
+        }
+
+        body.dark .text-brown-700 {
+            color: #e0e0e0;
+        }
+
+        body.dark .text-brown-600 {
+            color: #bbb;
+        }
+
+        body.dark .text-brown-500 {
+            color: #aaa;
+        }
+
+        body.dark .border-brown-200 {
+            border-color: #555;
+        }
+
+        body.dark .bg-cream-50 {
+            background-color: #444;
+            border-color: #666;
+        }
     </style>
 </head>
 <body class="min-h-screen py-8">
@@ -154,6 +253,13 @@
                       clip-rule="evenodd"/>
             </svg>
             ویرایش کانفیگ: {{ $filename }}
+            <button id="theme-toggle" class="btn-secondary px-4 py-2 rounded-lg flex items-center">
+                <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none"
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                </svg>
+            </button>
         </h1>
 
         @if ($errors->any())
@@ -1018,6 +1124,80 @@
                 </div>
             </div>
 
+            <!-- قوانین پیشوند عنوان -->
+            <div class="card p-6 mb-6">
+                <h2 class="section-header text-xl flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-2 text-brown-600" fill="none"
+                         viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+                    </svg>
+                    قوانین پیشوند عنوان
+                </h2>
+
+                <div class="form-group">
+                    <label class="block text-sm font-medium text-brown-700 mb-2">قوانین پیشوند عنوان <span
+                            class="text-brown-400">(اختیاری)</span></label>
+                    <div class="title-prefix-rules-container space-y-3">
+                        @foreach (old('title_prefix_rules.url', $content['title_prefix_rules'] ?? []) as $url => $rule)
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 title-prefix-rule">
+                                <div class="flex">
+                                    <input type="url" name="title_prefix_rules[url][]" value="{{ $url }}"
+                                           class="input-field flex-1 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+                                           placeholder="https://example.com/fa/book/">
+                                    <button type="button"
+                                            class="remove-title-prefix-rule mr-2 btn-danger px-3 py-2 rounded-lg flex items-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                             fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                  clip-rule="evenodd"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="flex">
+                                    <input type="text" name="title_prefix_rules[prefix][]"
+                                           value="{{ $rule['prefix'] ?? '' }}"
+                                           class="input-field flex-1 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+                                           placeholder="کتاب">
+                                </div>
+                            </div>
+                        @endforeach
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 title-prefix-rule">
+                            <div class="flex">
+                                <input type="url" name="title_prefix_rules[url][]"
+                                       class="input-field flex-1 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+                                       placeholder="https://example.com/fa/book/">
+                                <button type="button"
+                                        class="remove-title-prefix-rule mr-2 btn-danger px-3 py-2 rounded-lg flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                         fill="currentColor">
+                                        <path fill-rule="evenodd"
+                                              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                              clip-rule="evenodd"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="flex">
+                                <input type="text" name="title_prefix_rules[prefix][]"
+                                       class="input-field flex-1 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+                                       placeholder="کتاب">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button"
+                            class="add-title-prefix-rule mt-3 btn-primary px-4 py-2 rounded-lg flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20"
+                             fill="currentColor">
+                            <path fill-rule="evenodd"
+                                  d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                                  clip-rule="evenodd"/>
+                        </svg>
+                        افزودن قانون پیشوند
+                    </button>
+                </div>
+            </div>
+
             <!-- دکمه ثبت -->
             <div class="flex justify-center mt-8">
                 <button type="submit"
@@ -1270,6 +1450,54 @@
             }
             if (urlPaginationUseSampleUrl && urlPaginationUseSampleUrl.checked) {
                 paginationSampleUrlContainer.classList.remove('hidden');
+            }
+        });
+        // دکمه‌های اضافه کردن و حذف قوانین پیشوند عنوان
+        document.querySelector('.add-title-prefix-rule').addEventListener('click', function () {
+            const container = document.querySelector('.title-prefix-rules-container');
+            const newRule = document.createElement('div');
+            newRule.className = 'grid grid-cols-1 md:grid-cols-2 gap-4 title-prefix-rule';
+            newRule.innerHTML = `
+        <div class="flex">
+            <input type="url" name="title_prefix_rules[url][]" class="input-field flex-1 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder="https://example.com/fa/book/">
+            <button type="button" class="remove-title-prefix-rule mr-2 btn-danger px-3 py-2 rounded-lg flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        </div>
+        <div class="flex">
+            <input type="text" name="title_prefix_rules[prefix][]" class="input-field flex-1 px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200" placeholder="کتاب">
+        </div>
+    `;
+            container.appendChild(newRule);
+
+            newRule.querySelector('.remove-title-prefix-rule').addEventListener('click', function () {
+                container.removeChild(newRule);
+            });
+        });
+
+        // حذف قوانین پیشوند موجود
+        document.querySelectorAll('.remove-title-prefix-rule').forEach(btn => {
+            btn.addEventListener('click', function () {
+                this.parentElement.parentElement.remove();
+            });
+        });
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+
+        themeToggleBtn.addEventListener('click', function () {
+            document.body.classList.toggle('dark');
+
+            // تغییر آیکون بر اساس تم
+            if (document.body.classList.contains('dark')) {
+                themeIcon.innerHTML = `
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+        `;
+            } else {
+                themeIcon.innerHTML = `
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+        `;
             }
         });
     </script>

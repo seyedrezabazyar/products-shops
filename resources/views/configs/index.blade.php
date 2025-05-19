@@ -293,6 +293,112 @@
         table.classic-table tr:hover {
             background-color: #f8f1e9;
         }
+
+        /* استایل‌های تم دارک */
+        body.dark {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23808080' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        body.dark .card {
+            background-color: #3a3a3a;
+            border-color: #555;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        body.dark .input-field {
+            background-color: #444;
+            border-color: #666;
+            color: #e0e0e0;
+        }
+
+        body.dark .input-field:focus {
+            border-color: #888;
+            box-shadow: 0 0 0 2px rgba(136, 136, 136, 0.3);
+        }
+
+        body.dark .btn-primary {
+            background-color: #666;
+        }
+
+        body.dark .btn-primary:hover {
+            background-color: #777;
+        }
+
+        body.dark .btn-secondary {
+            background-color: #555;
+            color: #e0e0e0;
+        }
+
+        body.dark .btn-secondary:hover {
+            background-color: #666;
+        }
+
+        body.dark .btn-danger {
+            background-color: #ef4444;
+        }
+
+        body.dark .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
+        body.dark .section-header {
+            border-color: #555;
+            color: #bbb;
+        }
+
+        body.dark .classic-panel {
+            background-color: #2f2f2f;
+            border: 1px solid #d5ad85;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 0.5rem;
+        }
+
+        body.dark .method-box {
+            background-color: #444;
+            border-color: #666;
+        }
+
+        body.dark .method-box.selected {
+            background-color: rgba(136, 136, 136, 0.2);
+            border-color: #888;
+        }
+
+        body.dark .method-box.selected .method-circle {
+            background-color: #888;
+            border-color: #777;
+        }
+
+        body.dark .method-box.selected .method-title {
+            color: #bbb;
+        }
+
+        body.dark .method-circle {
+            background-color: #555;
+            border-color: #666;
+        }
+
+        body.dark .text-brown-700 {
+            color: #e0e0e0;
+        }
+
+        body.dark .text-brown-600 {
+            color: #bbb;
+        }
+
+        body.dark .text-brown-500 {
+            color: #aaa;
+        }
+
+        body.dark .border-brown-200 {
+            border-color: #555;
+        }
+
+        body.dark .bg-cream-50 {
+            background-color: #444;
+            border-color: #666;
+        }
     </style>
 </head>
 <body class="min-h-screen py-10">
@@ -304,6 +410,13 @@
             <div class="flex items-center mb-4 md:mb-0">
                 <i class="fas fa-cogs text-2xl text-sepia-600 ml-3"></i>
                 <h1 class="text-3xl font-bold classic-title">مدیریت کانفیگ‌ها</h1>
+                <button id="theme-toggle" class="btn-secondary px-4 py-2 rounded-lg flex items-center">
+                    <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none"
+                         viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                    </svg>
+                </button>
             </div>
             <a href="{{ route('configs.create') }}"
                class="btn-gold px-6 py-3 rounded flex items-center shadow-lg hover:shadow-xl transition-all duration-300">
@@ -560,6 +673,24 @@
 </form>
 
 <script>
+
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+
+    themeToggleBtn.addEventListener('click', function () {
+        document.body.classList.toggle('dark');
+
+        // تغییر آیکون بر اساس تم
+        if (document.body.classList.contains('dark')) {
+            themeIcon.innerHTML = `
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+        `;
+        } else {
+            themeIcon.innerHTML = `
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+        `;
+        }
+    });
     // Modal functionality
     const modal = document.getElementById('logModal');
     const closeModal = document.querySelector('.close-modal');
