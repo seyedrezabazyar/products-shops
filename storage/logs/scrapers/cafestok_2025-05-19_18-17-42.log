@@ -1,0 +1,29 @@
+اجرای اسکرپر برای کانفیگ cafestok در تاریخ 2025-05-19 18:17:42 شروع شد...
+Starting flexible scraper...
+Loading configuration from /var/www/products-shops/storage/app/private/private/cafestok.json
+Request delay set to 500 ms.
+Starting scrape operation...
+
+   Illuminate\Database\QueryException 
+
+  SQLSTATE[42S22]: Column not found: 1054 Unknown column 'image' in 'field list' (Connection: dynamic, SQL: select `url`, `image`, `product_id`, `off` from `links` where `processed` = 0 and `id` >= 10)
+
+  at /var/www/products-shops/vendor/laravel/framework/src/Illuminate/Database/Connection.php:822
+    818▕                     $this->getName(), $query, $this->prepareBindings($bindings), $e
+    819▕                 );
+    820▕             }
+    821▕ 
+  ➜ 822▕             throw new QueryException(
+    823▕                 $this->getName(), $query, $this->prepareBindings($bindings), $e
+    824▕             );
+    825▕         }
+    826▕     }
+
+      [2m+9 vendor frames [22m
+
+  10  /var/www/products-shops/app/Http/Controllers/StartController.php:3344
+      Illuminate\Database\Query\Builder::get()
+
+  11  /var/www/products-shops/app/Http/Controllers/StartController.php:2182
+      App\Http\Controllers\StartController::getProductLinksFromDatabase()
+

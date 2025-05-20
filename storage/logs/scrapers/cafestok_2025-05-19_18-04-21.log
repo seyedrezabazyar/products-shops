@@ -1,0 +1,44 @@
+اجرای اسکرپر برای کانفیگ cafestok در تاریخ 2025-05-19 18:04:21 شروع شد...
+Starting flexible scraper...
+Loading configuration from /var/www/products-shops/storage/app/private/private/cafestok.json
+Request delay set to 500 ms.
+Starting scrape operation...
+[1;95mExtracted product_id from product_page: 4985[0m
+[1;95mExtracted product_id from product_page: 10920[0m
+[1;95mExtracted product_id from product_page: 11624[0m
+[1;95mExtracted product_id from product_page: 9486[0m
+[1;95mExtracted product_id from product_page: 9480[0m
+[1;95mExtracted product_id from product_page: 5892[0m
+[1;95mExtracted product_id from product_page: 4981[0m
+[1;95mExtracted product_id from product_page: 14562[0m
+[1;95mExtracted product_id from product_page: 4782[0m
+[1;95mExtracted product_id from product_page: 5641[0m
+[1;95mExtracted product_id from product_page: 5021[0m
+[1;95mExtracted product_id from product_page: 9318[0m
+[1;95mExtracted product_id from product_page: 14562[0m
+[1;95mExtracted product_id from product_page: 4985[0m
+[1;95mExtracted product_id from product_page: 9486[0m
+[1;95mExtracted product_id from product_page: 5021[0m
+[1;95mExtracted product_id from product_page: 9318[0m
+[1;95mExtracted product_id from product_page: 5892[0m
+[1;95mExtracted product_id from product_page: 10920[0m
+[1;95mExtracted product_id from product_page: 4981[0m
+[1;95mExtracted product_id from product_page: 9480[0m
+[1;95mExtracted product_id from product_page: 5641[0m
+[1;95mExtracted product_id from product_page: 4782[0m
+[1;95mExtracted product_id from product_page: 11624[0m
+[1;95mExtracted product_id from product_page: 14562[0m
+[1;95mExtracted product_id from product_page: 4985[0m
+[1;95mExtracted product_id from product_page: 4981[0m
+[1;95mExtracted product_id from product_page: 5021[0m
+[1;95mExtracted product_id from product_page: 5892[0m
+[1;95mExtracted product_id from product_page: 9486[0m
+[1;95mExtracted product_id from product_page: 10920[0m
+[1;95mExtracted product_id from product_page: 9480[0m
+[1;95mExtracted product_id from product_page: 9318[0m
+[1;95mExtracted product_id from product_page: 11624[0m
+[1;95mExtracted product_id from product_page: 5641[0m
+[1;95mExtracted product_id from product_page: 4782[0m
+Scraping completed successfully!
+Total products scraped: 12
+Failed links: 12

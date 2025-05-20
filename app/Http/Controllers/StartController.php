@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FailedLink;
+use App\Models\Link;
 use App\Models\Product;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -19,7 +20,7 @@ class StartController
     private array $failedUrlsDueToInternalError = [];
     private $outputCallback = null;
     private int $processedCount = 0;
-    private int $failedLinks = 0;
+    protected array $failedLinks = [];
     private array $sharedProductIds = [];
     private const COLOR_GREEN = "\033[1;92m";
     private const COLOR_RED = "\033[1;91m";
@@ -31,11 +32,21 @@ class StartController
 
     public function __construct(array $config)
     {
-        $this->config = $config;
         ini_set('memory_limit', '1024M'); // افزایش حافظه
         set_time_limit(0); // حذف محدودیت زمانی
-        $this->httpClient = new Client([
+        $this->config = $config;
+        // اعتبارسنجی و تصحیح کانفیگ قبل از ادامه
+        $this->validateAndFixConfig();
 
+        // تنظیم زمان تاخیر بین درخواست‌ها
+        $delay = $this->config['request_delay'] ?? mt_rand(
+            $this->config['request_delay_min'] ?? 500,
+            $this->config['request_delay_max'] ?? 2000
+        );
+        $this->setRequestDelay($delay);
+
+        $this->httpClient = new Client([
+            'proxy' => "socks5://127.0.0.1:1089",
             'timeout' => $this->config['timeout'] ?? 120, // افزایش تایم‌اوت به 120 ثانیه
             'verify' => $this->config['verify_ssl'] ?? false,
             'headers' => [
@@ -1322,21 +1333,36 @@ JAVASCRIPT;
     private function setupDatabase(): void
     {
         $dbName = $this->getDatabaseNameFromBaseUrl();
+        $databaseMode = $this->config['database'] ?? 'clear';
+        $this->log("Database mode: $databaseMode", self::COLOR_GREEN);
 
         // اتصال به دیتابیس پیش‌فرض برای مدیریت دیتابیس‌ها
         $defaultConnection = config('database.connections.mysql.database');
 
         // بررسی وجود دیتابیس
         $exists = DB::select("SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?", [$dbName]);
+        $databaseExists = !empty($exists);
 
-        if (!empty($exists)) {
-            $this->log("Database $dbName exists, dropping it...", self::COLOR_YELLOW);
-            DB::statement("DROP DATABASE `$dbName`");
+        if ($databaseMode === 'clear') {
+            // حالت clear: حذف و ایجاد مجدد دیتابیس
+            if ($databaseExists) {
+                $this->log("Database $dbName exists, dropping it...", self::COLOR_YELLOW);
+                DB::statement("DROP DATABASE `$dbName`");
+            }
+
+            $this->log("Creating database $dbName...", self::COLOR_GREEN);
+            DB::statement("CREATE DATABASE `$dbName`");
+        } elseif ($databaseMode === 'continue') {
+            // حالت continue: استفاده از دیتابیس موجود یا ایجاد اگه وجود نداره
+            if (!$databaseExists) {
+                $this->log("Database $dbName does not exist, creating it...", self::COLOR_YELLOW);
+                DB::statement("CREATE DATABASE `$dbName`");
+            } else {
+                $this->log("Using existing database $dbName", self::COLOR_GREEN);
+            }
+        } else {
+            throw new \Exception("Invalid database mode specified: $databaseMode. Use 'clear' or 'continue'.");
         }
-
-        // ایجاد دیتابیس جدید
-        $this->log("Creating database $dbName...", self::COLOR_GREEN);
-        DB::statement("CREATE DATABASE `$dbName`");
 
         // تنظیم اتصال داینامیک
         config(["database.connections.dynamic" => [
@@ -1356,40 +1382,45 @@ JAVASCRIPT;
 
         $this->log("Switched to database: $dbName", self::COLOR_GREEN);
 
-        // اجرای مهاجرت‌های خاص
-        $this->log("Running specific migrations for database $dbName...", self::COLOR_GREEN);
+        // اجرای مهاجرت‌ها فقط اگه دیتابیس تازه ایجاد شده یا در حالت clear هستیم
+        if ($databaseMode === 'clear' || !$databaseExists) {
+            $this->log("Running specific migrations for database $dbName...", self::COLOR_GREEN);
 
-        // لیست فایل‌های مهاجرت مورد نیاز
-        $migrationFiles = [
-            database_path('migrations/2025_04_08_162133_create_products_table.php'),
-            database_path('migrations/2025_04_13_073528_create_failed_links_table.php'),
-        ];
+            // لیست فایل‌های مهاجرت مورد نیاز
+            $migrationFiles = [
+                database_path('migrations/2025_04_08_162133_create_products_table.php'),
+                database_path('migrations/2025_04_13_073528_create_failed_links_table.php'),
+                database_path('migrations/2025_05_19_162835_create_links_table.php'),
+            ];
 
-        foreach ($migrationFiles as $file) {
-            try {
-                if (!file_exists($file)) {
-                    throw new \Exception("Migration file $file not found");
+            foreach ($migrationFiles as $file) {
+                try {
+                    if (!file_exists($file)) {
+                        throw new \Exception("Migration file $file not found");
+                    }
+
+                    // بارگذاری دستی فایل مهاجرت
+                    require_once $file;
+
+                    // استخراج نام کلاس از فایل
+                    $className = $this->getMigrationClassName($file);
+                    if (!class_exists($className)) {
+                        throw new \Exception("Migration class $className not found in $file");
+                    }
+
+                    $migration = new $className();
+                    $migration->up();
+                    $this->log("Applied migration: " . basename($file), self::COLOR_GREEN);
+                } catch (\Exception $e) {
+                    $this->log("Failed to apply migration " . basename($file) . ": {$e->getMessage()}", self::COLOR_RED);
+                    throw $e;
                 }
-
-                // بارگذاری دستی فایل مهاجرت
-                require_once $file;
-
-                // استخراج نام کلاس از فایل
-                $className = $this->getMigrationClassName($file);
-                if (!class_exists($className)) {
-                    throw new \Exception("Migration class $className not found in $file");
-                }
-
-                $migration = new $className();
-                $migration->up();
-                $this->log("Applied migration: " . basename($file), self::COLOR_GREEN);
-            } catch (\Exception $e) {
-                $this->log("Failed to apply migration " . basename($file) . ": {$e->getMessage()}", self::COLOR_RED);
-                throw $e;
             }
-        }
 
-        $this->log("Specific migrations completed for database $dbName", self::COLOR_GREEN);
+            $this->log("Specific migrations completed for database $dbName", self::COLOR_GREEN);
+        } else {
+            $this->log("Skipping migrations for database $dbName in continue mode", self::COLOR_GREEN);
+        }
     }
 
     private function getMigrationClassName(string $file): string
@@ -1406,23 +1437,27 @@ JAVASCRIPT;
         $this->log("Processing " . count($links) . " product links in batches...", self::COLOR_GREEN);
         $totalProducts = count($links);
         $this->processedCount = 0;
-        $this->failedLinks = 0;
+        $this->failedLinks = [];
         $processedUrls = [];
+
+        // لاگ لینک‌های ورودی برای دیباگ
+        $this->log("Input links: " . json_encode(array_slice($links, 0, 5), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "...", self::COLOR_YELLOW);
 
         $filteredProducts = array_filter($links, function ($product) {
             $url = is_array($product) ? $product['url'] : $product;
-            $isValid = !$this->isUnwantedDomain($url);
+            $isValid = !$this->isUnwantedDomain($url) && !$this->isInvalidLink($url);
             if (!$isValid) {
-                $this->log("Filtered out unwanted link before processing: $url", self::COLOR_YELLOW);
+                $this->log("Filtered out unwanted/invalid link: $url", self::COLOR_YELLOW);
             }
             return $isValid;
         });
-        $this->log("Filtered to " . count($filteredProducts) . " valid product links for processing", self::COLOR_GREEN);
+
+        $this->log("Filtered to " . count($filteredProducts) . " valid product links", self::COLOR_GREEN);
 
         $method = $processingMethod ?? $this->config['method'] ?? 1;
+        $this->log("Using processing method: $method", self::COLOR_GREEN);
 
         if ($method === 1) {
-            $this->log("Generating requests for " . count($filteredProducts) . " products", self::COLOR_GREEN);
             $requests = function () use ($filteredProducts) {
                 foreach ($filteredProducts as $product) {
                     yield new Request('GET', is_array($product) ? $product['url'] : $product);
@@ -1438,33 +1473,40 @@ JAVASCRIPT;
                     $productId = is_array($product) && isset($product['product_id']) ? $product['product_id'] : 'unknown';
 
                     if (in_array($url, $processedUrls)) {
-                        $this->log("Skipping duplicate: $url", self::COLOR_GREEN);
+                        $this->log("Skipping duplicate URL: $url", self::COLOR_YELLOW);
                         return;
                     }
 
                     $this->processedCount++;
-                    $this->log("Processing product {$this->processedCount} of {$totalProducts}");
+                    $this->log("Processing product {$this->processedCount}/{$totalProducts}: $url", self::COLOR_GREEN);
 
                     $productData = $this->extractProductData($url, (string)$response->getBody(), $image, $productId);
                     if ($productData && $this->validateProductData($productData)) {
                         if (is_array($product) && isset($product['off'])) {
                             $productData['off'] = $product['off'];
                         }
-                        $this->saveProductToDatabase($productData);
-                        $processedUrls[] = $url;
-                        $this->logProduct($productData, $totalProducts); // پاس دادن totalProducts
-                        $this->log("DEBUG: logProduct called for {$productData['title']}", self::COLOR_YELLOW); // پیام دیباگ
+                        try {
+                            $this->saveProductToDatabase($productData);
+                            $processedUrls[] = $url;
+                            $this->logProduct($productData);
+                            $this->updateLinkProcessedStatus($url);
+                            $this->log("Successfully processed: $url", self::COLOR_GREEN);
+                        } catch (\Exception $e) {
+                            $this->failedLinks[] = $url;
+                            $this->saveFailedLink($url, "Database error: " . $e->getMessage());
+                            $this->log("Failed to save product: $url - {$e->getMessage()}", self::COLOR_RED);
+                        }
                     } else {
-                        $this->failedLinks++;
-                        $this->saveFailedLink($url, "Failed to extract valid product data");
-                        $this->log("Added to failed links: $url", self::COLOR_RED);
+                        $this->failedLinks[] = $url;
+                        $this->saveFailedLink($url, "Invalid or missing product data");
+                        $this->log("Failed to extract valid data: $url", self::COLOR_RED);
                     }
                 },
                 'rejected' => function ($reason, $index) use ($filteredProducts) {
-                    $this->failedLinks++;
                     $url = is_array($filteredProducts[$index]) ? $filteredProducts[$index]['url'] : $filteredProducts[$index];
-                    $this->saveFailedLink($url, "Failed to fetch product page: " . $reason->getMessage());
-                    $this->log("Added to failed links: $url", self::COLOR_YELLOW);
+                    $this->failedLinks[] = $url;
+                    $this->saveFailedLink($url, "Failed to fetch: " . $reason->getMessage());
+                    $this->log("Fetch failed: $url - {$reason->getMessage()}", self::COLOR_YELLOW);
                 },
             ]);
 
@@ -1475,7 +1517,7 @@ JAVASCRIPT;
             $batches = array_chunk($filteredProducts, $batchSize);
 
             foreach ($batches as $batchIndex => $batch) {
-                $this->log("Processing batch " . ($batchIndex + 1) . " with " . count($batch) . " products", self::COLOR_GREEN);
+                $this->log("Processing batch " . ($batchIndex + 1) . "/" . count($batches) . " with " . count($batch) . " products", self::COLOR_GREEN);
 
                 foreach ($batch as $product) {
                     $url = is_array($product) ? $product['url'] : $product;
@@ -1483,18 +1525,18 @@ JAVASCRIPT;
                     $productId = is_array($product) && isset($product['product_id']) ? $product['product_id'] : 'unknown';
 
                     if (in_array($url, $processedUrls)) {
-                        $this->log("Skipping duplicate: $url", self::COLOR_GREEN);
+                        $this->log("Skipping duplicate URL: $url", self::COLOR_YELLOW);
                         continue;
                     }
 
                     $this->processedCount++;
-                    $this->log("Processing product {$this->processedCount} of {$totalProducts}: $url", self::COLOR_GREEN);
+                    $this->log("Processing product {$this->processedCount}/{$totalProducts}: $url", self::COLOR_GREEN);
 
                     $productData = $this->processProductPageWithPlaywright($url);
                     if (isset($productData['error'])) {
-                        $this->failedLinks++;
+                        $this->failedLinks[] = $url;
                         $this->saveFailedLink($url, $productData['error']);
-                        $this->log("Added to failed links: $url - {$productData['error']}", self::COLOR_RED);
+                        $this->log("Failed: $url - {$productData['error']}", self::COLOR_RED);
                         continue;
                     }
 
@@ -1507,19 +1549,21 @@ JAVASCRIPT;
                     $productData['guarantee'] = $productData['guarantee'] ?? '';
 
                     if ($this->validateProductData($productData)) {
-                        $this->log("DEBUG: Valid product data for $url, proceeding to save", self::COLOR_YELLOW);
                         try {
                             $this->saveProductToDatabase($productData);
                             $processedUrls[] = $url;
-                            $this->log("DEBUG: Calling logProduct for {$productData['title']}", self::COLOR_YELLOW);
-                            $this->logProduct($productData, $totalProducts);
+                            $this->logProduct($productData);
+                            $this->updateLinkProcessedStatus($url);
+                            $this->log("Successfully processed: $url", self::COLOR_GREEN);
                         } catch (\Exception $e) {
-                            $this->failedLinks++;
+                            $this->failedLinks[] = $url;
                             $this->saveFailedLink($url, "Database error: " . $e->getMessage());
-                            $this->log("Added to failed links due to database error: $url", self::COLOR_RED);
+                            $this->log("Failed to save product: $url - {$e->getMessage()}", self::COLOR_RED);
                         }
                     } else {
-                        $this->log("DEBUG: Invalid product data for $url", self::COLOR_RED);
+                        $this->failedLinks[] = $url;
+                        $this->saveFailedLink($url, "Invalid product data: " . json_encode($productData, JSON_UNESCAPED_UNICODE));
+                        $this->log("Invalid product data: $url", self::COLOR_RED);
                     }
 
                     usleep(rand($this->config['request_delay_min'] ?? 1000, $this->config['request_delay_max'] ?? 3000) * 1000);
@@ -1530,7 +1574,7 @@ JAVASCRIPT;
             $batches = array_chunk($filteredProducts, $batchSize);
 
             foreach ($batches as $batchIndex => $batch) {
-                $this->log("Processing batch " . ($batchIndex + 1) . " with " . count($batch) . " products", self::COLOR_GREEN);
+                $this->log("Processing batch " . ($batchIndex + 1) . "/" . count($batches) . " with " . count($batch) . " products", self::COLOR_GREEN);
 
                 foreach ($batch as $product) {
                     $url = is_array($product) ? $product['url'] : $product;
@@ -1538,18 +1582,18 @@ JAVASCRIPT;
                     $productId = is_array($product) && isset($product['product_id']) ? $product['product_id'] : 'unknown';
 
                     if (in_array($url, $processedUrls)) {
-                        $this->log("Skipping duplicate: $url", self::COLOR_GREEN);
+                        $this->log("Skipping duplicate URL: $url", self::COLOR_YELLOW);
                         continue;
                     }
 
                     $this->processedCount++;
-                    $this->log("Processing product {$this->processedCount} of {$totalProducts}: $url", self::COLOR_GREEN);
+                    $this->log("Processing product {$this->processedCount}/{$totalProducts}: $url", self::COLOR_GREEN);
 
                     $productData = $this->extractProductData($url, null, $image, $productId);
                     if ($productData === null) {
-                        $this->failedLinks++;
+                        $this->failedLinks[] = $url;
                         $this->saveFailedLink($url, "Failed to extract product data");
-                        $this->log("Added to failed links due to null product data: $url", self::COLOR_RED);
+                        $this->log("Failed to extract data: $url", self::COLOR_RED);
                         continue;
                     }
 
@@ -1557,7 +1601,9 @@ JAVASCRIPT;
                     $productData['image'] = $image ?? ($productData['image'] ?? '');
                     $productData['product_id'] = $productId !== 'unknown' ? $productId : ($productData['product_id'] ?? 'unknown');
                     $productData['availability'] = isset($productData['availability']) ? (int)$productData['availability'] : 0;
-                    $productData['off'] = isset($productData['off']) ? (int)$productData['off'] : 0;
+                    $productData['off
+
+'] = isset($productData['off']) ? (int)$productData['off'] : 0;
                     $productData['category'] = $productData['category'] ?? '';
                     $productData['guarantee'] = $productData['guarantee'] ?? '';
 
@@ -1565,34 +1611,38 @@ JAVASCRIPT;
                         try {
                             $this->saveProductToDatabase($productData);
                             $processedUrls[] = $url;
-                            $this->logProduct($productData, $totalProducts);
-                            $this->log("Successfully saved product: $url", self::COLOR_GREEN);
+                            $this->logProduct($productData);
+                            $this->updateLinkProcessedStatus($url);
+                            $this->log("Successfully processed: $url", self::COLOR_GREEN);
                         } catch (\Exception $e) {
-                            $this->failedLinks++;
+                            $this->failedLinks[] = $url;
                             $this->saveFailedLink($url, "Database error: " . $e->getMessage());
-                            $this->log("Added to failed links due to database error: $url - {$e->getMessage()}", self::COLOR_RED);
+                            $this->log("Failed to save product: $url - {$e->getMessage()}", self::COLOR_RED);
                         }
                     } else {
-                        $this->failedLinks++;
-                        $reason = "Invalid product data: " . json_encode($productData, JSON_UNESCAPED_UNICODE);
-                        $this->saveFailedLink($url, $reason);
-                        $this->log("Added to failed links due to invalid product data: $url - $reason", self::COLOR_RED);
+                        $this->failedLinks[] = $url;
+                        $this->saveFailedLink($url, "Invalid product data: " . json_encode($productData, JSON_UNESCAPED_UNICODE));
+                        $this->log("Invalid product data: $url", self::COLOR_RED);
                     }
 
                     usleep(rand($this->config['request_delay_min'] ?? 1000, $this->config['request_delay_max'] ?? 3000) * 1000);
                 }
             }
         } else {
-            throw new \Exception("Invalid processing method specified: $method. Use 1, 2, or 3.");
+            throw new \Exception("Invalid processing method: $method. Use 1, 2, or 3.");
         }
 
-        $this->retryFailedLinks();
+        // تلاش مجدد برای لینک‌های شکست‌خورده
+        if (!empty($this->failedLinks)) {
+            $this->log("Retrying " . count($this->failedLinks) . " failed links...", self::COLOR_PURPLE);
+            $this->retryFailedLinks();
+        }
 
-        $this->log("Batch processing completed. Processed: {$this->processedCount}, Failed: {$this->failedLinks}", self::COLOR_GREEN);
+        $this->log("Batch processing completed. Processed: {$this->processedCount}, Failed: " . count($this->failedLinks), self::COLOR_GREEN);
 
         return [
             'processed' => $this->processedCount,
-            'failed' => $this->failedLinks,
+            'failed' => count($this->failedLinks),
             'pages_processed' => 0
         ];
     }
@@ -1998,62 +2048,95 @@ JAVASCRIPT;
     {
         $this->log("Starting scrape process...", self::COLOR_GREEN);
 
+        // لاگ محتوای کانفیگ برای دیباگ
+        $this->log("Config contents: " . json_encode($this->config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), self::COLOR_YELLOW);
+
+        // اعتبارسنجی کانفیگ
+        $this->validateConfig();
+
+        // آماده‌سازی دیتابیس
+        $this->setupDatabase();
+
         $links = [];
         $pagesProcessed = 0;
+        $this->processedCount = 0;
+        $this->failedLinks = [];
 
-        if ($this->config['method'] === 2) {
-            $this->log("Using method 2 to collect product links...", self::COLOR_GREEN);
-            $result = $this->fetchProductLinks();
+        // بررسی run_method
+        $runMethod = $this->config['run_method'] ?? 'new';
+        $this->log("Run method: $runMethod", self::COLOR_GREEN);
+
+        if ($runMethod === 'continue') {
+            // حالت ادامه: گرفتن لینک‌ها از دیتابیس
+            $this->log("Continuing with links from database...", self::COLOR_GREEN);
+            $result = $this->getProductLinksFromDatabase();
             $links = $result['links'] ?? [];
             $pagesProcessed = $result['pages_processed'] ?? 0;
-            $this->log("Collected " . count($links) . " unique product links from method 2.", self::COLOR_GREEN);
-            $this->log("Links structure: " . json_encode($links, JSON_PRETTY_PRINT), self::COLOR_YELLOW); // لاگ جدید
 
-            if (!empty($links)) {
-                $this->log("Processing " . count($links) . " links using method 1 for extraction...", self::COLOR_GREEN);
-                $batchResult = $this->processPagesInBatches($links, 1);
-                $pagesProcessed += $batchResult['pages_processed'] ?? 0;
-            } else {
-                $this->log("No links collected by method 2.", self::COLOR_YELLOW);
-            }
-        } elseif ($this->config['method'] === 1) {
-            $this->log("Using method 1 to collect and process links...", self::COLOR_GREEN);
-            $result = $this->scrapeMethodOneForUrl();
-            $links = $result['links'] ?? [];
-            $this->log("Links structure: " . json_encode($links, JSON_PRETTY_PRINT), self::COLOR_YELLOW);
-            $pagesProcessed = $result['pages_processed'] ?? 0;
-            $this->log("Collected " . count($links) . " links from method 1.", self::COLOR_GREEN);
-
-            if (!empty($links)) {
-                $processingMethod = $this->config['processing_method'] ?? $this->config['method'];
-                $this->log("Processing " . count($links) . " links using processing method: $processingMethod", self::COLOR_GREEN);
-                $batchResult = $this->processPagesInBatches($links, $processingMethod);
-                $pagesProcessed += $batchResult['pages_processed'] ?? 0;
-            } else {
-                $this->log("No links to process.", self::COLOR_YELLOW);
-            }
-        } elseif ($this->config['method'] === 3) {
-            $this->log("Using method 3 to collect and process links...", self::COLOR_GREEN);
-            $result = $this->scrapeMethodThree();
-            $links = $result['links'] ?? [];
-            $pagesProcessed = $result['pages_processed'] ?? 0;
-            $this->log("Collected " . count($links) . " links from method 3.", self::COLOR_GREEN);
-
-            if (!empty($links)) {
-                $processingMethod = $this->config['processing_method'] ?? $this->config['method'];
-                $this->log("Processing " . count($links) . " links using processing method: $processingMethod", self::COLOR_GREEN);
-                $batchResult = $this->processPagesInBatches($links, $processingMethod);
-                $pagesProcessed += $batchResult['pages_processed'] ?? 0;
-            } else {
-                $this->log("No links to process.", self::COLOR_YELLOW);
+            if (empty($links)) {
+                $this->log("No unprocessed links found in database. Stopping scrape.", self::COLOR_YELLOW);
+                return [
+                    'processed' => $this->processedCount,
+                    'failed' => $this->failedLinks,
+                    'pages_processed' => $pagesProcessed
+                ];
             }
 
-            $this->log("Method 3 processing completed. Exiting scrape.", self::COLOR_GREEN);
+            $this->log("Collected " . count($links) . " links from database.", self::COLOR_GREEN);
+
+            // پردازش لینک‌ها
+            $processingMethod = $this->config['processing_method'] ?? $this->config['method'] ?? 1;
+            $this->log("Processing " . count($links) . " links using processing method: $processingMethod", self::COLOR_GREEN);
+            $batchResult = $this->processPagesInBatches($links, $processingMethod);
+            $pagesProcessed += $batchResult['pages_processed'] ?? 0;
+
+            $this->log("Continue process completed.", self::COLOR_GREEN);
         } else {
-            throw new \Exception("Invalid method specified in config: {$this->config['method']}. Use 1, 2, or 3.");
+            // حالت جدید: جمع‌آوری لینک‌ها از وب
+            $method = $this->config['method'] ?? 1;
+            $this->log("Using method $method to collect product links...", self::COLOR_GREEN);
+
+            if ($method === 1) {
+                $result = $this->scrapeMethodOneForUrl();
+                $links = $result['links'] ?? [];
+                $pagesProcessed = $result['pages_processed'] ?? 0;
+            } elseif ($method === 2) {
+                $result = $this->fetchProductLinks();
+                $links = $result['links'] ?? [];
+                $pagesProcessed = $result['pages_processed'] ?? 0;
+            } elseif ($method === 3) {
+                $result = $this->scrapeMethodThree();
+                $links = $result['links'] ?? [];
+                $pagesProcessed = $result['pages_processed'] ?? 0;
+            } else {
+                throw new \Exception("Invalid method specified in config: $method. Use 1, 2, or 3.");
+            }
+
+            $this->log("Collected " . count($links) . " unique product links.", self::COLOR_GREEN);
+            $this->log("Links structure: " . json_encode($links, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), self::COLOR_YELLOW);
+
+            if (!empty($links)) {
+                // ذخیره لینک‌ها در دیتابیس
+                $this->saveProductLinksToDatabase($links);
+
+                // پردازش لینک‌ها
+                $processingMethod = $this->config['processing_method'] ?? $method;
+                $this->log("Processing " . count($links) . " links using processing method: $processingMethod", self::COLOR_GREEN);
+                $batchResult = $this->processPagesInBatches($links, $processingMethod);
+                $pagesProcessed += $batchResult['pages_processed'] ?? 0;
+            } else {
+                $this->log("No links collected.", self::COLOR_YELLOW);
+            }
         }
 
-        $this->log("Scrape completed. Processed: {$this->processedCount}, Failed: {$this->failedLinks}, Pages: $pagesProcessed", self::COLOR_GREEN);
+        // تلاش مجدد برای لینک‌های شکست‌خورده
+        if (!empty($this->failedLinks)) {
+            $this->log("Retrying " . count($this->failedLinks) . " failed links...", self::COLOR_PURPLE);
+            $retryResult = $this->retryFailedLinks();
+            $pagesProcessed += $retryResult['pages_processed'] ?? 0;
+        }
+
+        $this->log("Scrape completed. Processed: {$this->processedCount}, Failed: " . count($this->failedLinks) . ", Pages: $pagesProcessed", self::COLOR_GREEN);
 
         return [
             'processed' => $this->processedCount,
@@ -2062,31 +2145,96 @@ JAVASCRIPT;
         ];
     }
 
-    public function scrapeMultiple(): array
+    public function scrapeMultiple(?int $start_id = null): array
     {
-        $this->log("Starting scraper...", self::COLOR_GREEN);
+        $this->log("Inside scrapeMultiple method", self::COLOR_PURPLE);
+        $this->log("Starting scraper with start_id: " . ($start_id ?? 'not set'), self::COLOR_GREEN);
+
+        // لاگ محتوای کانفیگ برای دیباگ
+        $this->log("Config contents: " . json_encode($this->config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), self::COLOR_YELLOW);
+
+        // اعتبارسنجی کانفیگ
+        $this->validateConfig();
 
         // تنظیم دیتابیس
         $this->setupDatabase();
 
-        // بررسی تعداد products_urls
-        $productsUrlsCount = count($this->config['products_urls']);
-        $this->log("Found $productsUrlsCount products_urls to process", self::COLOR_PURPLE);
-
         // تنظیم اولیه
         $this->processedCount = 0;
-        $this->failedLinks = 0;
+        $this->failedLinks = [];
 
-        // جمع‌آوری لینک‌های محصولات از تمام products_urls
-        $result = $this->fetchProductLinks();
+        // اعتبارسنجی start_id
+        if ($start_id !== null && $start_id <= 0) {
+            $this->log("Invalid start_id: $start_id. Must be a positive integer. Ignoring start_id.", self::COLOR_RED);
+            $start_id = null;
+        }
+
+        // بررسی run_method
+        $runMethod = $this->config['run_method'] ?? 'new';
+        $this->log("Run method: $runMethod", self::COLOR_GREEN);
+
+        $links = [];
+        $pagesProcessed = 0;
+
+        if ($runMethod === 'continue') {
+            $this->log("Continuing with links from database" . ($start_id ? " starting from ID $start_id" : "") . "...", self::COLOR_GREEN);
+            $result = $this->getProductLinksFromDatabase($start_id);
+            $links = $result['links'] ?? [];
+            $pagesProcessed = $result['pages_processed'] ?? 0;
+
+            $this->log("Got " . count($links) . " links from database", self::COLOR_GREEN);
+            if (empty($links)) {
+                $this->log("No links found in database" . ($start_id ? " for ID >= $start_id" : "") . ". Stopping scrape.", self::COLOR_YELLOW);
+                return [
+                    'status' => 'success',
+                    'total_products' => 0,
+                    'failed_links' => 0,
+                    'total_pages_count' => $pagesProcessed,
+                    'products' => []
+                ];
+            }
+        } else {
+            $this->log("Fetching product links from web...", self::COLOR_GREEN);
+            $result = $this->fetchProductLinks();
+            $links = $result['links'] ?? [];
+            $pagesProcessed = $result['pages_processed'] ?? 0;
+
+            $this->log("Got " . count($links) . " unique product links from web", self::COLOR_GREEN);
+            $this->log("Links structure: " . json_encode(array_slice($links, 0, 5), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "...", self::COLOR_YELLOW);
+
+            if (!empty($links)) {
+                $this->saveProductLinksToDatabase($links);
+            } else {
+                $this->log("No links collected from web. Stopping scrape.", self::COLOR_YELLOW);
+                return [
+                    'status' => 'success',
+                    'total_products' => 0,
+                    'failed_links' => 0,
+                    'total_pages_count' => $pagesProcessed,
+                    'products' => []
+                ];
+            }
+        }
+
+        // حذف لینک‌های تکراری
+        $uniqueLinks = array_values(array_unique(array_map(function ($link) {
+            return is_array($link) ? $link['url'] : $link;
+        }, $links)));
+        $this->log("After deduplication, processing " . count($uniqueLinks) . " unique links", self::COLOR_GREEN);
 
         // پردازش لینک‌های جمع‌آوری‌شده
-        $this->log("Processing all collected links...", self::COLOR_GREEN);
-        $processingMethod = $this->config['processing_method'] ?? $this->config['method'];
-        $processedResult = $this->processPagesInBatches($result['links'], $processingMethod);
+        $processingMethod = $this->config['processing_method'] ?? $this->config['method'] ?? 1;
+        $this->log("Processing links using method: $processingMethod", self::COLOR_GREEN);
+        $processedResult = $this->processPagesInBatches($uniqueLinks, $processingMethod);
 
-        $this->log("Scraping completed!", self::COLOR_GREEN);
-        $this->log("Processed: {$processedResult['processed']}, Failed: {$processedResult['failed']}, Pages processed: {$result['pages_processed']}", self::COLOR_GREEN);
+        // تلاش مجدد برای لینک‌های شکست‌خورده
+        if (!empty($this->failedLinks)) {
+            $this->log("Retrying " . count($this->failedLinks) . " failed links...", self::COLOR_PURPLE);
+            $retryResult = $this->retryFailedLinks();
+            $pagesProcessed += $retryResult['pages_processed'] ?? 0;
+        }
+
+        $this->log("Scraping completed! Processed: {$processedResult['processed']}, Failed: " . count($this->failedLinks), self::COLOR_GREEN);
 
         // جمع‌آوری محصولات از دیتابیس
         $products = Product::all()->map(function ($product) {
@@ -2106,8 +2254,8 @@ JAVASCRIPT;
         return [
             'status' => 'success',
             'total_products' => $processedResult['processed'],
-            'failed_links' => $processedResult['failed'],
-            'total_pages_count' => $result['pages_processed'],
+            'failed_links' => count($this->failedLinks),
+            'total_pages_count' => $pagesProcessed,
             'products' => $products
         ];
     }
@@ -2318,6 +2466,10 @@ JAVASCRIPT;
         $method = $this->config['method'] ?? 1;
         $this->log("Fetching product links using method: $method", self::COLOR_GREEN);
 
+        // ذخیره لینک‌ها در دیتابیس بعد از جمع آوری
+        $runMethod = $this->config['run_method'] ?? 'new';
+        $this->log("Run method: $runMethod", self::COLOR_GREEN);
+
         if (!isset($this->config['selectors']['main_page']['product_links'])) {
             throw new \Exception("Main page product_links selector is required.");
         }
@@ -2358,16 +2510,20 @@ JAVASCRIPT;
 
                 $this->log("Found " . count($rawLinks) . " links from $productUrl", self::COLOR_GREEN);
 
-                $filteredLinks = array_filter($rawLinks, function ($link) use (&$allLinks) {
-                    $url = is_array($link) ? ($link['url'] ?? '') : $link;
+                $filteredLinks = array_filter($rawLinks, function ($link) use (&$allLinks, $productUrl) {
+                    $url = is_array($link) ? ($link['url'] ?? $link) : $link;
                     $isValid = $url && !$this->isUnwantedDomain($url) && !in_array($url, array_column($allLinks, 'url'));
                     if (!$isValid) {
                         $this->log("Filtered out invalid, unwanted, or duplicate link: $url", self::COLOR_YELLOW);
+                        return false;
                     }
-                    return $isValid;
+                    // ذخیره لینک همراه با sourceUrl
+                    $allLinks[] = [
+                        'url' => $url,
+                        'sourceUrl' => $productUrl
+                    ];
+                    return true;
                 });
-
-                $allLinks = array_merge($allLinks, $filteredLinks);
             }
         }
 
@@ -2397,16 +2553,20 @@ JAVASCRIPT;
 
                 $this->log("Found " . count($rawLinks) . " links from $failedUrl during retry", self::COLOR_GREEN);
 
-                $filteredLinks = array_filter($rawLinks, function ($link) use (&$allLinks) {
-                    $url = is_array($link) ? ($link['url'] ?? '') : $link;
+                $filteredLinks = array_filter($rawLinks, function ($link) use (&$allLinks, $failedUrl) {
+                    $url = is_array($link) ? ($link['url'] ?? $link) : $link;
                     $isValid = $url && !$this->isUnwantedDomain($url) && !in_array($url, array_column($allLinks, 'url'));
                     if (!$isValid) {
                         $this->log("Filtered out invalid, unwanted, or duplicate link: $url", self::COLOR_YELLOW);
+                        return false;
                     }
-                    return $isValid;
+                    // ذخیره لینک همراه با sourceUrl
+                    $allLinks[] = [
+                        'url' => $url,
+                        'sourceUrl' => $failedUrl
+                    ];
+                    return true;
                 });
-
-                $allLinks = array_merge($allLinks, $filteredLinks);
             }
 
             // پاک کردن آرایه بعد از تلاش مجدد
@@ -2417,7 +2577,7 @@ JAVASCRIPT;
         $uniqueLinks = [];
         $urlSet = [];
         foreach ($allLinks as $link) {
-            $url = is_array($link) ? $link['url'] : $link;
+            $url = $link['url'];
             if (!in_array($url, $urlSet)) {
                 $urlSet[] = $url;
                 $uniqueLinks[] = $link;
@@ -2425,6 +2585,12 @@ JAVASCRIPT;
         }
 
         $this->log("Total unique links collected: " . count($uniqueLinks), self::COLOR_GREEN);
+        $this->log("Links structure: " . json_encode($uniqueLinks, JSON_PRETTY_PRINT), self::COLOR_YELLOW);
+
+        // ذخیره لینک‌ها در دیتابیس
+        if (isset($uniqueLinks) && !empty($uniqueLinks)) {
+            $this->saveProductLinksToDatabase($uniqueLinks);
+        }
 
         return [
             'links' => array_values($uniqueLinks),
@@ -2488,35 +2654,42 @@ JAVASCRIPT;
 
     private function saveProductToDatabase(array $productData): void
     {
-        $this->log("Raw availability before saving: {$productData['availability']}", self::COLOR_YELLOW);
+        $this->log("Saving product to database: {$productData['title']}", self::COLOR_GREEN);
 
-        $validated = validator($productData, [
-            'title' => 'required|string|max:500',
-            'image' => 'nullable|string|max:1000',
-        ])->validate();
+        try {
+            // آماده‌سازی داده‌ها
+            $data = [
+                'product_id' => $productData['product_id'] ?? null,
+                'title' => $productData['title'] ?? '',
+                'price' => $productData['price'] ?? 0,
+                'page_url' => $productData['page_url'] ?? '',
+                'availability' => $productData['availability'] ?? 0,
+                'off' => $productData['off'] ?? 0,
+                'image' => $productData['image'] ?? '',
+                'guarantee' => $productData['guarantee'] ?? '',
+                'category' => $productData['category'] ?? '',
+                'updated_at' => now(),
+            ];
 
-        $productId = isset($productData['product_id']) && !empty($productData['product_id']) && $productData['product_id'] !== 'نامعلوم'
-            ? $productData['product_id']
-            : '';
+            // چک کردن وجود محصول با page_url
+            $existingProduct = Product::where('page_url', $data['page_url'])->first();
 
-        Product::updateOrCreate(
-            [
-                'page_url' => $productData['page_url'],
-            ],
-            [
-                'title' => $validated['title'],
-                'price' => $productData['price'],
-                'product_id' => $productId,
-                'availability' => (int)$productData['availability'],
-                'image' => $validated['image'],
-                'category' => $productData['category'],
-                'off' => (int)$productData['off'],
-                'guarantee' => $productData['guarantee'],
-            ]
-        );
+            if ($existingProduct) {
+                // آپدیت محصول موجود
+                $this->log("Updating existing product with page_url: {$data['page_url']}", self::COLOR_YELLOW);
+                $existingProduct->update($data);
+            } else {
+                // ایجاد محصول جدید
+                $this->log("Creating new product with page_url: {$data['page_url']}", self::COLOR_GREEN);
+                $data['created_at'] = now();
+                Product::create($data);
+            }
 
-        $totalProducts = count($this->config['products_urls'] ?? []);
-        $this->logProduct($productData, $totalProducts);
+            $this->log("Product saved successfully: {$data['title']}", self::COLOR_GREEN);
+        } catch (\Exception $e) {
+            $this->log("Failed to save product {$productData['title']}: {$e->getMessage()}", self::COLOR_RED);
+            throw $e;
+        }
     }
 
     private function validateProductData(array $productData): bool
@@ -3152,6 +3325,92 @@ JAVASCRIPT;
         return $table;
     }
 
+    private function getProductLinksFromDatabase(?int $start_id = null): array
+    {
+        $this->log("Fetching product links from database" . ($start_id ? " starting from ID $start_id" : ""), self::COLOR_GREEN);
+
+        try {
+            $query = DB::table('links')
+                ->where('processed', 0) // فقط لینک‌های پردازش‌نشده
+                ->select('url', 'image', 'product_id', 'off');
+
+            if ($start_id !== null) {
+                $query->where('id', '>=', $start_id);
+            }
+
+            $links = $query->get()->map(function ($link) {
+                return [
+                    'url' => $link->url,
+                    'image' => $link->image,
+                    'product_id' => $link->product_id,
+                    'off' => $link->off,
+                ];
+            })->toArray();
+
+            $this->log("Retrieved " . count($links) . " links from database" . ($start_id ? " with ID >= $start_id" : ""), self::COLOR_GREEN);
+
+            // لاگ بازه IDها برای دیباگ
+            if (!empty($links)) {
+                $ids = DB::table('links')
+                    ->whereIn('url', array_column($links, 'url'))
+                    ->pluck('id')
+                    ->toArray();
+                $this->log("Link ID range: " . min($ids) . " to " . max($ids), self::COLOR_YELLOW);
+            }
+
+            return [
+                'links' => $links,
+                'pages_processed' => 0 // بسته به منطق شما ممکنه تغییر کنه
+            ];
+        } catch (\Exception $e) {
+            $this->log("Failed to fetch links from database: {$e->getMessage()}", self::COLOR_RED);
+            return [
+                'links' => [],
+                'pages_processed' => 0
+            ];
+        }
+    }
+
+    private function saveProductLinksToDatabase(array $links): void
+    {
+        $this->log("Saving " . count($links) . " product links to database...", self::COLOR_GREEN);
+
+        foreach ($links as $link) {
+            $url = is_array($link) ? $link['url'] : $link;
+            $sourceUrl = is_array($link) && isset($link['sourceUrl']) ? $link['sourceUrl'] : null;
+            $productId = is_array($link) && isset($link['product_id']) ? $link['product_id'] : null;
+
+            // بررسی تکراری نبودن لینک در دیتابیس
+            $existingLink = Link::where('url', $url)->first();
+
+            if (!$existingLink) {
+                Link::create([
+                    'url' => $url,
+                    'source_url' => $sourceUrl,
+                    'is_processed' => false,
+                    'product_id' => $productId
+                ]);
+            } else {
+                $this->log("Skipping duplicate link in database: $url", self::COLOR_YELLOW);
+            }
+        }
+
+        $this->log("Product links saved to database successfully", self::COLOR_GREEN);
+    }
+
+    private function updateLinkProcessedStatus(string $url, bool $status = true): void
+    {
+        // بروزرسانی وضعیت لینک به پردازش شده
+        $link = Link::where('url', $url)->first();
+
+        if ($link) {
+            $link->is_processed = $status;
+            $link->save();
+        } else {
+            $this->log("Link not found in database for status update: $url", self::COLOR_YELLOW);
+        }
+    }
+
     private function mb_str_pad(string $input, int $pad_length, string $pad_string = ' ', int $pad_type = STR_PAD_RIGHT): string
     {
         $input_length = mb_strwidth($input, 'UTF-8');
@@ -3295,6 +3554,41 @@ JAVASCRIPT;
         return $title;
     }
 
+    private function validateAndFixConfig(): void
+    {
+        // بررسی صحت کلیدهای مهم کانفیگ
+        $this->log("Validating configuration...", self::COLOR_GREEN);
+
+        // بررسی و اطمینان از وجود run_method
+        if (!isset($this->config['run_method'])) {
+            $this->config['run_method'] = 'new';
+            $this->log("run_method was not set in config. Defaulting to 'new'", self::COLOR_YELLOW);
+        }
+
+        // تبدیل خودکار run_method به فرمت صحیح string
+        $this->config['run_method'] = (string)$this->config['run_method'];
+
+        // بررسی صحت مقدار run_method
+        if (!in_array($this->config['run_method'], ['new', 'continue'])) {
+            $this->log("WARNING: Invalid run_method '{$this->config['run_method']}' in config. Must be 'new' or 'continue'. Defaulting to 'new'", self::COLOR_RED);
+            $this->config['run_method'] = 'new';
+        }
+
+        // لاگ کردن کانفیگ برای دیباگ
+        $this->log("Config validated. Using run_method: {$this->config['run_method']}", self::COLOR_GREEN);
+
+        // بررسی وجود کلیدهای مهم دیگر
+        if (!isset($this->config['method'])) {
+            $this->log("WARNING: 'method' is not set in config. Defaulting to 1", self::COLOR_YELLOW);
+            $this->config['method'] = 1;
+        }
+
+        if (!isset($this->config['processing_method']) && $this->config['run_method'] === 'continue') {
+            $this->log("WARNING: 'processing_method' is not set for continue mode. Using method {$this->config['method']} instead", self::COLOR_YELLOW);
+            $this->config['processing_method'] = $this->config['method'];
+        }
+    }
+
     private function validateConfig(): void
     {
         $requiredFields = [
@@ -3363,6 +3657,11 @@ JAVASCRIPT;
             if (!isset($this->config['category_word_count']) || !is_int($this->config['category_word_count']) || $this->config['category_word_count'] < 1) {
                 throw new \Exception("Validation Error: 'category_word_count' must be a positive integer when 'category_method' is 'title'.");
             }
+        }
+
+        // اعتبارسنجی run_method
+        if (isset($this->config['run_method']) && !in_array($this->config['run_method'], ['new', 'continue'])) {
+            throw new \Exception("Invalid run_method. Use 'new' or 'continue'.");
         }
 
         if ($this->config['method'] === 1) {

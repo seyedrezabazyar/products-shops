@@ -533,7 +533,7 @@ class ConfigController extends Controller
      */
     public function runScraper($filename)
     {
-        $configPath = storage_path('app/private/' . $filename . '.json');
+        $configPath = $this->configPath . 'private/' . $filename . '.json';
 
         if (!file_exists($configPath)) {
             return redirect()->route('configs.index')->with('error', 'فایل کانفیگ یافت نشد!');
