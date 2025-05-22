@@ -456,6 +456,66 @@
                 </div>
             </div>
 
+            <!-- تنظیمات دیتابیس و اجرا -->
+            <div class="card p-6 mb-6">
+                <h2 class="section-header text-xl flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 ml-2 text-brown-600" fill="none"
+                         viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/>
+                    </svg>
+                    تنظیمات دیتابیس و اجرا
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- روش اجرا -->
+                    <div class="form-group">
+                        <label class="block text-sm font-medium text-brown-700 mb-2">روش اجرا <span
+                                class="text-red-500">*</span></label>
+                        <select name="run_method" id="run_method"
+                                class="input-field w-full px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+                                required>
+                            <option value="new" {{ old('run_method', 'new') === 'new' ? 'selected' : '' }}>جدید</option>
+                            <option value="continue" {{ old('run_method') === 'continue' ? 'selected' : '' }}>ادامه
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- دیتابیس -->
+                    <div class="form-group">
+                        <label class="block text-sm font-medium text-brown-700 mb-2">وضعیت دیتابیس <span
+                                class="text-red-500">*</span></label>
+                        <select name="database" id="database"
+                                class="input-field w-full px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+                                required>
+                            <option value="clear" {{ old('database', 'clear') === 'clear' ? 'selected' : '' }}>پاک
+                                کردن
+                            </option>
+                            <option value="continue" {{ old('database') === 'continue' ? 'selected' : '' }}>ادامه
+                            </option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- دسته‌بندی ثابت -->
+                <div class="form-group">
+                    <label class="inline-flex items-center">
+                        <input type="hidden" name="use_set_category" value="0">
+                        <input type="checkbox" name="use_set_category" value="1" id="use_set_category"
+                               class="w-5 h-5 text-brown-600 border-brown-300 rounded focus:ring-brown-500 bg-white" {{ old('use_set_category') ? 'checked' : '' }}>
+                        <span class="mr-3 text-brown-700">استفاده از دسته‌بندی ثابت</span>
+                    </label>
+                </div>
+
+                <div id="set-category-container" class="form-group {{ old('use_set_category') ? '' : 'hidden' }}">
+                    <label class="block text-sm font-medium text-brown-700 mb-2">دسته‌بندی ثابت <span
+                            class="text-red-500">*</span></label>
+                    <input type="text" name="set_category" id="set_category" value="{{ old('set_category') }}"
+                           class="input-field w-full px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+                           placeholder="مثال: لوازم خانگی" {{ old('use_set_category') ? 'required' : '' }}>
+                </div>
+            </div>
+
             <!-- تنظیمات قیمت -->
             <div class="card p-6 mb-6">
                 <h2 class="section-header text-xl flex items-center">
@@ -711,6 +771,7 @@
                     </div>
                 </div>
 
+
                 <!-- سلکتورهای صفحه محصول -->
                 <div class="mt-6 border-t border-brown-200 pt-5">
                     <h3 class="text-lg font-semibold text-brown-700 mb-4 flex items-center">
@@ -789,6 +850,24 @@
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-brown-700 mb-2">سلکتور دکمه افزودن به سبد خرید
+                                <span class="text-red-500">*</span></label>
+                            <input type="hidden" name="selectors[product_page][add_to_cart_button][type]" value="css">
+                            <input type="text" name="selectors[product_page][add_to_cart_button][selector]"
+                                   class="input-field w-full px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+                                   placeholder=".add-to-cart-button" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-brown-700 mb-2">سلکتور ناموجودی <span
+                                    class="text-red-500">*</span></label>
+                            <input type="hidden" name="selectors[product_page][out_of_stock][type]" value="css">
+                            <input type="text" name="selectors[product_page][out_of_stock][selector]"
+                                   class="input-field w-full px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+                                   placeholder=".out-of-stock" required>
+                        </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div id="product-page-product-id-container" class="form-group">
                                 <label class="block text-sm font-medium text-brown-700 mb-2">سلکتور شناسه محصول</label>
@@ -863,6 +942,21 @@
                     </svg>
                     کلمات کلیدی
                 </h2>
+
+                <div class="form-group">
+                    <label class="block text-sm font-medium text-brown-700 mb-2">حالت شناسایی موجودی <span
+                            class="text-red-500">*</span></label>
+                    <select name="availability_mode" id="availability_mode"
+                            class="input-field w-full px-4 py-2.5 rounded-lg focus:outline-none focus:ring-2 transition-all duration-200"
+                            required>
+                        <option value="smart" {{ old('availability_mode', 'smart') === 'smart' ? 'selected' : '' }}>
+                            هوشمند
+                        </option>
+                        <option value="keyword" {{ old('availability_mode') === 'keyword' ? 'selected' : '' }}>کلمه
+                            کلیدی
+                        </option>
+                    </select>
+                </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6">
                     <div class="form-group">
@@ -1312,6 +1406,27 @@
             });
         });
     });
+    // نمایش/مخفی کردن فیلد دسته‌بندی ثابت
+    const useSetCategoryCheckbox = document.querySelector('#use_set_category');
+    const setCategoryContainer = document.getElementById('set-category-container');
+    const setCategoryInput = document.querySelector('#set_category');
+
+    if (useSetCategoryCheckbox && setCategoryContainer && setCategoryInput) {
+        // تنظیم حالت اولیه
+        setCategoryContainer.classList.toggle('hidden', !useSetCategoryCheckbox.checked);
+        setCategoryInput.required = useSetCategoryCheckbox.checked;
+
+        // رویداد تغییر چک‌باکس
+        useSetCategoryCheckbox.addEventListener('change', function () {
+            setCategoryContainer.classList.toggle('hidden', !this.checked);
+            setCategoryInput.required = this.checked;
+            if (!this.checked) {
+                setCategoryInput.value = ''; // خالی کردن مقدار فیلد در صورت غیرفعال شدن
+            }
+        });
+    } else {
+        console.error('Checkbox, set category container, or input not found');
+    }
 </script>
 </body>
 </html>

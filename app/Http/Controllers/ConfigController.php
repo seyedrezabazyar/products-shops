@@ -28,11 +28,7 @@ class ConfigController extends Controller
         }
     }
 
-    /**
-     * Display a listing of the configs.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         $files = Storage::files('private');
@@ -82,12 +78,7 @@ class ConfigController extends Controller
         }
     }
 
-    /**
-     * Delete a log file.
-     *
-     * @param string $logfile
-     * @return \Illuminate\Http\Response
-     */
+
     public function deleteLog($logfile)
     {
         $logPath = storage_path('logs/scrapers/' . $logfile);
@@ -104,22 +95,11 @@ class ConfigController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new config.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         return view('configs.create');
     }
 
-    /**
-     * Store a newly created config in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $validator = $this->getValidator($request);
@@ -133,6 +113,7 @@ class ConfigController extends Controller
         $method = (int)$request->input('method', 1);
         $config = $this->buildConfig($request, $method);
 
+
         $siteName = $request->input('site_name');
         $filename = $siteName . '.json';
 
@@ -141,12 +122,7 @@ class ConfigController extends Controller
         return redirect()->route('configs.index')->with('success', 'کانفیگ با موفقیت ذخیره شد!');
     }
 
-    /**
-     * Show the form for editing the specified config.
-     *
-     * @param string $filename
-     * @return \Illuminate\Http\Response
-     */
+
     public function edit($filename)
     {
         $filePath = "private/{$filename}.json";
@@ -159,16 +135,19 @@ class ConfigController extends Controller
             return redirect()->route('configs.index')->with('error', 'خطا در خواندن فایل کانفیگ.');
         }
 
+        // Check if set_category exists in the config to determine if checkbox should be checked
+        if (isset($content['set_category'])) {
+            $content['use_set_category'] = true;
+        }
+
+        // اطمینان از وجود availability_mode در محتوا
+        if (!isset($content['availability_mode'])) {
+            $content['availability_mode'] = 'smart'; // مقدار پیش‌فرض
+        }
+
         return view('configs.edit', compact('content', 'filename'));
     }
 
-    /**
-     * Update the specified config in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param string $filename
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $filename)
     {
         $validator = $this->getValidator($request);
@@ -182,18 +161,13 @@ class ConfigController extends Controller
         $method = (int)$request->input('method', 1);
         $config = $this->buildConfig($request, $method);
 
+
         // به‌روزرسانی فایل کانفیگ
         Storage::put('private/' . $filename . '.json', json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
 
         return redirect()->route('configs.index')->with('success', 'کانفیگ با موفقیت به‌روزرسانی شد!');
     }
 
-    /**
-     * Remove the specified config from storage.
-     *
-     * @param string $filename
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($filename)
     {
         $filePath = "private/{$filename}.json";
@@ -205,12 +179,6 @@ class ConfigController extends Controller
         return redirect()->route('configs.index')->with('success', 'کانفیگ با موفقیت حذف شد!');
     }
 
-    /**
-     * Get validator for request data.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
     private function getValidator(Request $request)
     {
         $rules = [
@@ -226,6 +194,7 @@ class ConfigController extends Controller
             'guarantee_method' => 'required|in:selector,title',
             'guarantee_keywords' => 'required|array|min:1',
             'guarantee_keywords.*' => 'required|string',
+            'availability_mode' => 'required|in:smart,keyword', // اضافه کردن availability_mode
             'availability_keywords.positive' => 'required|array|min:1',
             'availability_keywords.positive.*' => 'required|string',
             'availability_keywords.negative' => 'required|array|min:1',
@@ -235,6 +204,11 @@ class ConfigController extends Controller
             'selectors.main_page.product_links.type' => 'required|string',
             'selectors.main_page.product_links.selector' => 'required|string',
             'selectors.main_page.product_links.attribute' => 'required|string',
+            // اضافه کردن سلکتورهای جدید
+            'selectors.product_page.add_to_cart_button.type' => 'required|string',
+            'selectors.product_page.add_to_cart_button.selector' => 'required|string',
+            'selectors.product_page.out_of_stock.type' => 'required|string',
+            'selectors.product_page.out_of_stock.selector' => 'required|string',
         ];
 
         // Add method-specific validation
@@ -273,7 +247,10 @@ class ConfigController extends Controller
                 }
             }
         }
-
+        $rules['run_method'] = 'required|in:new,continue';
+        $rules['database'] = 'required|in:clear,continue';
+        $rules['use_set_category'] = 'boolean';
+        $rules['set_category'] = 'nullable|required_if:use_set_category,1|string';
         $rules['title_prefix_rules.url.*'] = 'nullable|url';
         $rules['title_prefix_rules.prefix.*'] = 'nullable|string|max:255';
 
@@ -286,13 +263,6 @@ class ConfigController extends Controller
         return Validator::make($request->all(), $rules);
     }
 
-    /**
-     * Build config from request data.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param int $method
-     * @return array
-     */
     private function buildConfig(Request $request, $method)
     {
         $config = [
@@ -312,6 +282,9 @@ class ConfigController extends Controller
             'image_method' => $request->input('image_method', 'product_page'),
             'product_id_method' => $request->input('product_id_method'),
             'product_id_source' => $request->input('product_id_source'),
+            'availability_mode' => $request->input('availability_mode', 'smart'), // اضافه کردن availability_mode
+            'run_method' => $request->input('run_method', 'new'),
+            'database' => $request->input('database', 'clear'),
             'product_id_fallback_script_patterns' => [
                 'product_id:\\s*\"(\\d+)\"',
                 'product_id:\\s*(\\d+)'
@@ -348,6 +321,14 @@ class ConfigController extends Controller
                         'type' => $request->input('selectors.product_page.availability.type'),
                         'selector' => $request->input('selectors.product_page.availability.selector'),
                     ],
+                    'add_to_cart_button' => [ // اضافه کردن سلکتور add_to_cart_button
+                        'type' => $request->input('selectors.product_page.add_to_cart_button.type'),
+                        'selector' => $request->input('selectors.product_page.add_to_cart_button.selector'),
+                    ],
+                    'out_of_stock' => [ // اضافه کردن سلکتور out_of_stock
+                        'type' => $request->input('selectors.product_page.out_of_stock.type'),
+                        'selector' => $request->input('selectors.product_page.out_of_stock.selector'),
+                    ],
                     'price' => [
                         'type' => $request->input('selectors.product_page.price.type'),
                         'selector' => $request->input('selectors.product_page.price.selector'),
@@ -371,14 +352,22 @@ class ConfigController extends Controller
                         'attribute' => $request->input('selectors.product_page.product_id.attribute'),
                     ],
                 ],
-            ],
-            'data_transformers' => [
-                'price' => 'cleanPrice',
-                'availability' => 'parseAvailability',
-                'off' => 'cleanOff',
-                'guarantee' => 'cleanGuarantee',
+                'data_transformers' => [
+                    'price' => 'cleanPrice',
+                    'availability' => 'parseAvailability',
+                    'off' => 'cleanOff',
+                    'guarantee' => 'cleanGuarantee',
+                ],
             ],
         ];
+
+        // فقط در صورتی که use_set_category تیک خورده باشد، set_category را اضافه کن
+        if (filter_var($request->input('use_set_category', false), FILTER_VALIDATE_BOOLEAN)) {
+            $setCategory = trim($request->input('set_category', ''));
+            if (!empty($setCategory)) {
+                $config['set_category'] = $setCategory;
+            }
+        }
 
         if ($request->input('product_id_source') == 'main_page') {
             $config['selectors']['main_page']['product_id'] = [
@@ -525,12 +514,6 @@ class ConfigController extends Controller
         return $navigation;
     }
 
-    /**
-     * Run the scraper for the specified config.
-     *
-     * @param string $filename
-     * @return \Illuminate\Http\Response
-     */
     public function runScraper($filename)
     {
         $configPath = $this->configPath . 'private/' . $filename . '.json';
@@ -671,12 +654,6 @@ class ConfigController extends Controller
         return view('configs.history', compact('configs'));
     }
 
-    /**
-     * Show logs for the specified config.
-     *
-     * @param string $filename
-     * @return \Illuminate\Http\Response
-     */
     public function showLogs($filename)
     {
         $logDirectory = storage_path('logs/scrapers');
@@ -708,12 +685,7 @@ class ConfigController extends Controller
         return view('configs.logs', compact('logFiles', 'filename'));
     }
 
-    /**
-     * Get the content of a log file.
-     *
-     * @param string $logfile
-     * @return \Illuminate\Http\Response
-     */
+
     public function getLogContent($logfile)
     {
         $logPath = storage_path('logs/scrapers/' . $logfile);
@@ -732,12 +704,7 @@ class ConfigController extends Controller
             ->header('Content-Type', 'text/plain; charset=UTF-8');
     }
 
-    /**
-     * Stop the running scraper for the specified config.
-     *
-     * @param string $filename
-     * @return \Illuminate\Http\Response
-     */
+
     public function stopScraper($filename)
     {
         $runFilePath = 'private/runs/' . $filename . '.json';
@@ -792,12 +759,7 @@ class ConfigController extends Controller
         }
     }
 
-    /**
-     * Check if a process is running by PID.
-     *
-     * @param int $pid
-     * @return bool
-     */
+
     private function isProcessRunning($pid)
     {
         if (empty($pid)) {
