@@ -77,6 +77,7 @@ class StartController
             return ['links' => [], 'pages_processed' => 0];
         }
 
+        // حلقه روی تمام products_urls
         foreach ($this->config['products_urls'] as $index => $productsUrl) {
             $normalizedUrl = $this->normalizeUrl($productsUrl);
             if (in_array($normalizedUrl, $processedUrls)) {
@@ -87,6 +88,7 @@ class StartController
 
             $this->log("Processing products_url " . ($index + 1) . ": $productsUrl", self::COLOR_PURPLE);
 
+            // تنظیمات پیکربندی
             $baseurl = json_encode($this->config['base_urls'][0] ?? '');
             $scrool = json_encode($this->config['scrool'] ?? '');
             $userAgent = json_encode($this->config['user_agent'][0] ?? 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/91.0.4472.124');
@@ -97,6 +99,7 @@ class StartController
             $positiveKeywords = json_encode($this->config['availability_keywords']['positive'] ?? []);
             $negativeKeywords = json_encode($this->config['availability_keywords']['negative'] ?? []);
 
+            // سلکتورهای صفحه محصول
             $titleSelector = json_encode($this->config['selectors']['product_page']['title']['selector'] ?? '.styles__title___3F4_f');
             $priceSelector = json_encode($this->config['selectors']['product_page']['price']['selector'][0] ?? '.styles__final-price___1L1AM');
             $availabilitySelector = json_encode($this->config['selectors']['product_page']['availability']['selector'][0] ?? '#buy-button');
@@ -107,10 +110,12 @@ class StartController
             $productIdSelector = json_encode($this->config['selectors']['product_page']['product_id']['selector'] ?? 'head > meta:nth-child(9)');
             $productIdAttribute = json_encode($this->config['selectors']['product_page']['product_id']['attribute'] ?? 'content');
 
+            // تنظیمات صفحه‌بندی
             $paginationConfig = $this->config['method_settings']['method_3']['navigation']['pagination'] ?? [];
             $paginationMethod = json_encode($paginationConfig['method'] ?? 'next_button');
             $paginationConfigJson = json_encode($paginationConfig);
 
+            // اعتبارسنجی
             if (empty($productsUrl)) {
                 $this->log("Error: Products URL is empty for index $index.", self::COLOR_RED);
                 continue;
@@ -128,6 +133,7 @@ class StartController
                 continue;
             }
 
+            // اسکریپت Playwright
             $playwrightScript = <<<'JAVASCRIPT'
 const { chromium } = require('playwright');
 
@@ -142,29 +148,29 @@ const { chromium } = require('playwright');
     let pageNumber = 1;
     const seenLinks = new Set();
 
-    const initializeBrowser = async () => {
-        console.log('Launching headless Chrome browser...');
-        browser = await chromium.launch({
-            headless: true,
-            args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-extensions']
-        });
+const initializeBrowser = async () => {
+    console.log('Launching headless Chrome browser...');
+    browser = await chromium.launch({
+        headless: true,
+        args: ['--no-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-extensions']
+    });
 
-        console.log('Creating new browser context...');
-        context = await browser.newContext({
-            userAgent: USER_AGENT,
-            viewport: { width: 1920, height: 1080 },
-            bypassCSP: true
-        });
+    console.log('Creating new browser context...');
+    context = await browser.newContext({
+        userAgent: USER_AGENT,
+        viewport: { width: 1920, height: 1080 },
+        bypassCSP: true // برای دور زدن محدودیت‌های CSP
+    });
 
-        console.log('Creating new page...');
-        page = await context.newPage();
+    console.log('Creating new page...');
+    page = await context.newPage();
 
-        browser.on('disconnected', () => {
-            console.log('Browser disconnected unexpectedly.');
-            consoleLogs.push('Browser disconnected unexpectedly.');
-        });
-    };
-
+    // لاگ‌گیری در صورت بسته شدن غیرمنتظره
+    browser.on('disconnected', () => {
+        console.log('Browser disconnected unexpectedly.');
+        consoleLogs.push('Browser disconnected unexpectedly.');
+    });
+};
     const closeBrowser = async () => {
         if (browser) {
             console.log('Closing browser...');
@@ -215,7 +221,7 @@ const { chromium } = require('playwright');
         console.log('Waiting for product links to appear (max 30s)...');
         await page.waitForSelector(LINK_SELECTOR, { timeout: 30000 }).catch((e) => {
             console.log(`Error waiting for links: ${e.message}`);
-            consoleLogs.push(`Error YELLOW: ${e.message}`);
+            consoleLogs.push(`Error waiting for links on page ${pageNumber}: ${e.message}`);
         });
 
         const links = await page.$$eval(LINK_SELECTOR, (elements, linkAttribute) => {
@@ -245,7 +251,7 @@ const { chromium } = require('playwright');
             }
         }
 
-        console.log(`page${pageNumber} -> ${newLinks.length} link find`);
+        console.log(`Extracted ${newLinks.length} new product links from page ${pageNumber}.`);
         return newLinks;
     };
 
@@ -299,7 +305,7 @@ const { chromium } = require('playwright');
                     return element ? element.textContent.trim() : '';
                 }, AVAILABILITY_SELECTOR);
 
-                console.log(`Raw availability text: Retrospective ${availabilityText}`);
+                console.log(`Raw availability text: ${availabilityText}`);
                 const positiveKeywords = POSITIVE_KEYWORDS;
                 const negativeKeywords = NEGATIVE_KEYWORDS;
 
@@ -378,19 +384,21 @@ const { chromium } = require('playwright');
             const randomDelay = Math.floor(Math.random() * (5000 - 3000 + 1)) + 3000;
             await page.waitForTimeout(randomDelay);
 
-        } catch (error) {
-            console.error(`Error processing ${absoluteLink}: ${error.message}`);
-            consoleLogs.push(`Error processing ${absoluteLink}: ${error.message}`);
-            productData.error = error.message;
-            allProducts.push(productData);
-            await closeBrowser();
-            await initializeBrowser();
-        }
-    };
+} catch (error) {
+        console.error(`Error processing ${absoluteLink}: ${error.message}`);
+        consoleLogs.push(`Error processing ${absoluteLink}: ${error.message}`);
+        productData.error = error.message;
+        allProducts.push(productData);
+        // تلاش برای بازسازی مرورگر
+        await closeBrowser();
+        await initializeBrowser();
+    }
+};
 
     try {
         await initializeBrowser();
 
+        // Step 1: جمع‌آوری لینک‌های محصولات
         while (pageNumber <= MAX_PAGES) {
             console.log(`Processing page ${pageNumber}...`);
 
@@ -433,6 +441,7 @@ const { chromium } = require('playwright');
 
         console.log(`Total unique links extracted: ${allLinks.length}`);
 
+        // Step 2: پردازش هر لینک محصول در همان تب
         for (let index = 0; index < allLinks.length; index++) {
             await processProduct(allLinks[index], index);
         }
@@ -449,6 +458,7 @@ const { chromium } = require('playwright');
 })();
 JAVASCRIPT;
 
+            // جایگزینی placeholderها
             $playwrightScript = str_replace(
                 [
                     'USER_AGENT',
@@ -501,6 +511,7 @@ JAVASCRIPT;
                 $playwrightScript
             );
 
+            // ذخیره اسکریپت موقت
             $tempFileBase = tempnam(sys_get_temp_dir(), 'playwright_method3_');
             $tempFile = $tempFileBase . '.cjs';
             rename($tempFileBase, $tempFile);
@@ -508,6 +519,7 @@ JAVASCRIPT;
 
             $this->log("Temporary script file created at: $tempFile", self::COLOR_GREEN);
 
+            // اجرای اسکریپت
             $nodeModulesPath = base_path('node_modules');
             $this->log("Executing Playwright script: NODE_PATH=$nodeModulesPath node $tempFile", self::COLOR_GREEN);
 
@@ -531,11 +543,7 @@ JAVASCRIPT;
                 $line = fgets($pipes[1]);
                 if ($line !== false) {
                     $output .= $line;
-                    if (strpos($line, 'page') !== false && strpos($line, 'link find') !== false) {
-                        $this->log(trim($line), self::COLOR_GREEN);
-                    } else {
-                        $this->log("Playwright output: " . trim($line), self::COLOR_YELLOW);
-                    }
+                    $this->log("Playwright output: " . trim($line), self::COLOR_YELLOW);
                     file_put_contents($logFile, "[STDOUT] " . trim($line) . PHP_EOL, FILE_APPEND);
                 }
             }
@@ -555,6 +563,7 @@ JAVASCRIPT;
 
             $this->log("Playwright script execution completed with return code: $returnCode", self::COLOR_GREEN);
 
+            // تجزیه خروجی
             preg_match('/Final result: ({.*})/', $output, $matches);
             if (!isset($matches[1])) {
                 $this->log("Failed to parse Playwright output.", self::COLOR_RED);
@@ -576,6 +585,7 @@ JAVASCRIPT;
                 }
             }
 
+            // پردازش محصولات و ذخیره در دیتابیس
             $links = [];
             foreach ($result['products'] as $productData) {
                 $this->log("Processing product: {$productData['url']}, Availability: {$productData['availability']}", self::COLOR_YELLOW);
@@ -585,6 +595,7 @@ JAVASCRIPT;
                     continue;
                 }
 
+                // پردازش داده‌های محصول
                 $processedData = [
                     'page_url' => $productData['url'],
                     'url' => $productData['url'],
@@ -627,6 +638,7 @@ JAVASCRIPT;
             unlink($tempFile);
         }
 
+        // اطمینان از اتمام پردازش
         $this->log("All products_urls processed. Total links: " . count($allLinks) . ", Total pages: $totalPagesProcessed", self::COLOR_GREEN);
 
         return [
@@ -838,13 +850,15 @@ JAVASCRIPT;
 
         $this->log("Starting Playwright scraping process for URL: $productUrl...", self::COLOR_GREEN);
 
+        // تنظیم تایم‌اوت و حافظه
         set_time_limit(300);
         ini_set('memory_limit', '512M');
 
+        // مقادیر کانفیگ
         $maxPages = $this->config['method_settings']['method_2']['navigation']['max_pages'] ?? 10;
         $scrollDelay = $this->config['method_settings']['method_2']['navigation']['scroll_delay'] ?? 3000;
         $paginationMethod = $this->config['method_settings']['method_2']['navigation']['pagination']['method'] ?? 'url';
-        $this->log("Pagination method: $paginationMethod", self::COLOR_YELLOW);
+        $this->log("Pagination method: $paginationMethod", self::COLOR_YELLOW); // لاگ برای بررسی
 
         $linkSelector = addslashes($this->config['selectors']['main_page']['product_links']['selector']);
         $linkAttribute = addslashes($this->config['selectors']['main_page']['product_links']['attribute']);
@@ -861,16 +875,18 @@ JAVASCRIPT;
         $container = addslashes($this->config['container']);
         $baseUrl = addslashes($this->config['base_urls'][0] ?? '');
 
+        // تنظیمات دکمه Next
         $nextButtonSelector = '';
         if ($paginationMethod === 'next_button') {
             $nextButtonSelector = addslashes($this->config['method_settings']['method_2']['navigation']['pagination']['next_button']['selector'] ?? '');
-            $this->log("Next button selector: $nextButtonSelector", self::COLOR_YELLOW);
+            $this->log("Next button selector: $nextButtonSelector", self::COLOR_YELLOW); // لاگ برای بررسی
             if (empty($nextButtonSelector)) {
                 $this->log("Next button selector is required for pagination method 'next_button'", self::COLOR_RED);
                 return ['links' => [], 'pages_processed' => 0];
             }
         }
 
+        // تنظیمات صفحه‌بندی برای روش url
         $paginationConfig = $this->config['method_settings']['method_2']['navigation']['pagination']['url'] ?? [];
         $paginationType = addslashes($paginationConfig['type'] ?? 'query');
         $paginationParam = addslashes($paginationConfig['parameter'] ?? 'page');
@@ -881,6 +897,7 @@ JAVASCRIPT;
         $forceTrailingSlash = $paginationConfig['force_trailing_slash'] ?? false;
         $paginationConfigJson = json_encode($paginationConfig, JSON_UNESCAPED_SLASHES);
 
+        // تعریف اسکریپت Playwright
         $playwrightScript = <<<'JAVASCRIPT'
 const { chromium } = require('playwright');
 
@@ -1065,7 +1082,7 @@ const { chromium } = require('playwright');
                 baseUrl: baseUrl
             });
 
-            console.log(`page${currentPage} -> ${currentPageLinks.length} link find`);
+            console.log(`Found ${currentPageLinks.length} links on page ${currentPage}`);
             if (currentPageLinks.length === 0) {
                 console.log(`No products found on page ${currentPage}. Stopping...`);
                 hasMorePages = false;
@@ -1099,7 +1116,7 @@ const { chromium } = require('playwright');
                         console.log(`Current URL before click: ${currentUrl}`);
                         await nextButton.scrollIntoViewIfNeeded();
                         await nextButton.click();
-                        await page.waitForTimeout(10000);
+                        await page.waitForTimeout(10000); // انتظار 10 ثانیه برای بارگذاری
 
                         const newUrl = page.url();
                         console.log(`New URL after click: ${newUrl}`);
@@ -1139,6 +1156,7 @@ const { chromium } = require('playwright');
 })();
 JAVASCRIPT;
 
+        // جایگذاری مقادیر PHP
         $playwrightScript = str_replace(
             [
                 'USER_AGENT',
@@ -1228,15 +1246,14 @@ JAVASCRIPT;
         }
 
         $output = '';
-        $errorOutput = '';
+        $errorOutput = ''; // برای ذخیره خطاها
         $logFile = storage_path('logs/playwright_' . date('Ymd_His') . '.log');
         while (!feof($pipes[1])) {
             $line = fgets($pipes[1]);
             if ($line !== false) {
                 $output .= $line;
-                if (strpos($line, 'page') !== false && strpos($line, 'link find') !== false) {
-                    $this->log(trim($line), self::COLOR_GREEN);
-                } else {
+                // فقط لاگ‌هایی که شامل JSON خروجی نیستند نمایش داده شوند
+                if (!preg_match('/^\s*\{.*"links":.*\}/', $line)) {
                     $this->log("Playwright output: " . trim($line), self::COLOR_YELLOW);
                 }
                 file_put_contents($logFile, "[STDOUT] " . trim($line) . PHP_EOL, FILE_APPEND);
@@ -1246,7 +1263,7 @@ JAVASCRIPT;
         while (!feof($pipes[2])) {
             $errorLine = fgets($pipes[2]);
             if ($errorLine !== false) {
-                $errorOutput .= $errorLine;
+                $errorOutput .= $errorLine; // جمع‌آوری خطاها
                 $this->log("Playwright error: " . trim($errorLine), self::COLOR_RED);
                 file_put_contents($logFile, "[STDERR] " . trim($errorLine) . PHP_EOL, FILE_APPEND);
             }
@@ -1259,13 +1276,15 @@ JAVASCRIPT;
 
         $this->log("Playwright script execution completed with return code: $returnCode", self::COLOR_GREEN);
 
+        // بررسی خطای داخلی در خروجی یا خطاها
         if ($returnCode !== 0 || strpos($errorOutput, "Target page, context or browser has been closed") !== false || strpos($output, "Target page, context or browser has been closed") !== false) {
             $this->log("Internal Playwright error detected for URL: $productUrl. Will retry later.", self::COLOR_YELLOW);
-            $this->failedUrlsDueToInternalError[] = $productUrl;
+            $this->failedUrlsDueToInternalError[] = $productUrl; // اضافه کردن URL به لیست خطاهای داخلی
             unlink($tempFile);
             return ['links' => [], 'pages_processed' => 0];
         }
 
+        // تجزیه خروجی
         preg_match('/\{.*\}/s', $output, $matches);
         if (!isset($matches[0])) {
             $this->log("Failed to parse Playwright output for $productUrl.", self::COLOR_RED);
@@ -1287,10 +1306,12 @@ JAVASCRIPT;
             }
         }
 
+        // مپ کردن لینک‌ها و اطمینان از استخراج product_id اگه خالی بود
         $links = array_map(function ($link) use ($productUrl) {
             $url = $this->makeAbsoluteUrl($link['url']);
             $productId = $link['product_id'] ?? 'unknown';
 
+            // اگه product_id خالیه و روش url هست، از URL استخراج کن
             if ($productId === 'unknown' && ($this->config['product_id_method'] ?? 'selector') === 'url') {
                 $productId = $this->extractProductIdFromUrl($url, '', new Crawler());
                 $this->log("Extracted product_id from URL in PHP: $productId for $url", self::COLOR_GREEN);
@@ -1308,7 +1329,7 @@ JAVASCRIPT;
         unlink($tempFile);
         return [
             'links' => array_unique($links, SORT_REGULAR),
-            'pages_processed' => $result['pages_processed'] ?? 0
+            'pages_processed' => $result['pages_processed'] ?? 0 // مقدار پیش‌فرض در صورت عدم وجود
         ];
     }
 
@@ -2470,11 +2491,17 @@ JAVASCRIPT;
 
                 $this->log("Processing products_url " . ($index + 1) . ": $productUrl", self::COLOR_PURPLE);
 
+                // در خط 35 تقریباً، قبل از match
+                $this->log("About to call scrapeWithPlaywright for: $productUrl", self::COLOR_PURPLE);
+
                 $result = match ($method) {
                     1 => $this->scrapeMethodOneForUrl($productUrl),
                     2 => $this->scrapeWithPlaywright(2, $productUrl),
                     default => throw new \Exception("Invalid method specified in config: $method. Use 1 or 2."),
                 };
+
+// بعد از match این خط رو اضافه کن:
+                $this->log("Result from scrapeWithPlaywright: " . json_encode($result, JSON_PRETTY_PRINT), self::COLOR_YELLOW);
 
                 $rawLinks = $result['links'] ?? [];
                 $pagesProcessed = $result['pages_processed'] ?? 0;
