@@ -1,0 +1,1846 @@
+[2025-05-23 13:51:16] Validating configuration...
+[2025-05-23 13:51:16] Config validated. Using run_method: new
+[2025-05-23 13:51:16] Inside scrapeMultiple method
+[2025-05-23 13:51:16] Starting scraper with start_id: not set
+[2025-05-23 13:51:16] Config contents: {
+    "method": 3,
+    "processing_method": 1,
+    "base_urls": [
+        "https:\/\/sinastyle.ir"
+    ],
+    "products_urls": [
+        "https:\/\/sinastyle.ir\/products"
+    ],
+    "request_delay_min": 500000,
+    "request_delay_max": 500000,
+    "timeout": 60,
+    "max_retries": 2,
+    "concurrency": 10,
+    "batch_size": 100,
+    "user_agent": "Mozilla\/5.0 (Windows NT 10.0; Win64; x64) Chrome\/91.0.4472.124",
+    "verify_ssl": false,
+    "keep_price_format": false,
+    "image_method": "product_page",
+    "product_id_method": "url",
+    "product_id_source": "url",
+    "availability_mode": "smart",
+    "run_method": "new",
+    "database": "clear",
+    "product_id_fallback_script_patterns": [
+        "product_id:\\s*\\\"(\\d+)\\\"",
+        "product_id:\\s*(\\d+)"
+    ],
+    "category_method": "selector",
+    "category_word_count": 1,
+    "guarantee_method": "selector",
+    "guarantee_keywords": [
+        "گارانتی"
+    ],
+    "availability_keywords": {
+        "positive": [
+            "موجود",
+            "افزودن به سبد خرید"
+        ],
+        "negative": [
+            "ناموجود"
+        ]
+    },
+    "price_keywords": {
+        "unpriced": [
+            "تماس بگیرید"
+        ]
+    },
+    "selectors": {
+        "main_page": {
+            "product_links": {
+                "type": "css",
+                "selector": "div.sc-195bc97-1 > a",
+                "attribute": "href"
+            }
+        },
+        "product_page": {
+            "title": {
+                "type": "css",
+                "selector": "h1.bWVCXB"
+            },
+            "category": {
+                "type": "css",
+                "selector": "div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"
+            },
+            "availability": {
+                "type": "css",
+                "selector": "span.sc-hLQSwg.XxlIx"
+            },
+            "add_to_cart_button": {
+                "type": "css",
+                "selector": "span.sc-hLQSwg.XxlIx"
+            },
+            "out_of_stock": {
+                "type": "css",
+                "selector": ".kIqWGe"
+            },
+            "price": {
+                "type": "css",
+                "selector": ".gVmreK"
+            },
+            "image": {
+                "type": "css",
+                "selector": ".dFxbiY > img:nth-child(1)",
+                "attribute": "src"
+            },
+            "off": {
+                "type": "css",
+                "selector": ".eaqgCF"
+            },
+            "guarantee": {
+                "type": "css",
+                "selector": null
+            },
+            "product_id": {
+                "type": "css",
+                "selector": null,
+                "attribute": "data-id"
+            }
+        },
+        "data_transformers": {
+            "price": "cleanPrice",
+            "availability": "parseAvailability",
+            "off": "cleanOff",
+            "guarantee": "cleanGuarantee"
+        }
+    },
+    "container": "div.sc-195bc97-1",
+    "scrool": 10,
+    "method_settings": {
+        "method_3": {
+            "enabled": true,
+            "navigation": {
+                "use_webdriver": true,
+                "pagination": {
+                    "method": "next_button",
+                    "next_button": {
+                        "selector": ".test"
+                    }
+                },
+                "max_pages": 3,
+                "scroll_delay": 5000
+            }
+        }
+    }
+}
+[2025-05-23 13:51:16] Configuration validated successfully.
+[2025-05-23 13:51:16] Generated database name: sinastyle_ir
+[2025-05-23 13:51:16] Database mode: clear
+[2025-05-23 13:51:16] Database sinastyle_ir exists, dropping it...
+[2025-05-23 13:51:16] Creating database sinastyle_ir...
+[2025-05-23 13:51:16] Switched to database: sinastyle_ir
+[2025-05-23 13:51:16] Running specific migrations for database sinastyle_ir...
+[2025-05-23 13:51:16] Applied migration: 2025_04_08_162133_create_products_table.php
+[2025-05-23 13:51:16] Applied migration: 2025_04_13_073528_create_failed_links_table.php
+[2025-05-23 13:51:16] Applied migration: 2025_05_19_162835_create_links_table.php
+[2025-05-23 13:51:16] Specific migrations completed for database sinastyle_ir
+[2025-05-23 13:51:16] Run method: new
+[2025-05-23 13:51:16] Fetching product links from web...
+[2025-05-23 13:51:16] 🔄 STARTING fetchProductLinks - Method: 3
+[2025-05-23 13:51:16] 📄 Config check - products_urls count: 1
+[2025-05-23 13:51:16] 📄 Config check - base_urls: ["https:\/\/sinastyle.ir"]
+[2025-05-23 13:51:16] ✅ Product links selector found (array): {"type":"css","selector":"div.sc-195bc97-1 > a","attribute":"href"}
+[2025-05-23 13:51:16] 🎯 Using scrapeMethodThree for method 3...
+[2025-05-23 13:51:16] Starting scrapeMethodThree...
+[2025-05-23 13:51:16] Normalized URL: https://sinastyle.ir/products -> https://sinastyle.ir/products/
+[2025-05-23 13:51:16] Processing products_url 1: https://sinastyle.ir/products
+[2025-05-23 13:51:16] Temporary script file created at: /tmp/playwright_method3_tr3gdscjcagaciDWPt6.cjs
+[2025-05-23 13:51:16] Executing Playwright script: NODE_PATH=/var/www/html/products-shops/node_modules node /tmp/playwright_method3_tr3gdscjcagaciDWPt6.cjs
+[2025-05-23 13:51:17] Playwright output: Launching headless Chrome browser...
+[2025-05-23 13:51:17] Playwright output: Creating new browser context...
+[2025-05-23 13:51:17] Playwright output: Creating new page...
+[2025-05-23 13:51:17] Playwright output: Processing page 1...
+[2025-05-23 13:51:17] Playwright output: Navigating to main page: https://sinastyle.ir/products...
+[2025-05-23 13:51:18] Playwright output: Main page navigation completed.
+[2025-05-23 13:51:19] Playwright output: Scroll 1 completed.
+[2025-05-23 13:51:22] Playwright output: Scroll 2 completed.
+[2025-05-23 13:51:25] Playwright output: Scroll 3 completed.
+[2025-05-23 13:51:28] Playwright output: Scroll 4 completed.
+[2025-05-23 13:51:31] Playwright output: Scroll 5 completed.
+[2025-05-23 13:51:34] Playwright output: Scroll 6 completed.
+[2025-05-23 13:51:37] Playwright output: Scroll 7 completed.
+[2025-05-23 13:51:40] Playwright output: Scroll 8 completed.
+[2025-05-23 13:51:43] Playwright output: Scroll 9 completed.
+[2025-05-23 13:51:46] Playwright output: Scroll 10 completed.
+[2025-05-23 13:51:49] Playwright output: Waiting for product links to appear (max 30s)...
+[2025-05-23 13:51:49] Playwright output: Added new link: /product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:51:49] Playwright output: Added new link: /product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:51:49] Playwright output: Added new link: /product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:51:49] Playwright output: Added new link: /product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:51:49] Playwright output: Added new link: /product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:51:49] Playwright output: Added new link: /product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:51:49] Playwright output: Added new link: /product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:51:49] Playwright output: Added new link: /product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:51:49] Playwright output: Added new link: /product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:51:49] Playwright output: Added new link: /product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:51:49] Playwright output: Added new link: /product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:51:49] Playwright output: Added new link: /product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:51:49] Playwright output: Extracted 12 new product links from page 1.
+[2025-05-23 13:51:49] Playwright output: Checking for "Next Page" button...
+[2025-05-23 13:51:49] Playwright output: No "Next Page" button found or not visible. Stopping pagination.
+[2025-05-23 13:51:49] Playwright output: Total unique links extracted: 12
+[2025-05-23 13:51:49] Playwright output: Processing link 1: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:51:49] Playwright output: Navigating to https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA...
+[2025-05-23 13:51:50] Playwright output: Product page navigation completed.
+[2025-05-23 13:51:50] Playwright output: Waiting for title selector...
+[2025-05-23 13:51:51] Playwright output: Extracted title: تیشرت مچینست
+[2025-05-23 13:51:51] Playwright output: Waiting for price selector...
+[2025-05-23 13:51:51] Playwright output: Extracted price: 530,000
+[2025-05-23 13:51:51] Playwright output: Waiting for availability selector...
+[2025-05-23 13:51:51] Playwright output: Raw availability text: افزودن به سبد خرید
+[2025-05-23 13:51:51] Playwright output: Product is available based on positive keyword: افزودن به سبد خرید
+[2025-05-23 13:51:51] Playwright output: Final availability value: 1
+[2025-05-23 13:51:51] Playwright output: Waiting for image selector...
+[2025-05-23 13:51:51] Playwright output: Extracted image: https://digifycdn.com/media/item_images/IMG_1141_2tczzZj.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true
+[2025-05-23 13:51:51] Playwright output: Waiting for category selector...
+[2025-05-23 13:51:51] Playwright output: Extracted category: محصولات
+[2025-05-23 13:51:51] Playwright output: No guarantee selector provided. Skipping guarantee extraction.
+[2025-05-23 13:51:51] Playwright output: Extracting product_id...
+[2025-05-23 13:51:51] Playwright output: Using URL method for product_id extraction...
+[2025-05-23 13:51:51] Playwright output: Extracted product_id from URL: 1665489
+[2025-05-23 13:51:51] Playwright output: Processed product 1: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:51:55] Playwright output: Processing link 2: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:51:55] Playwright output: Navigating to https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C....
+[2025-05-23 13:51:55] Playwright output: Product page navigation completed.
+[2025-05-23 13:51:55] Playwright output: Waiting for title selector...
+[2025-05-23 13:51:56] Playwright output: Extracted title: شلوار مام‌.
+[2025-05-23 13:51:56] Playwright output: Waiting for price selector...
+[2025-05-23 13:51:56] Playwright output: Extracted price: 898,000
+[2025-05-23 13:51:56] Playwright output: Waiting for availability selector...
+[2025-05-23 13:51:56] Playwright output: Raw availability text: افزودن به سبد خرید
+[2025-05-23 13:51:56] Playwright output: Product is available based on positive keyword: افزودن به سبد خرید
+[2025-05-23 13:51:56] Playwright output: Final availability value: 1
+[2025-05-23 13:51:56] Playwright output: Waiting for image selector...
+[2025-05-23 13:51:56] Playwright output: Extracted image: https://digifycdn.com/media/item_images/IMG_1179_4k0GZiq.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true
+[2025-05-23 13:51:56] Playwright output: Waiting for category selector...
+[2025-05-23 13:51:56] Playwright output: Extracted category: شلوار
+[2025-05-23 13:51:56] Playwright output: No guarantee selector provided. Skipping guarantee extraction.
+[2025-05-23 13:51:56] Playwright output: Extracting product_id...
+[2025-05-23 13:51:56] Playwright output: Using URL method for product_id extraction...
+[2025-05-23 13:51:56] Playwright output: Extracted product_id from URL: 1665485
+[2025-05-23 13:51:56] Playwright output: Processed product 2: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:51:59] Playwright output: Processing link 3: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:51:59] Playwright output: Navigating to https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA...
+[2025-05-23 13:51:59] Playwright output: Product page navigation completed.
+[2025-05-23 13:51:59] Playwright output: Waiting for title selector...
+[2025-05-23 13:52:00] Playwright output: Extracted title: شلوار مام فیت
+[2025-05-23 13:52:00] Playwright output: Waiting for price selector...
+[2025-05-23 13:52:00] Playwright output: Extracted price: 898,000
+[2025-05-23 13:52:00] Playwright output: Waiting for availability selector...
+[2025-05-23 13:52:00] Playwright output: Raw availability text: افزودن به سبد خرید
+[2025-05-23 13:52:00] Playwright output: Product is available based on positive keyword: افزودن به سبد خرید
+[2025-05-23 13:52:00] Playwright output: Final availability value: 1
+[2025-05-23 13:52:00] Playwright output: Waiting for image selector...
+[2025-05-23 13:52:00] Playwright output: Extracted image: https://digifycdn.com/media/item_images/IMG_1181_AIEiP2K.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true
+[2025-05-23 13:52:00] Playwright output: Waiting for category selector...
+[2025-05-23 13:52:00] Playwright output: Extracted category: شلوار
+[2025-05-23 13:52:00] Playwright output: No guarantee selector provided. Skipping guarantee extraction.
+[2025-05-23 13:52:00] Playwright output: Extracting product_id...
+[2025-05-23 13:52:00] Playwright output: Using URL method for product_id extraction...
+[2025-05-23 13:52:00] Playwright output: Extracted product_id from URL: 1665481
+[2025-05-23 13:52:00] Playwright output: Processed product 3: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:52:03] Playwright output: Processing link 4: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:52:03] Playwright output: Navigating to https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85...
+[2025-05-23 13:52:04] Playwright output: Product page navigation completed.
+[2025-05-23 13:52:04] Playwright output: Waiting for title selector...
+[2025-05-23 13:52:04] Playwright output: Extracted title: شلوار مام
+[2025-05-23 13:52:04] Playwright output: Waiting for price selector...
+[2025-05-23 13:52:04] Playwright output: Extracted price: 980,000
+[2025-05-23 13:52:04] Playwright output: Waiting for availability selector...
+[2025-05-23 13:52:04] Playwright output: Raw availability text: افزودن به سبد خرید
+[2025-05-23 13:52:04] Playwright output: Product is available based on positive keyword: افزودن به سبد خرید
+[2025-05-23 13:52:04] Playwright output: Final availability value: 1
+[2025-05-23 13:52:04] Playwright output: Waiting for image selector...
+[2025-05-23 13:52:04] Playwright output: Extracted image: https://digifycdn.com/media/item_images/IMG_1182_9XioEob.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true
+[2025-05-23 13:52:04] Playwright output: Waiting for category selector...
+[2025-05-23 13:52:04] Playwright output: Extracted category: شلوار
+[2025-05-23 13:52:04] Playwright output: No guarantee selector provided. Skipping guarantee extraction.
+[2025-05-23 13:52:04] Playwright output: Extracting product_id...
+[2025-05-23 13:52:04] Playwright output: Using URL method for product_id extraction...
+[2025-05-23 13:52:04] Playwright output: Extracted product_id from URL: 1665475
+[2025-05-23 13:52:04] Playwright output: Processed product 4: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:52:09] Playwright output: Processing link 5: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:52:09] Playwright output: Navigating to https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF...
+[2025-05-23 13:52:09] Playwright output: Product page navigation completed.
+[2025-05-23 13:52:09] Playwright output: Waiting for title selector...
+[2025-05-23 13:52:10] Playwright output: Extracted title: شلوار بگ
+[2025-05-23 13:52:10] Playwright output: Waiting for price selector...
+[2025-05-23 13:52:10] Playwright output: Extracted price: 1,299,000
+[2025-05-23 13:52:10] Playwright output: Waiting for availability selector...
+[2025-05-23 13:52:10] Playwright output: Raw availability text: افزودن به سبد خرید
+[2025-05-23 13:52:10] Playwright output: Product is available based on positive keyword: افزودن به سبد خرید
+[2025-05-23 13:52:10] Playwright output: Final availability value: 1
+[2025-05-23 13:52:10] Playwright output: Waiting for image selector...
+[2025-05-23 13:52:10] Playwright output: Extracted image: https://digifycdn.com/media/item_images/IMG_1178_mUrE0TC.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true
+[2025-05-23 13:52:10] Playwright output: Waiting for category selector...
+[2025-05-23 13:52:10] Playwright output: Extracted category: شلوار
+[2025-05-23 13:52:10] Playwright output: No guarantee selector provided. Skipping guarantee extraction.
+[2025-05-23 13:52:10] Playwright output: Extracting product_id...
+[2025-05-23 13:52:10] Playwright output: Using URL method for product_id extraction...
+[2025-05-23 13:52:10] Playwright output: Extracted product_id from URL: 1665467
+[2025-05-23 13:52:10] Playwright output: Processed product 5: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:52:13] Playwright output: Processing link 6: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:52:13] Playwright output: Navigating to https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE...
+[2025-05-23 13:52:13] Playwright output: Product page navigation completed.
+[2025-05-23 13:52:13] Playwright output: Waiting for title selector...
+[2025-05-23 13:52:14] Playwright output: Extracted title: تیشرتEAGLE
+[2025-05-23 13:52:14] Playwright output: Waiting for price selector...
+[2025-05-23 13:52:14] Playwright output: Extracted price: 525,000
+[2025-05-23 13:52:14] Playwright output: Waiting for availability selector...
+[2025-05-23 13:52:14] Playwright output: Raw availability text: افزودن به سبد خرید
+[2025-05-23 13:52:14] Playwright output: Product is available based on positive keyword: افزودن به سبد خرید
+[2025-05-23 13:52:14] Playwright output: Final availability value: 1
+[2025-05-23 13:52:14] Playwright output: Waiting for image selector...
+[2025-05-23 13:52:14] Playwright output: Extracted image: https://digifycdn.com/media/item_images/image_wDUe3dA.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true
+[2025-05-23 13:52:14] Playwright output: Waiting for category selector...
+[2025-05-23 13:52:14] Playwright output: Extracted category: تیشرت
+[2025-05-23 13:52:14] Playwright output: No guarantee selector provided. Skipping guarantee extraction.
+[2025-05-23 13:52:14] Playwright output: Extracting product_id...
+[2025-05-23 13:52:14] Playwright output: Using URL method for product_id extraction...
+[2025-05-23 13:52:14] Playwright output: Extracted product_id from URL: 1663626
+[2025-05-23 13:52:14] Playwright output: Processed product 6: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:52:18] Playwright output: Processing link 7: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:52:18] Playwright output: Navigating to https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA...
+[2025-05-23 13:52:18] Playwright output: Product page navigation completed.
+[2025-05-23 13:52:18] Playwright output: Waiting for title selector...
+[2025-05-23 13:52:19] Playwright output: Extracted title: تیشرت LEIFFA
+[2025-05-23 13:52:19] Playwright output: Waiting for price selector...
+[2025-05-23 13:52:19] Playwright output: Extracted price: 525,000
+[2025-05-23 13:52:19] Playwright output: Waiting for availability selector...
+[2025-05-23 13:52:19] Playwright output: Raw availability text: افزودن به سبد خرید
+[2025-05-23 13:52:19] Playwright output: Product is available based on positive keyword: افزودن به سبد خرید
+[2025-05-23 13:52:19] Playwright output: Final availability value: 1
+[2025-05-23 13:52:19] Playwright output: Waiting for image selector...
+[2025-05-23 13:52:19] Playwright output: Extracted image: https://digifycdn.com/media/item_images/image_hBUleqe.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true
+[2025-05-23 13:52:19] Playwright output: Waiting for category selector...
+[2025-05-23 13:52:19] Playwright output: Extracted category: تیشرت
+[2025-05-23 13:52:19] Playwright output: No guarantee selector provided. Skipping guarantee extraction.
+[2025-05-23 13:52:19] Playwright output: Extracting product_id...
+[2025-05-23 13:52:19] Playwright output: Using URL method for product_id extraction...
+[2025-05-23 13:52:19] Playwright output: Extracted product_id from URL: 1663611
+[2025-05-23 13:52:19] Playwright output: Processed product 7: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:52:23] Playwright output: Processing link 8: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:52:23] Playwright output: Navigating to https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1....
+[2025-05-23 13:52:24] Playwright output: Product page navigation completed.
+[2025-05-23 13:52:24] Playwright output: Waiting for title selector...
+[2025-05-23 13:52:25] Playwright output: Extracted title: تیشرت طرح دار.
+[2025-05-23 13:52:25] Playwright output: Waiting for price selector...
+[2025-05-23 13:52:25] Playwright output: Extracted price: 535,000
+[2025-05-23 13:52:25] Playwright output: Waiting for availability selector...
+[2025-05-23 13:52:25] Playwright output: Raw availability text: افزودن به سبد خرید
+[2025-05-23 13:52:25] Playwright output: Product is available based on positive keyword: افزودن به سبد خرید
+[2025-05-23 13:52:25] Playwright output: Final availability value: 1
+[2025-05-23 13:52:25] Playwright output: Waiting for image selector...
+[2025-05-23 13:52:25] Playwright output: Extracted image: https://digifycdn.com/media/item_images/image_0pPgpyj.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true
+[2025-05-23 13:52:25] Playwright output: Waiting for category selector...
+[2025-05-23 13:52:25] Playwright output: Extracted category: تیشرت
+[2025-05-23 13:52:25] Playwright output: No guarantee selector provided. Skipping guarantee extraction.
+[2025-05-23 13:52:25] Playwright output: Extracting product_id...
+[2025-05-23 13:52:25] Playwright output: Using URL method for product_id extraction...
+[2025-05-23 13:52:25] Playwright output: Extracted product_id from URL: 1663600
+[2025-05-23 13:52:25] Playwright output: Processed product 8: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:52:28] Playwright output: Processing link 9: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:28] Playwright output: Navigating to https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1...
+[2025-05-23 13:52:30] Playwright output: Product page navigation completed.
+[2025-05-23 13:52:30] Playwright output: Waiting for title selector...
+[2025-05-23 13:52:30] Playwright output: Extracted title: تیشرت طرح دار
+[2025-05-23 13:52:30] Playwright output: Waiting for price selector...
+[2025-05-23 13:52:30] Playwright output: Extracted price: 525,000
+[2025-05-23 13:52:30] Playwright output: Waiting for availability selector...
+[2025-05-23 13:52:30] Playwright output: Raw availability text: افزودن به سبد خرید
+[2025-05-23 13:52:30] Playwright output: Product is available based on positive keyword: افزودن به سبد خرید
+[2025-05-23 13:52:30] Playwright output: Final availability value: 1
+[2025-05-23 13:52:30] Playwright output: Waiting for image selector...
+[2025-05-23 13:52:30] Playwright output: Extracted image: https://digifycdn.com/media/item_images/image_zUOI8Fw.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true
+[2025-05-23 13:52:30] Playwright output: Waiting for category selector...
+[2025-05-23 13:52:30] Playwright output: Extracted category: تیشرت
+[2025-05-23 13:52:30] Playwright output: No guarantee selector provided. Skipping guarantee extraction.
+[2025-05-23 13:52:30] Playwright output: Extracting product_id...
+[2025-05-23 13:52:30] Playwright output: Using URL method for product_id extraction...
+[2025-05-23 13:52:30] Playwright output: Extracted product_id from URL: 1663586
+[2025-05-23 13:52:30] Playwright output: Processed product 9: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:34] Playwright output: Processing link 10: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:34] Playwright output: Navigating to https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff...
+[2025-05-23 13:52:35] Playwright output: Product page navigation completed.
+[2025-05-23 13:52:35] Playwright output: Waiting for title selector...
+[2025-05-23 13:52:35] Playwright output: Extracted title: تیشرت staff
+[2025-05-23 13:52:35] Playwright output: Waiting for price selector...
+[2025-05-23 13:52:35] Playwright output: Extracted price: 565,000
+[2025-05-23 13:52:35] Playwright output: Waiting for availability selector...
+[2025-05-23 13:52:35] Playwright output: Raw availability text: افزودن به سبد خرید
+[2025-05-23 13:52:35] Playwright output: Product is available based on positive keyword: افزودن به سبد خرید
+[2025-05-23 13:52:35] Playwright output: Final availability value: 1
+[2025-05-23 13:52:35] Playwright output: Waiting for image selector...
+[2025-05-23 13:52:35] Playwright output: Extracted image: https://digifycdn.com/media/item_images/image_okMtM7g.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true
+[2025-05-23 13:52:35] Playwright output: Waiting for category selector...
+[2025-05-23 13:52:35] Playwright output: Extracted category: تیشرت
+[2025-05-23 13:52:35] Playwright output: No guarantee selector provided. Skipping guarantee extraction.
+[2025-05-23 13:52:35] Playwright output: Extracting product_id...
+[2025-05-23 13:52:35] Playwright output: Using URL method for product_id extraction...
+[2025-05-23 13:52:35] Playwright output: Extracted product_id from URL: 1663570
+[2025-05-23 13:52:35] Playwright output: Processed product 10: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:40] Playwright output: Processing link 11: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:52:40] Playwright output: Navigating to https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI...
+[2025-05-23 13:52:41] Playwright output: Product page navigation completed.
+[2025-05-23 13:52:41] Playwright output: Waiting for title selector...
+[2025-05-23 13:52:41] Playwright output: Extracted title: تیشرت MAUI
+[2025-05-23 13:52:41] Playwright output: Waiting for price selector...
+[2025-05-23 13:52:41] Playwright output: Extracted price: 625,000
+[2025-05-23 13:52:41] Playwright output: Waiting for availability selector...
+[2025-05-23 13:52:41] Playwright output: Raw availability text: افزودن به سبد خرید
+[2025-05-23 13:52:41] Playwright output: Product is available based on positive keyword: افزودن به سبد خرید
+[2025-05-23 13:52:41] Playwright output: Final availability value: 1
+[2025-05-23 13:52:41] Playwright output: Waiting for image selector...
+[2025-05-23 13:52:41] Playwright output: Extracted image: https://digifycdn.com/media/item_images/image_SuSSk6P.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true
+[2025-05-23 13:52:41] Playwright output: Waiting for category selector...
+[2025-05-23 13:52:41] Playwright output: Extracted category: تیشرت
+[2025-05-23 13:52:41] Playwright output: No guarantee selector provided. Skipping guarantee extraction.
+[2025-05-23 13:52:41] Playwright output: Extracting product_id...
+[2025-05-23 13:52:41] Playwright output: Using URL method for product_id extraction...
+[2025-05-23 13:52:41] Playwright output: Extracted product_id from URL: 1663545
+[2025-05-23 13:52:41] Playwright output: Processed product 11: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:52:45] Playwright output: Processing link 12: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:52:45] Playwright output: Navigating to https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO...
+[2025-05-23 13:52:45] Playwright output: Product page navigation completed.
+[2025-05-23 13:52:45] Playwright output: Waiting for title selector...
+[2025-05-23 13:52:46] Playwright output: Extracted title: تیشرت GYRO
+[2025-05-23 13:52:46] Playwright output: Waiting for price selector...
+[2025-05-23 13:52:46] Playwright output: Extracted price: 585,000
+[2025-05-23 13:52:46] Playwright output: Waiting for availability selector...
+[2025-05-23 13:52:46] Playwright output: Raw availability text: افزودن به سبد خرید
+[2025-05-23 13:52:46] Playwright output: Product is available based on positive keyword: افزودن به سبد خرید
+[2025-05-23 13:52:46] Playwright output: Final availability value: 1
+[2025-05-23 13:52:46] Playwright output: Waiting for image selector...
+[2025-05-23 13:52:46] Playwright output: Extracted image: https://digifycdn.com/media/item_images/image_0RCHPtY.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true
+[2025-05-23 13:52:46] Playwright output: Waiting for category selector...
+[2025-05-23 13:52:46] Playwright output: Extracted category: تیشرت
+[2025-05-23 13:52:46] Playwright output: No guarantee selector provided. Skipping guarantee extraction.
+[2025-05-23 13:52:46] Playwright output: Extracting product_id...
+[2025-05-23 13:52:46] Playwright output: Using URL method for product_id extraction...
+[2025-05-23 13:52:46] Playwright output: Extracted product_id from URL: 1663532
+[2025-05-23 13:52:46] Playwright output: Processed product 12: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:52:50] Playwright output: Final result: {"links":["/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA","/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.","/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA","/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85","/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF","/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE","/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA","/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.","/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1","/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff","/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI","/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO"],"products":[{"url":"https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA","title":"تیشرت مچینست","price":"530,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1141_2tczzZj.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"محصولات","guarantee":"","product_id":"1665489","error":""},{"url":"https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.","title":"شلوار مام‌.","price":"898,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1179_4k0GZiq.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665485","error":""},{"url":"https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA","title":"شلوار مام فیت","price":"898,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1181_AIEiP2K.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665481","error":""},{"url":"https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85","title":"شلوار مام","price":"980,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1182_9XioEob.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665475","error":""},{"url":"https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF","title":"شلوار بگ","price":"1,299,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1178_mUrE0TC.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665467","error":""},{"url":"https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE","title":"تیشرتEAGLE","price":"525,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_wDUe3dA.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663626","error":""},{"url":"https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA","title":"تیشرت LEIFFA","price":"525,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_hBUleqe.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663611","error":""},{"url":"https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.","title":"تیشرت طرح دار.","price":"535,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_0pPgpyj.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663600","error":""},{"url":"https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1","title":"تیشرت طرح دار","price":"525,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_zUOI8Fw.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663586","error":""},{"url":"https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff","title":"تیشرت staff","price":"565,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_okMtM7g.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663570","error":""},{"url":"https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI","title":"تیشرت MAUI","price":"625,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_SuSSk6P.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663545","error":""},{"url":"https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO","title":"تیشرت GYRO","price":"585,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_0RCHPtY.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663532","error":""}],"pages_processed":0,"console_logs":[]}
+[2025-05-23 13:52:50] Playwright output: Closing browser...
+[2025-05-23 13:52:50] Playwright output: Browser disconnected unexpectedly.
+[2025-05-23 13:52:51] Playwright output: Browser closed.
+[2025-05-23 13:52:51] Playwright output: Final result: {"links":["/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA","/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.","/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA","/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85","/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF","/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE","/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA","/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.","/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1","/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff","/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI","/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO"],"products":[{"url":"https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA","title":"تیشرت مچینست","price":"530,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1141_2tczzZj.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"محصولات","guarantee":"","product_id":"1665489","error":""},{"url":"https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.","title":"شلوار مام‌.","price":"898,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1179_4k0GZiq.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665485","error":""},{"url":"https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA","title":"شلوار مام فیت","price":"898,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1181_AIEiP2K.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665481","error":""},{"url":"https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85","title":"شلوار مام","price":"980,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1182_9XioEob.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665475","error":""},{"url":"https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF","title":"شلوار بگ","price":"1,299,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1178_mUrE0TC.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665467","error":""},{"url":"https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE","title":"تیشرتEAGLE","price":"525,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_wDUe3dA.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663626","error":""},{"url":"https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA","title":"تیشرت LEIFFA","price":"525,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_hBUleqe.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663611","error":""},{"url":"https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.","title":"تیشرت طرح دار.","price":"535,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_0pPgpyj.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663600","error":""},{"url":"https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1","title":"تیشرت طرح دار","price":"525,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_zUOI8Fw.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663586","error":""},{"url":"https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff","title":"تیشرت staff","price":"565,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_okMtM7g.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663570","error":""},{"url":"https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI","title":"تیشرت MAUI","price":"625,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_SuSSk6P.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663545","error":""},{"url":"https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO","title":"تیشرت GYRO","price":"585,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_0RCHPtY.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663532","error":""}],"pages_processed":0,"console_logs":["Browser disconnected unexpectedly."]}
+[2025-05-23 13:52:51] Playwright script execution completed with return code: 0
+[2025-05-23 13:52:51] Processing product: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA, Availability: 1
+[2025-05-23 13:52:51] Raw price input to cleanPrice: '530,000'
+[2025-05-23 13:52:51] Cleaned price: '530000'
+[2025-05-23 13:52:51] Cleaned guarantee: ''
+[2025-05-23 13:52:51] Raw off value: '0'
+[2025-05-23 13:52:51] Processed off (numeric): 0
+[2025-05-23 13:52:51] Validating product data: {"page_url":"https:\/\/sinastyle.ir\/product\/1665489\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA","url":"https:\/\/sinastyle.ir\/product\/1665489\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA","title":"تیشرت مچینست","price":530000,"availability":1,"image":"https:\/\/digifycdn.com\/media\/item_images\/IMG_1141_2tczzZj.jpeg?x-img=v1\/optimize,q_95\/resize,w_500,force_true","category":"محصولات","guarantee":"","product_id":"1665489","off":0}
+[2025-05-23 13:52:51] Product data validated successfully for URL: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:52:51] 🆕 محصول جدید اضافه شد: تیشرت مچینست (ID: 1665489)
+[2025-05-23 13:52:51] [1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665489   |               تیشرت مچینست               |   530000   |  محصولات   |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] 🎉 محصول جدید ایجاد شد: تیشرت مچینست
+[2025-05-23 13:52:51] 📦 محصول پردازش شد: تیشرت مچینست (ID: 1665489)
+[2025-05-23 13:52:51] [1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665489   |               تیشرت مچینست               |   530000   |  محصولات   |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] Processing product: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C., Availability: 1
+[2025-05-23 13:52:51] Raw price input to cleanPrice: '898,000'
+[2025-05-23 13:52:51] Cleaned price: '898000'
+[2025-05-23 13:52:51] Cleaned guarantee: ''
+[2025-05-23 13:52:51] Raw off value: '0'
+[2025-05-23 13:52:51] Processed off (numeric): 0
+[2025-05-23 13:52:51] Validating product data: {"page_url":"https:\/\/sinastyle.ir\/product\/1665485\/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.","url":"https:\/\/sinastyle.ir\/product\/1665485\/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.","title":"شلوار مام‌.","price":898000,"availability":1,"image":"https:\/\/digifycdn.com\/media\/item_images\/IMG_1179_4k0GZiq.jpeg?x-img=v1\/optimize,q_95\/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665485","off":0}
+[2025-05-23 13:52:51] Product data validated successfully for URL: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:52:51] 🆕 محصول جدید اضافه شد: شلوار مام‌. (ID: 1665485)
+[2025-05-23 13:52:51] [1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665485   |               شلوار مام‌.                |   898000   |   شلوار    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] 🎉 محصول جدید ایجاد شد: شلوار مام‌.
+[2025-05-23 13:52:51] 📦 محصول پردازش شد: شلوار مام‌. (ID: 1665485)
+[2025-05-23 13:52:51] [1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665485   |               شلوار مام‌.                |   898000   |   شلوار    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] Processing product: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA, Availability: 1
+[2025-05-23 13:52:51] Raw price input to cleanPrice: '898,000'
+[2025-05-23 13:52:51] Cleaned price: '898000'
+[2025-05-23 13:52:51] Cleaned guarantee: ''
+[2025-05-23 13:52:51] Raw off value: '0'
+[2025-05-23 13:52:51] Processed off (numeric): 0
+[2025-05-23 13:52:51] Validating product data: {"page_url":"https:\/\/sinastyle.ir\/product\/1665481\/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA","url":"https:\/\/sinastyle.ir\/product\/1665481\/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA","title":"شلوار مام فیت","price":898000,"availability":1,"image":"https:\/\/digifycdn.com\/media\/item_images\/IMG_1181_AIEiP2K.jpeg?x-img=v1\/optimize,q_95\/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665481","off":0}
+[2025-05-23 13:52:51] Product data validated successfully for URL: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:52:51] 🆕 محصول جدید اضافه شد: شلوار مام فیت (ID: 1665481)
+[2025-05-23 13:52:51] [1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665481   |              شلوار مام فیت               |   898000   |   شلوار    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] 🎉 محصول جدید ایجاد شد: شلوار مام فیت
+[2025-05-23 13:52:51] 📦 محصول پردازش شد: شلوار مام فیت (ID: 1665481)
+[2025-05-23 13:52:51] [1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665481   |              شلوار مام فیت               |   898000   |   شلوار    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] Processing product: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85, Availability: 1
+[2025-05-23 13:52:51] Raw price input to cleanPrice: '980,000'
+[2025-05-23 13:52:51] Cleaned price: '980000'
+[2025-05-23 13:52:51] Cleaned guarantee: ''
+[2025-05-23 13:52:51] Raw off value: '0'
+[2025-05-23 13:52:51] Processed off (numeric): 0
+[2025-05-23 13:52:51] Validating product data: {"page_url":"https:\/\/sinastyle.ir\/product\/1665475\/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85","url":"https:\/\/sinastyle.ir\/product\/1665475\/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85","title":"شلوار مام","price":980000,"availability":1,"image":"https:\/\/digifycdn.com\/media\/item_images\/IMG_1182_9XioEob.jpeg?x-img=v1\/optimize,q_95\/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665475","off":0}
+[2025-05-23 13:52:51] Product data validated successfully for URL: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:52:51] 🆕 محصول جدید اضافه شد: شلوار مام (ID: 1665475)
+[2025-05-23 13:52:51] [1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665475   |                شلوار مام                 |   980000   |   شلوار    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] 🎉 محصول جدید ایجاد شد: شلوار مام
+[2025-05-23 13:52:51] 📦 محصول پردازش شد: شلوار مام (ID: 1665475)
+[2025-05-23 13:52:51] [1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665475   |                شلوار مام                 |   980000   |   شلوار    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] Processing product: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF, Availability: 1
+[2025-05-23 13:52:51] Raw price input to cleanPrice: '1,299,000'
+[2025-05-23 13:52:51] Cleaned price: '1299000'
+[2025-05-23 13:52:51] Cleaned guarantee: ''
+[2025-05-23 13:52:51] Raw off value: '0'
+[2025-05-23 13:52:51] Processed off (numeric): 0
+[2025-05-23 13:52:51] Validating product data: {"page_url":"https:\/\/sinastyle.ir\/product\/1665467\/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF","url":"https:\/\/sinastyle.ir\/product\/1665467\/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF","title":"شلوار بگ","price":1299000,"availability":1,"image":"https:\/\/digifycdn.com\/media\/item_images\/IMG_1178_mUrE0TC.jpeg?x-img=v1\/optimize,q_95\/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665467","off":0}
+[2025-05-23 13:52:51] Product data validated successfully for URL: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:52:51] 🆕 محصول جدید اضافه شد: شلوار بگ (ID: 1665467)
+[2025-05-23 13:52:51] [1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665467   |                 شلوار بگ                 |  1299000   |   شلوار    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] 🎉 محصول جدید ایجاد شد: شلوار بگ
+[2025-05-23 13:52:51] 📦 محصول پردازش شد: شلوار بگ (ID: 1665467)
+[2025-05-23 13:52:51] [1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665467   |                 شلوار بگ                 |  1299000   |   شلوار    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] Processing product: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE, Availability: 1
+[2025-05-23 13:52:51] Raw price input to cleanPrice: '525,000'
+[2025-05-23 13:52:51] Cleaned price: '525000'
+[2025-05-23 13:52:51] Cleaned guarantee: ''
+[2025-05-23 13:52:51] Raw off value: '0'
+[2025-05-23 13:52:51] Processed off (numeric): 0
+[2025-05-23 13:52:51] Validating product data: {"page_url":"https:\/\/sinastyle.ir\/product\/1663626\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE","url":"https:\/\/sinastyle.ir\/product\/1663626\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE","title":"تیشرتEAGLE","price":525000,"availability":1,"image":"https:\/\/digifycdn.com\/media\/item_images\/image_wDUe3dA.jpg?x-img=v1\/optimize,q_95\/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663626","off":0}
+[2025-05-23 13:52:51] Product data validated successfully for URL: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:52:51] 🆕 محصول جدید اضافه شد: تیشرتEAGLE (ID: 1663626)
+[2025-05-23 13:52:51] [1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663626   |                تیشرتEAGLE                |   525000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] 🎉 محصول جدید ایجاد شد: تیشرتEAGLE
+[2025-05-23 13:52:51] 📦 محصول پردازش شد: تیشرتEAGLE (ID: 1663626)
+[2025-05-23 13:52:51] [1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663626   |                تیشرتEAGLE                |   525000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] Processing product: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA, Availability: 1
+[2025-05-23 13:52:51] Raw price input to cleanPrice: '525,000'
+[2025-05-23 13:52:51] Cleaned price: '525000'
+[2025-05-23 13:52:51] Cleaned guarantee: ''
+[2025-05-23 13:52:51] Raw off value: '0'
+[2025-05-23 13:52:51] Processed off (numeric): 0
+[2025-05-23 13:52:51] Validating product data: {"page_url":"https:\/\/sinastyle.ir\/product\/1663611\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA","url":"https:\/\/sinastyle.ir\/product\/1663611\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA","title":"تیشرت LEIFFA","price":525000,"availability":1,"image":"https:\/\/digifycdn.com\/media\/item_images\/image_hBUleqe.jpg?x-img=v1\/optimize,q_95\/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663611","off":0}
+[2025-05-23 13:52:51] Product data validated successfully for URL: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:52:51] 🆕 محصول جدید اضافه شد: تیشرت LEIFFA (ID: 1663611)
+[2025-05-23 13:52:51] [1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663611   |               تیشرت LEIFFA               |   525000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] 🎉 محصول جدید ایجاد شد: تیشرت LEIFFA
+[2025-05-23 13:52:51] 📦 محصول پردازش شد: تیشرت LEIFFA (ID: 1663611)
+[2025-05-23 13:52:51] [1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663611   |               تیشرت LEIFFA               |   525000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] Processing product: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1., Availability: 1
+[2025-05-23 13:52:51] Raw price input to cleanPrice: '535,000'
+[2025-05-23 13:52:51] Cleaned price: '535000'
+[2025-05-23 13:52:51] Cleaned guarantee: ''
+[2025-05-23 13:52:51] Raw off value: '0'
+[2025-05-23 13:52:51] Processed off (numeric): 0
+[2025-05-23 13:52:51] Validating product data: {"page_url":"https:\/\/sinastyle.ir\/product\/1663600\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.","url":"https:\/\/sinastyle.ir\/product\/1663600\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.","title":"تیشرت طرح دار.","price":535000,"availability":1,"image":"https:\/\/digifycdn.com\/media\/item_images\/image_0pPgpyj.jpg?x-img=v1\/optimize,q_95\/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663600","off":0}
+[2025-05-23 13:52:51] Product data validated successfully for URL: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:52:51] 🆕 محصول جدید اضافه شد: تیشرت طرح دار. (ID: 1663600)
+[2025-05-23 13:52:51] [1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663600   |              تیشرت طرح دار.              |   535000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] 🎉 محصول جدید ایجاد شد: تیشرت طرح دار.
+[2025-05-23 13:52:51] 📦 محصول پردازش شد: تیشرت طرح دار. (ID: 1663600)
+[2025-05-23 13:52:51] [1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663600   |              تیشرت طرح دار.              |   535000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] Processing product: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1, Availability: 1
+[2025-05-23 13:52:51] Raw price input to cleanPrice: '525,000'
+[2025-05-23 13:52:51] Cleaned price: '525000'
+[2025-05-23 13:52:51] Cleaned guarantee: ''
+[2025-05-23 13:52:51] Raw off value: '0'
+[2025-05-23 13:52:51] Processed off (numeric): 0
+[2025-05-23 13:52:51] Validating product data: {"page_url":"https:\/\/sinastyle.ir\/product\/1663586\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1","url":"https:\/\/sinastyle.ir\/product\/1663586\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1","title":"تیشرت طرح دار","price":525000,"availability":1,"image":"https:\/\/digifycdn.com\/media\/item_images\/image_zUOI8Fw.jpg?x-img=v1\/optimize,q_95\/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663586","off":0}
+[2025-05-23 13:52:51] Product data validated successfully for URL: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:51] 🆕 محصول جدید اضافه شد: تیشرت طرح دار (ID: 1663586)
+[2025-05-23 13:52:51] [1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663586   |              تیشرت طرح دار               |   525000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] 🎉 محصول جدید ایجاد شد: تیشرت طرح دار
+[2025-05-23 13:52:51] 📦 محصول پردازش شد: تیشرت طرح دار (ID: 1663586)
+[2025-05-23 13:52:51] [1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663586   |              تیشرت طرح دار               |   525000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] Processing product: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff, Availability: 1
+[2025-05-23 13:52:51] Raw price input to cleanPrice: '565,000'
+[2025-05-23 13:52:51] Cleaned price: '565000'
+[2025-05-23 13:52:51] Cleaned guarantee: ''
+[2025-05-23 13:52:51] Raw off value: '0'
+[2025-05-23 13:52:51] Processed off (numeric): 0
+[2025-05-23 13:52:51] Validating product data: {"page_url":"https:\/\/sinastyle.ir\/product\/1663570\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff","url":"https:\/\/sinastyle.ir\/product\/1663570\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff","title":"تیشرت staff","price":565000,"availability":1,"image":"https:\/\/digifycdn.com\/media\/item_images\/image_okMtM7g.jpg?x-img=v1\/optimize,q_95\/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663570","off":0}
+[2025-05-23 13:52:51] Product data validated successfully for URL: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:51] 🆕 محصول جدید اضافه شد: تیشرت staff (ID: 1663570)
+[2025-05-23 13:52:51] [1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663570   |               تیشرت staff                |   565000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] 🎉 محصول جدید ایجاد شد: تیشرت staff
+[2025-05-23 13:52:51] 📦 محصول پردازش شد: تیشرت staff (ID: 1663570)
+[2025-05-23 13:52:51] [1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663570   |               تیشرت staff                |   565000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] Processing product: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI, Availability: 1
+[2025-05-23 13:52:51] Raw price input to cleanPrice: '625,000'
+[2025-05-23 13:52:51] Cleaned price: '625000'
+[2025-05-23 13:52:51] Cleaned guarantee: ''
+[2025-05-23 13:52:51] Raw off value: '0'
+[2025-05-23 13:52:51] Processed off (numeric): 0
+[2025-05-23 13:52:51] Validating product data: {"page_url":"https:\/\/sinastyle.ir\/product\/1663545\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI","url":"https:\/\/sinastyle.ir\/product\/1663545\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI","title":"تیشرت MAUI","price":625000,"availability":1,"image":"https:\/\/digifycdn.com\/media\/item_images\/image_SuSSk6P.jpg?x-img=v1\/optimize,q_95\/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663545","off":0}
+[2025-05-23 13:52:51] Product data validated successfully for URL: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:52:51] 🆕 محصول جدید اضافه شد: تیشرت MAUI (ID: 1663545)
+[2025-05-23 13:52:51] [1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663545   |                تیشرت MAUI                |   625000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] 🎉 محصول جدید ایجاد شد: تیشرت MAUI
+[2025-05-23 13:52:51] 📦 محصول پردازش شد: تیشرت MAUI (ID: 1663545)
+[2025-05-23 13:52:51] [1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663545   |                تیشرت MAUI                |   625000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] Processing product: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO, Availability: 1
+[2025-05-23 13:52:51] Raw price input to cleanPrice: '585,000'
+[2025-05-23 13:52:51] Cleaned price: '585000'
+[2025-05-23 13:52:51] Cleaned guarantee: ''
+[2025-05-23 13:52:51] Raw off value: '0'
+[2025-05-23 13:52:51] Processed off (numeric): 0
+[2025-05-23 13:52:51] Validating product data: {"page_url":"https:\/\/sinastyle.ir\/product\/1663532\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO","url":"https:\/\/sinastyle.ir\/product\/1663532\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO","title":"تیشرت GYRO","price":585000,"availability":1,"image":"https:\/\/digifycdn.com\/media\/item_images\/image_0RCHPtY.jpg?x-img=v1\/optimize,q_95\/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663532","off":0}
+[2025-05-23 13:52:51] Product data validated successfully for URL: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:52:51] 🆕 محصول جدید اضافه شد: تیشرت GYRO (ID: 1663532)
+[2025-05-23 13:52:51] [1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663532   |                تیشرت GYRO                |   585000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] 🎉 محصول جدید ایجاد شد: تیشرت GYRO
+[2025-05-23 13:52:51] 📦 محصول پردازش شد: تیشرت GYRO (ID: 1663532)
+[2025-05-23 13:52:51] [1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663532   |                تیشرت GYRO                |   585000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[2025-05-23 13:52:51] 
+[2025-05-23 13:52:51] All products_urls processed. Total links: 12, Total pages: 0
+[2025-05-23 13:52:51] 📊 Method 3 result - Links: 12, Pages: 0
+[2025-05-23 13:52:51] Got 12 unique product links from web
+[2025-05-23 13:52:51] Links structure: [
+    {
+        "url": "https:\/\/sinastyle.ir\/product\/1665489\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA",
+        "image": "https:\/\/digifycdn.com\/media\/item_images\/IMG_1141_2tczzZj.jpeg?x-img=v1\/optimize,q_95\/resize,w_500,force_true",
+        "product_id": "1665489"
+    },
+    {
+        "url": "https:\/\/sinastyle.ir\/product\/1665485\/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.",
+        "image": "https:\/\/digifycdn.com\/media\/item_images\/IMG_1179_4k0GZiq.jpeg?x-img=v1\/optimize,q_95\/resize,w_500,force_true",
+        "product_id": "1665485"
+    },
+    {
+        "url": "https:\/\/sinastyle.ir\/product\/1665481\/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA",
+        "image": "https:\/\/digifycdn.com\/media\/item_images\/IMG_1181_AIEiP2K.jpeg?x-img=v1\/optimize,q_95\/resize,w_500,force_true",
+        "product_id": "1665481"
+    },
+    {
+        "url": "https:\/\/sinastyle.ir\/product\/1665475\/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85",
+        "image": "https:\/\/digifycdn.com\/media\/item_images\/IMG_1182_9XioEob.jpeg?x-img=v1\/optimize,q_95\/resize,w_500,force_true",
+        "product_id": "1665475"
+    },
+    {
+        "url": "https:\/\/sinastyle.ir\/product\/1665467\/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF",
+        "image": "https:\/\/digifycdn.com\/media\/item_images\/IMG_1178_mUrE0TC.jpeg?x-img=v1\/optimize,q_95\/resize,w_500,force_true",
+        "product_id": "1665467"
+    }
+]...
+[2025-05-23 13:52:51] Saving 12 product links to database...
+[2025-05-23 13:52:51] Product links saved to database successfully
+[2025-05-23 13:52:51] After deduplication, processing 12 unique links
+[2025-05-23 13:52:51] Processing links using method: 1
+[2025-05-23 13:52:51] Processing 12 product links in batches...
+[2025-05-23 13:52:51] Input links: [
+    "https:\/\/sinastyle.ir\/product\/1665489\/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA",
+    "https:\/\/sinastyle.ir\/product\/1665485\/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.",
+    "https:\/\/sinastyle.ir\/product\/1665481\/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA",
+    "https:\/\/sinastyle.ir\/product\/1665475\/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85",
+    "https:\/\/sinastyle.ir\/product\/1665467\/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF"
+]...
+[2025-05-23 13:52:51] Filtered to 12 valid product links
+[2025-05-23 13:52:51] Using processing method: 1
+[2025-05-23 13:52:51] Processing product 1/12: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:51] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:51] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:51] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:52:51] Raw title extracted: ''
+[2025-05-23 13:52:51] No title prefix rule matched for URL: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:51] Title after applying prefix: 
+[2025-05-23 13:52:51] Extracted title: "" for https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:51] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:51] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:51] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:51] Extracted category from selector: 
+[2025-05-23 13:52:51] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:51] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:51] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:52:51] Raw availability extracted: ''
+[2025-05-23 13:52:51] Availability fallback processing: 0
+[2025-05-23 13:52:51] Extracted availability: "0" for https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:51] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:52:51] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:52:51] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:52:51] Raw price extracted: ''
+[2025-05-23 13:52:51] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:52:51] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:52:51] No valid price found, setting default: '0'
+[2025-05-23 13:52:51] Extracted price: "0" for https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:51] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:51] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:51] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:51] Extracted image from product_page: 
+[2025-05-23 13:52:51] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:52:51] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:52:51] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:52:51] Raw off extracted: ''
+[2025-05-23 13:52:51] Extracted off: "" for https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:51] Validation failed: title is empty for URL: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:51] No valid data extracted for https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1. Adding to failed links.
+[2025-05-23 13:52:51] ❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:51]   └─ خطا: No valid data extracted
+[2025-05-23 13:52:51] 🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:51]   └─ خطا: Invalid or missing product data
+[2025-05-23 13:52:51] Failed to extract valid data: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:51] Processing product 2/12: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:51] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:51] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:51] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:52:51] Raw title extracted: ''
+[2025-05-23 13:52:51] No title prefix rule matched for URL: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:51] Title after applying prefix: 
+[2025-05-23 13:52:51] Extracted title: "" for https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:51] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:51] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:51] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:51] Extracted category from selector: 
+[2025-05-23 13:52:51] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:51] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:51] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:52:51] Raw availability extracted: ''
+[2025-05-23 13:52:51] Availability fallback processing: 0
+[2025-05-23 13:52:51] Extracted availability: "0" for https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:51] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:52:51] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:52:51] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:52:51] Raw price extracted: ''
+[2025-05-23 13:52:51] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:52:51] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:52:51] No valid price found, setting default: '0'
+[2025-05-23 13:52:51] Extracted price: "0" for https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:51] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:51] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:51] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:51] Extracted image from product_page: 
+[2025-05-23 13:52:51] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:52:51] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:52:51] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:52:51] Raw off extracted: ''
+[2025-05-23 13:52:51] Extracted off: "" for https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:51] Validation failed: title is empty for URL: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:51] No valid data extracted for https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff. Adding to failed links.
+[2025-05-23 13:52:51] ❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:51]   └─ خطا: No valid data extracted
+[2025-05-23 13:52:51] 🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:51]   └─ خطا: Invalid or missing product data
+[2025-05-23 13:52:51] Failed to extract valid data: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:52] Processing product 3/12: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:52:52] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:52:52] Raw title extracted: ''
+[2025-05-23 13:52:52] No title prefix rule matched for URL: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:52:52] Title after applying prefix: 
+[2025-05-23 13:52:52] Extracted title: "" for https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:52:52] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted category from selector: 
+[2025-05-23 13:52:52] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:52:52] Raw availability extracted: ''
+[2025-05-23 13:52:52] Availability fallback processing: 0
+[2025-05-23 13:52:52] Extracted availability: "0" for https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:52:52] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:52:52] Raw price extracted: ''
+[2025-05-23 13:52:52] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:52:52] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:52:52] No valid price found, setting default: '0'
+[2025-05-23 13:52:52] Extracted price: "0" for https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:52:52] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted image from product_page: 
+[2025-05-23 13:52:52] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:52:52] Raw off extracted: ''
+[2025-05-23 13:52:52] Extracted off: "" for https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:52:52] Validation failed: title is empty for URL: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:52:52] No valid data extracted for https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF. Adding to failed links.
+[2025-05-23 13:52:52] ❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:52:52]   └─ خطا: No valid data extracted
+[2025-05-23 13:52:52] 🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:52:52]   └─ خطا: Invalid or missing product data
+[2025-05-23 13:52:52] Failed to extract valid data: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:52:52] Processing product 4/12: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:52:52] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:52:52] Raw title extracted: ''
+[2025-05-23 13:52:52] No title prefix rule matched for URL: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:52:52] Title after applying prefix: 
+[2025-05-23 13:52:52] Extracted title: "" for https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:52:52] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted category from selector: 
+[2025-05-23 13:52:52] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:52:52] Raw availability extracted: ''
+[2025-05-23 13:52:52] Availability fallback processing: 0
+[2025-05-23 13:52:52] Extracted availability: "0" for https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:52:52] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:52:52] Raw price extracted: ''
+[2025-05-23 13:52:52] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:52:52] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:52:52] No valid price found, setting default: '0'
+[2025-05-23 13:52:52] Extracted price: "0" for https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:52:52] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted image from product_page: 
+[2025-05-23 13:52:52] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:52:52] Raw off extracted: ''
+[2025-05-23 13:52:52] Extracted off: "" for https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:52:52] Validation failed: title is empty for URL: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:52:52] No valid data extracted for https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA. Adding to failed links.
+[2025-05-23 13:52:52] ❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:52:52]   └─ خطا: No valid data extracted
+[2025-05-23 13:52:52] 🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:52:52]   └─ خطا: Invalid or missing product data
+[2025-05-23 13:52:52] Failed to extract valid data: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:52:52] Processing product 5/12: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:52:52] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:52:52] Raw title extracted: ''
+[2025-05-23 13:52:52] No title prefix rule matched for URL: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:52:52] Title after applying prefix: 
+[2025-05-23 13:52:52] Extracted title: "" for https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:52:52] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted category from selector: 
+[2025-05-23 13:52:52] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:52:52] Raw availability extracted: ''
+[2025-05-23 13:52:52] Availability fallback processing: 0
+[2025-05-23 13:52:52] Extracted availability: "0" for https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:52:52] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:52:52] Raw price extracted: ''
+[2025-05-23 13:52:52] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:52:52] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:52:52] No valid price found, setting default: '0'
+[2025-05-23 13:52:52] Extracted price: "0" for https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:52:52] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted image from product_page: 
+[2025-05-23 13:52:52] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:52:52] Raw off extracted: ''
+[2025-05-23 13:52:52] Extracted off: "" for https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:52:52] Validation failed: title is empty for URL: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:52:52] No valid data extracted for https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA. Adding to failed links.
+[2025-05-23 13:52:52] ❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:52:52]   └─ خطا: No valid data extracted
+[2025-05-23 13:52:52] 🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:52:52]   └─ خطا: Invalid or missing product data
+[2025-05-23 13:52:52] Failed to extract valid data: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:52:52] Processing product 6/12: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:52:52] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:52:52] Raw title extracted: ''
+[2025-05-23 13:52:52] No title prefix rule matched for URL: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:52:52] Title after applying prefix: 
+[2025-05-23 13:52:52] Extracted title: "" for https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:52:52] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted category from selector: 
+[2025-05-23 13:52:52] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:52:52] Raw availability extracted: ''
+[2025-05-23 13:52:52] Availability fallback processing: 0
+[2025-05-23 13:52:52] Extracted availability: "0" for https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:52:52] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:52:52] Raw price extracted: ''
+[2025-05-23 13:52:52] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:52:52] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:52:52] No valid price found, setting default: '0'
+[2025-05-23 13:52:52] Extracted price: "0" for https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:52:52] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted image from product_page: 
+[2025-05-23 13:52:52] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:52:52] Raw off extracted: ''
+[2025-05-23 13:52:52] Extracted off: "" for https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:52:52] Validation failed: title is empty for URL: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:52:52] No valid data extracted for https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85. Adding to failed links.
+[2025-05-23 13:52:52] ❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:52:52]   └─ خطا: No valid data extracted
+[2025-05-23 13:52:52] 🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:52:52]   └─ خطا: Invalid or missing product data
+[2025-05-23 13:52:52] Failed to extract valid data: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:52:52] Processing product 7/12: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:52:52] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:52:52] Raw title extracted: ''
+[2025-05-23 13:52:52] No title prefix rule matched for URL: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:52:52] Title after applying prefix: 
+[2025-05-23 13:52:52] Extracted title: "" for https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:52:52] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted category from selector: 
+[2025-05-23 13:52:52] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:52:52] Raw availability extracted: ''
+[2025-05-23 13:52:52] Availability fallback processing: 0
+[2025-05-23 13:52:52] Extracted availability: "0" for https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:52:52] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:52:52] Raw price extracted: ''
+[2025-05-23 13:52:52] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:52:52] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:52:52] No valid price found, setting default: '0'
+[2025-05-23 13:52:52] Extracted price: "0" for https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:52:52] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted image from product_page: 
+[2025-05-23 13:52:52] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:52:52] Raw off extracted: ''
+[2025-05-23 13:52:52] Extracted off: "" for https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:52:52] Validation failed: title is empty for URL: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:52:52] No valid data extracted for https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA. Adding to failed links.
+[2025-05-23 13:52:52] ❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:52:52]   └─ خطا: No valid data extracted
+[2025-05-23 13:52:52] 🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:52:52]   └─ خطا: Invalid or missing product data
+[2025-05-23 13:52:52] Failed to extract valid data: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:52:52] Processing product 8/12: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:52:52] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:52:52] Raw title extracted: ''
+[2025-05-23 13:52:52] No title prefix rule matched for URL: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:52:52] Title after applying prefix: 
+[2025-05-23 13:52:52] Extracted title: "" for https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:52:52] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted category from selector: 
+[2025-05-23 13:52:52] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:52:52] Raw availability extracted: ''
+[2025-05-23 13:52:52] Availability fallback processing: 0
+[2025-05-23 13:52:52] Extracted availability: "0" for https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:52:52] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:52:52] Raw price extracted: ''
+[2025-05-23 13:52:52] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:52:52] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:52:52] No valid price found, setting default: '0'
+[2025-05-23 13:52:52] Extracted price: "0" for https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:52:52] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted image from product_page: 
+[2025-05-23 13:52:52] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:52:52] Raw off extracted: ''
+[2025-05-23 13:52:52] Extracted off: "" for https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:52:52] Validation failed: title is empty for URL: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:52:52] No valid data extracted for https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.. Adding to failed links.
+[2025-05-23 13:52:52] ❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:52:52]   └─ خطا: No valid data extracted
+[2025-05-23 13:52:52] 🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:52:52]   └─ خطا: Invalid or missing product data
+[2025-05-23 13:52:52] Failed to extract valid data: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:52:52] Processing product 9/12: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:52:52] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:52:52] Raw title extracted: ''
+[2025-05-23 13:52:52] No title prefix rule matched for URL: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:52:52] Title after applying prefix: 
+[2025-05-23 13:52:52] Extracted title: "" for https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:52:52] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted category from selector: 
+[2025-05-23 13:52:52] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:52:52] Raw availability extracted: ''
+[2025-05-23 13:52:52] Availability fallback processing: 0
+[2025-05-23 13:52:52] Extracted availability: "0" for https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:52:52] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:52:52] Raw price extracted: ''
+[2025-05-23 13:52:52] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:52:52] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:52:52] No valid price found, setting default: '0'
+[2025-05-23 13:52:52] Extracted price: "0" for https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:52:52] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted image from product_page: 
+[2025-05-23 13:52:52] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:52:52] Raw off extracted: ''
+[2025-05-23 13:52:52] Extracted off: "" for https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:52:52] Validation failed: title is empty for URL: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:52:52] No valid data extracted for https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.. Adding to failed links.
+[2025-05-23 13:52:52] ❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:52:52]   └─ خطا: No valid data extracted
+[2025-05-23 13:52:52] 🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:52:52]   └─ خطا: Invalid or missing product data
+[2025-05-23 13:52:52] Failed to extract valid data: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:52:52] Processing product 10/12: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:52:52] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:52:52] Raw title extracted: ''
+[2025-05-23 13:52:52] No title prefix rule matched for URL: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:52:52] Title after applying prefix: 
+[2025-05-23 13:52:52] Extracted title: "" for https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:52:52] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted category from selector: 
+[2025-05-23 13:52:52] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:52:52] Raw availability extracted: ''
+[2025-05-23 13:52:52] Availability fallback processing: 0
+[2025-05-23 13:52:52] Extracted availability: "0" for https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:52:52] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:52:52] Raw price extracted: ''
+[2025-05-23 13:52:52] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:52:52] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:52:52] No valid price found, setting default: '0'
+[2025-05-23 13:52:52] Extracted price: "0" for https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:52:52] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted image from product_page: 
+[2025-05-23 13:52:52] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:52:52] Raw off extracted: ''
+[2025-05-23 13:52:52] Extracted off: "" for https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:52:52] Validation failed: title is empty for URL: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:52:52] No valid data extracted for https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI. Adding to failed links.
+[2025-05-23 13:52:52] ❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:52:52]   └─ خطا: No valid data extracted
+[2025-05-23 13:52:52] 🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:52:52]   └─ خطا: Invalid or missing product data
+[2025-05-23 13:52:52] Failed to extract valid data: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:52:52] Processing product 11/12: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:52:52] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:52:52] Raw title extracted: ''
+[2025-05-23 13:52:52] No title prefix rule matched for URL: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:52:52] Title after applying prefix: 
+[2025-05-23 13:52:52] Extracted title: "" for https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:52:52] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted category from selector: 
+[2025-05-23 13:52:52] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:52:52] Raw availability extracted: ''
+[2025-05-23 13:52:52] Availability fallback processing: 0
+[2025-05-23 13:52:52] Extracted availability: "0" for https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:52:52] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:52:52] Raw price extracted: ''
+[2025-05-23 13:52:52] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:52:52] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:52:52] No valid price found, setting default: '0'
+[2025-05-23 13:52:52] Extracted price: "0" for https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:52:52] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted image from product_page: 
+[2025-05-23 13:52:52] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:52:52] Raw off extracted: ''
+[2025-05-23 13:52:52] Extracted off: "" for https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:52:52] Validation failed: title is empty for URL: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:52:52] No valid data extracted for https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO. Adding to failed links.
+[2025-05-23 13:52:52] ❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:52:52]   └─ خطا: No valid data extracted
+[2025-05-23 13:52:52] 🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:52:52]   └─ خطا: Invalid or missing product data
+[2025-05-23 13:52:52] Failed to extract valid data: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:52:52] Processing product 12/12: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:52:52] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:52:52] Raw title extracted: ''
+[2025-05-23 13:52:52] No title prefix rule matched for URL: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:52:52] Title after applying prefix: 
+[2025-05-23 13:52:52] Extracted title: "" for https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:52:52] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted category from selector: 
+[2025-05-23 13:52:52] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:52:52] Raw availability extracted: ''
+[2025-05-23 13:52:52] Availability fallback processing: 0
+[2025-05-23 13:52:52] Extracted availability: "0" for https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:52:52] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:52:52] Raw price extracted: ''
+[2025-05-23 13:52:52] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:52:52] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:52:52] No valid price found, setting default: '0'
+[2025-05-23 13:52:52] Extracted price: "0" for https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:52:52] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:52] Extracted image from product_page: 
+[2025-05-23 13:52:52] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:52:52] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:52:52] Raw off extracted: ''
+[2025-05-23 13:52:52] Extracted off: "" for https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:52:52] Validation failed: title is empty for URL: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:52:52] No valid data extracted for https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE. Adding to failed links.
+[2025-05-23 13:52:52] ❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:52:52]   └─ خطا: No valid data extracted
+[2025-05-23 13:52:52] 🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:52:52]   └─ خطا: Invalid or missing product data
+[2025-05-23 13:52:52] Failed to extract valid data: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:52:52] Batch processing completed. Processed: 12, Failed: 12
+[2025-05-23 13:52:52] Found 12 failed links in database. Attempting to retry...
+[2025-05-23 13:52:52] 🔄 شروع تلاش مجدد برای 12 لینک ناموفق...
+[2025-05-23 13:52:52] ═══════════════════════════════════════════════════════════════
+[2025-05-23 13:52:52] ⚠️  هشدار: پروکسی تعریف نشده - استفاده از اتصال مستقیم
+[2025-05-23 13:52:52] 🔍 تلاش مجدد [1/12] - تلاش #3: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:52] Attempting to fetch failed URL with proxy and random UA: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:55] Successfully fetched content with proxy : and UA: Mozilla/5.0 (Windows NT 10.0; ...
+[2025-05-23 13:52:55] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:55] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:55] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:52:55] Raw title extracted: ''
+[2025-05-23 13:52:55] No title prefix rule matched for URL: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:55] Title after applying prefix: 
+[2025-05-23 13:52:55] Extracted title: "" for https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:55] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:55] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:55] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:55] Extracted category from selector: 
+[2025-05-23 13:52:55] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:55] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:55] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:52:55] Raw availability extracted: ''
+[2025-05-23 13:52:55] Availability fallback processing: 0
+[2025-05-23 13:52:55] Extracted availability: "0" for https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:55] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:52:55] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:52:55] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:52:55] Raw price extracted: ''
+[2025-05-23 13:52:55] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:52:55] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:52:55] No valid price found, setting default: '0'
+[2025-05-23 13:52:55] Extracted price: "0" for https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:55] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:55] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:55] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:55] Extracted image from product_page: 
+[2025-05-23 13:52:55] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:52:55] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:52:55] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:52:55] Raw off extracted: ''
+[2025-05-23 13:52:55] Extracted off: "" for https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:55] Validation failed: title is empty for URL: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:55] No valid data extracted for https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1. Adding to failed links.
+[2025-05-23 13:52:55] 🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:55]   └─ خطا: No valid data extracted
+[2025-05-23 13:52:55] ❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:52:55]   └─ خطا: داده محصول نامعتبر
+[2025-05-23 13:52:55] ───────────────────────────────────────────────────────────────
+[2025-05-23 13:52:55] 🔍 تلاش مجدد [2/12] - تلاش #3: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:55] Attempting to fetch failed URL with proxy and random UA: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:57] Successfully fetched content with proxy : and UA: Mozilla/5.0 (Windows NT 10.0; ...
+[2025-05-23 13:52:58] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:58] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:52:58] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:52:58] Raw title extracted: ''
+[2025-05-23 13:52:58] No title prefix rule matched for URL: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:58] Title after applying prefix: 
+[2025-05-23 13:52:58] Extracted title: "" for https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:58] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:58] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:52:58] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:58] Extracted category from selector: 
+[2025-05-23 13:52:58] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:58] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:52:58] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:52:58] Raw availability extracted: ''
+[2025-05-23 13:52:58] Availability fallback processing: 0
+[2025-05-23 13:52:58] Extracted availability: "0" for https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:58] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:52:58] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:52:58] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:52:58] Raw price extracted: ''
+[2025-05-23 13:52:58] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:52:58] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:52:58] No valid price found, setting default: '0'
+[2025-05-23 13:52:58] Extracted price: "0" for https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:58] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:58] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:52:58] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:52:58] Extracted image from product_page: 
+[2025-05-23 13:52:58] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:52:58] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:52:58] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:52:58] Raw off extracted: ''
+[2025-05-23 13:52:58] Extracted off: "" for https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:58] Validation failed: title is empty for URL: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:58] No valid data extracted for https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff. Adding to failed links.
+[2025-05-23 13:52:58] 🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:58]   └─ خطا: No valid data extracted
+[2025-05-23 13:52:58] ❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:52:58]   └─ خطا: داده محصول نامعتبر
+[2025-05-23 13:52:58] ───────────────────────────────────────────────────────────────
+[2025-05-23 13:52:58] 🔍 تلاش مجدد [3/12] - تلاش #3: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:52:58] Attempting to fetch failed URL with proxy and random UA: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:53:00] Successfully fetched content with proxy : and UA: Mozilla/5.0 (Windows NT 10.0; ...
+[2025-05-23 13:53:00] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:00] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:00] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:53:00] Raw title extracted: ''
+[2025-05-23 13:53:00] No title prefix rule matched for URL: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:53:00] Title after applying prefix: 
+[2025-05-23 13:53:00] Extracted title: "" for https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:53:00] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:00] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:00] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:00] Extracted category from selector: 
+[2025-05-23 13:53:00] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:00] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:00] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:53:00] Raw availability extracted: ''
+[2025-05-23 13:53:00] Availability fallback processing: 0
+[2025-05-23 13:53:00] Extracted availability: "0" for https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:53:00] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:53:00] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:53:00] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:53:00] Raw price extracted: ''
+[2025-05-23 13:53:00] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:53:00] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:53:00] No valid price found, setting default: '0'
+[2025-05-23 13:53:00] Extracted price: "0" for https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:53:00] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:00] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:00] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:00] Extracted image from product_page: 
+[2025-05-23 13:53:00] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:53:00] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:53:00] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:53:00] Raw off extracted: ''
+[2025-05-23 13:53:00] Extracted off: "" for https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:53:00] Validation failed: title is empty for URL: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:53:00] No valid data extracted for https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF. Adding to failed links.
+[2025-05-23 13:53:00] 🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:53:00]   └─ خطا: No valid data extracted
+[2025-05-23 13:53:00] ❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:53:00]   └─ خطا: داده محصول نامعتبر
+[2025-05-23 13:53:00] ───────────────────────────────────────────────────────────────
+[2025-05-23 13:53:00] 🔍 تلاش مجدد [4/12] - تلاش #3: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:53:00] Attempting to fetch failed URL with proxy and random UA: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:53:03] Successfully fetched content with proxy : and UA: Mozilla/5.0 (Windows NT 10.0; ...
+[2025-05-23 13:53:03] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:03] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:03] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:53:03] Raw title extracted: ''
+[2025-05-23 13:53:03] No title prefix rule matched for URL: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:53:03] Title after applying prefix: 
+[2025-05-23 13:53:03] Extracted title: "" for https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:53:03] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:03] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:03] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:03] Extracted category from selector: 
+[2025-05-23 13:53:03] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:03] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:03] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:53:03] Raw availability extracted: ''
+[2025-05-23 13:53:03] Availability fallback processing: 0
+[2025-05-23 13:53:03] Extracted availability: "0" for https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:53:03] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:53:03] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:53:03] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:53:03] Raw price extracted: ''
+[2025-05-23 13:53:03] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:53:03] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:53:03] No valid price found, setting default: '0'
+[2025-05-23 13:53:03] Extracted price: "0" for https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:53:03] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:03] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:03] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:03] Extracted image from product_page: 
+[2025-05-23 13:53:03] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:53:03] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:53:03] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:53:03] Raw off extracted: ''
+[2025-05-23 13:53:03] Extracted off: "" for https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:53:03] Validation failed: title is empty for URL: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:53:03] No valid data extracted for https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA. Adding to failed links.
+[2025-05-23 13:53:03] 🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:53:03]   └─ خطا: No valid data extracted
+[2025-05-23 13:53:03] ❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:53:03]   └─ خطا: داده محصول نامعتبر
+[2025-05-23 13:53:03] ───────────────────────────────────────────────────────────────
+[2025-05-23 13:53:03] 🔍 تلاش مجدد [5/12] - تلاش #3: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:53:03] Attempting to fetch failed URL with proxy and random UA: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:53:05] Successfully fetched content with proxy : and UA: Mozilla/5.0 (Windows NT 10.0; ...
+[2025-05-23 13:53:05] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:05] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:05] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:53:05] Raw title extracted: ''
+[2025-05-23 13:53:05] No title prefix rule matched for URL: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:53:05] Title after applying prefix: 
+[2025-05-23 13:53:05] Extracted title: "" for https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:53:05] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:05] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:05] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:05] Extracted category from selector: 
+[2025-05-23 13:53:05] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:05] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:05] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:53:05] Raw availability extracted: ''
+[2025-05-23 13:53:05] Availability fallback processing: 0
+[2025-05-23 13:53:05] Extracted availability: "0" for https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:53:05] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:53:05] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:53:05] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:53:05] Raw price extracted: ''
+[2025-05-23 13:53:05] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:53:05] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:53:05] No valid price found, setting default: '0'
+[2025-05-23 13:53:05] Extracted price: "0" for https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:53:05] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:05] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:05] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:05] Extracted image from product_page: 
+[2025-05-23 13:53:05] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:53:05] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:53:05] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:53:05] Raw off extracted: ''
+[2025-05-23 13:53:05] Extracted off: "" for https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:53:05] Validation failed: title is empty for URL: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:53:05] No valid data extracted for https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA. Adding to failed links.
+[2025-05-23 13:53:05] 🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:53:05]   └─ خطا: No valid data extracted
+[2025-05-23 13:53:05] ❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:53:05]   └─ خطا: داده محصول نامعتبر
+[2025-05-23 13:53:05] ───────────────────────────────────────────────────────────────
+[2025-05-23 13:53:05] 🔍 تلاش مجدد [6/12] - تلاش #3: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:53:05] Attempting to fetch failed URL with proxy and random UA: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:53:08] Successfully fetched content with proxy : and UA: Mozilla/5.0 (Windows NT 6.3; W...
+[2025-05-23 13:53:08] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:08] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:08] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:53:08] Raw title extracted: ''
+[2025-05-23 13:53:08] No title prefix rule matched for URL: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:53:08] Title after applying prefix: 
+[2025-05-23 13:53:08] Extracted title: "" for https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:53:08] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:08] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:08] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:08] Extracted category from selector: 
+[2025-05-23 13:53:08] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:08] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:08] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:53:08] Raw availability extracted: ''
+[2025-05-23 13:53:08] Availability fallback processing: 0
+[2025-05-23 13:53:08] Extracted availability: "0" for https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:53:08] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:53:08] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:53:08] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:53:08] Raw price extracted: ''
+[2025-05-23 13:53:08] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:53:08] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:53:08] No valid price found, setting default: '0'
+[2025-05-23 13:53:08] Extracted price: "0" for https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:53:08] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:08] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:08] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:08] Extracted image from product_page: 
+[2025-05-23 13:53:08] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:53:08] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:53:08] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:53:08] Raw off extracted: ''
+[2025-05-23 13:53:08] Extracted off: "" for https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:53:08] Validation failed: title is empty for URL: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:53:08] No valid data extracted for https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85. Adding to failed links.
+[2025-05-23 13:53:08] 🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:53:08]   └─ خطا: No valid data extracted
+[2025-05-23 13:53:08] ❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:53:08]   └─ خطا: داده محصول نامعتبر
+[2025-05-23 13:53:08] ───────────────────────────────────────────────────────────────
+[2025-05-23 13:53:08] 🔍 تلاش مجدد [7/12] - تلاش #3: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:53:08] Attempting to fetch failed URL with proxy and random UA: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:53:12] Successfully fetched content with proxy : and UA: Mozilla/5.0 (Macintosh; Intel ...
+[2025-05-23 13:53:12] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:12] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:12] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:53:12] Raw title extracted: ''
+[2025-05-23 13:53:12] No title prefix rule matched for URL: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:53:12] Title after applying prefix: 
+[2025-05-23 13:53:12] Extracted title: "" for https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:53:12] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:12] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:12] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:12] Extracted category from selector: 
+[2025-05-23 13:53:12] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:12] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:12] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:53:12] Raw availability extracted: ''
+[2025-05-23 13:53:12] Availability fallback processing: 0
+[2025-05-23 13:53:12] Extracted availability: "0" for https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:53:12] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:53:12] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:53:12] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:53:12] Raw price extracted: ''
+[2025-05-23 13:53:12] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:53:12] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:53:12] No valid price found, setting default: '0'
+[2025-05-23 13:53:12] Extracted price: "0" for https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:53:12] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:12] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:12] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:12] Extracted image from product_page: 
+[2025-05-23 13:53:12] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:53:12] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:53:12] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:53:12] Raw off extracted: ''
+[2025-05-23 13:53:12] Extracted off: "" for https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:53:12] Validation failed: title is empty for URL: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:53:12] No valid data extracted for https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA. Adding to failed links.
+[2025-05-23 13:53:12] 🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:53:12]   └─ خطا: No valid data extracted
+[2025-05-23 13:53:12] ❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:53:12]   └─ خطا: داده محصول نامعتبر
+[2025-05-23 13:53:12] ───────────────────────────────────────────────────────────────
+[2025-05-23 13:53:12] 🔍 تلاش مجدد [8/12] - تلاش #3: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:53:12] Attempting to fetch failed URL with proxy and random UA: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:53:14] Successfully fetched content with proxy : and UA: Mozilla/5.0 (Macintosh; Intel ...
+[2025-05-23 13:53:14] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:14] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:14] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:53:14] Raw title extracted: ''
+[2025-05-23 13:53:14] No title prefix rule matched for URL: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:53:14] Title after applying prefix: 
+[2025-05-23 13:53:14] Extracted title: "" for https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:53:14] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:14] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:14] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:14] Extracted category from selector: 
+[2025-05-23 13:53:14] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:14] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:14] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:53:14] Raw availability extracted: ''
+[2025-05-23 13:53:14] Availability fallback processing: 0
+[2025-05-23 13:53:14] Extracted availability: "0" for https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:53:14] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:53:14] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:53:14] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:53:14] Raw price extracted: ''
+[2025-05-23 13:53:14] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:53:14] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:53:14] No valid price found, setting default: '0'
+[2025-05-23 13:53:14] Extracted price: "0" for https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:53:14] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:14] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:14] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:14] Extracted image from product_page: 
+[2025-05-23 13:53:14] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:53:14] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:53:14] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:53:14] Raw off extracted: ''
+[2025-05-23 13:53:14] Extracted off: "" for https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:53:14] Validation failed: title is empty for URL: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:53:14] No valid data extracted for https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.. Adding to failed links.
+[2025-05-23 13:53:14] 🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:53:14]   └─ خطا: No valid data extracted
+[2025-05-23 13:53:14] ❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:53:14]   └─ خطا: داده محصول نامعتبر
+[2025-05-23 13:53:14] ───────────────────────────────────────────────────────────────
+[2025-05-23 13:53:14] 🔍 تلاش مجدد [9/12] - تلاش #3: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:53:14] Attempting to fetch failed URL with proxy and random UA: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:53:17] Successfully fetched content with proxy : and UA: Mozilla/5.0 (Windows NT 10.0; ...
+[2025-05-23 13:53:17] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:17] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:17] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:53:17] Raw title extracted: ''
+[2025-05-23 13:53:17] No title prefix rule matched for URL: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:53:17] Title after applying prefix: 
+[2025-05-23 13:53:17] Extracted title: "" for https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:53:17] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:17] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:17] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:17] Extracted category from selector: 
+[2025-05-23 13:53:17] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:17] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:17] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:53:17] Raw availability extracted: ''
+[2025-05-23 13:53:17] Availability fallback processing: 0
+[2025-05-23 13:53:17] Extracted availability: "0" for https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:53:17] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:53:17] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:53:17] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:53:17] Raw price extracted: ''
+[2025-05-23 13:53:17] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:53:17] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:53:17] No valid price found, setting default: '0'
+[2025-05-23 13:53:17] Extracted price: "0" for https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:53:17] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:17] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:17] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:17] Extracted image from product_page: 
+[2025-05-23 13:53:17] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:53:17] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:53:17] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:53:17] Raw off extracted: ''
+[2025-05-23 13:53:17] Extracted off: "" for https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:53:17] Validation failed: title is empty for URL: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:53:17] No valid data extracted for https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.. Adding to failed links.
+[2025-05-23 13:53:17] 🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:53:17]   └─ خطا: No valid data extracted
+[2025-05-23 13:53:17] ❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:53:17]   └─ خطا: داده محصول نامعتبر
+[2025-05-23 13:53:17] ───────────────────────────────────────────────────────────────
+[2025-05-23 13:53:17] 🔍 تلاش مجدد [10/12] - تلاش #3: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:53:17] Attempting to fetch failed URL with proxy and random UA: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:53:21] Successfully fetched content with proxy : and UA: Mozilla/5.0 (iPad; CPU OS 8_0_...
+[2025-05-23 13:53:21] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:21] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:21] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:53:21] Raw title extracted: ''
+[2025-05-23 13:53:21] No title prefix rule matched for URL: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:53:21] Title after applying prefix: 
+[2025-05-23 13:53:21] Extracted title: "" for https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:53:21] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:21] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:21] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:21] Extracted category from selector: 
+[2025-05-23 13:53:21] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:21] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:21] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:53:21] Raw availability extracted: ''
+[2025-05-23 13:53:21] Availability fallback processing: 0
+[2025-05-23 13:53:21] Extracted availability: "0" for https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:53:21] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:53:21] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:53:21] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:53:21] Raw price extracted: ''
+[2025-05-23 13:53:21] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:53:21] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:53:21] No valid price found, setting default: '0'
+[2025-05-23 13:53:21] Extracted price: "0" for https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:53:21] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:21] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:21] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:21] Extracted image from product_page: 
+[2025-05-23 13:53:21] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:53:21] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:53:21] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:53:21] Raw off extracted: ''
+[2025-05-23 13:53:21] Extracted off: "" for https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:53:21] Validation failed: title is empty for URL: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:53:21] No valid data extracted for https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI. Adding to failed links.
+[2025-05-23 13:53:21] 🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:53:21]   └─ خطا: No valid data extracted
+[2025-05-23 13:53:21] ❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:53:21]   └─ خطا: داده محصول نامعتبر
+[2025-05-23 13:53:21] ───────────────────────────────────────────────────────────────
+[2025-05-23 13:53:21] 🔍 تلاش مجدد [11/12] - تلاش #3: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:53:21] Attempting to fetch failed URL with proxy and random UA: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:53:24] Successfully fetched content with proxy : and UA: Mozilla/5.0 (Windows NT 6.2; W...
+[2025-05-23 13:53:24] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:24] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:24] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:53:24] Raw title extracted: ''
+[2025-05-23 13:53:24] No title prefix rule matched for URL: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:53:24] Title after applying prefix: 
+[2025-05-23 13:53:24] Extracted title: "" for https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:53:24] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:24] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:24] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:24] Extracted category from selector: 
+[2025-05-23 13:53:24] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:24] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:24] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:53:24] Raw availability extracted: ''
+[2025-05-23 13:53:24] Availability fallback processing: 0
+[2025-05-23 13:53:24] Extracted availability: "0" for https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:53:24] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:53:24] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:53:24] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:53:24] Raw price extracted: ''
+[2025-05-23 13:53:24] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:53:24] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:53:24] No valid price found, setting default: '0'
+[2025-05-23 13:53:24] Extracted price: "0" for https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:53:24] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:24] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:24] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:24] Extracted image from product_page: 
+[2025-05-23 13:53:24] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:53:24] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:53:24] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:53:24] Raw off extracted: ''
+[2025-05-23 13:53:24] Extracted off: "" for https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:53:24] Validation failed: title is empty for URL: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:53:24] No valid data extracted for https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO. Adding to failed links.
+[2025-05-23 13:53:24] 🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:53:24]   └─ خطا: No valid data extracted
+[2025-05-23 13:53:24] ❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:53:24]   └─ خطا: داده محصول نامعتبر
+[2025-05-23 13:53:24] ───────────────────────────────────────────────────────────────
+[2025-05-23 13:53:24] 🔍 تلاش مجدد [12/12] - تلاش #3: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:53:24] Attempting to fetch failed URL with proxy and random UA: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:53:26] Successfully fetched content with proxy : and UA: Mozilla/5.0 (Windows NT 10.0; ...
+[2025-05-23 13:53:26] Trying selector [0]: 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:26] No value found with selector 'h1.bWVCXB' for field: unknown
+[2025-05-23 13:53:26] No value found for selectors: ["h1.bWVCXB"] for field: unknown
+[2025-05-23 13:53:26] Raw title extracted: ''
+[2025-05-23 13:53:26] No title prefix rule matched for URL: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:53:26] Title after applying prefix: 
+[2025-05-23 13:53:26] Extracted title: "" for https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:53:26] Trying selector [0]: 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:26] No value found with selector 'div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)' for field: unknown
+[2025-05-23 13:53:26] No value found for selectors: ["div.cjdzNw:nth-child(2) > a:nth-child(1) > span:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:26] Extracted category from selector: 
+[2025-05-23 13:53:26] Trying selector [0]: 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:26] No value found with selector 'span.sc-hLQSwg.XxlIx' for field: unknown
+[2025-05-23 13:53:26] No value found for selectors: ["span.sc-hLQSwg.XxlIx"] for field: unknown
+[2025-05-23 13:53:26] Raw availability extracted: ''
+[2025-05-23 13:53:26] Availability fallback processing: 0
+[2025-05-23 13:53:26] Extracted availability: "0" for https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:53:26] Trying selector [0]: '.gVmreK' for field: unknown
+[2025-05-23 13:53:26] No value found with selector '.gVmreK' for field: unknown
+[2025-05-23 13:53:26] No value found for selectors: [".gVmreK"] for field: unknown
+[2025-05-23 13:53:26] Raw price extracted: ''
+[2025-05-23 13:53:26] Trying primary price selector: '.gVmreK'
+[2025-05-23 13:53:26] No price found with primary selector: '.gVmreK'
+[2025-05-23 13:53:26] No valid price found, setting default: '0'
+[2025-05-23 13:53:26] Extracted price: "0" for https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:53:26] Trying selector [0]: '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:26] No value found with selector '.dFxbiY > img:nth-child(1)' for field: unknown
+[2025-05-23 13:53:26] No value found for selectors: [".dFxbiY > img:nth-child(1)"] for field: unknown
+[2025-05-23 13:53:26] Extracted image from product_page: 
+[2025-05-23 13:53:26] Trying selector [0]: '.eaqgCF' for field: unknown
+[2025-05-23 13:53:26] No value found with selector '.eaqgCF' for field: unknown
+[2025-05-23 13:53:26] No value found for selectors: [".eaqgCF"] for field: unknown
+[2025-05-23 13:53:26] Raw off extracted: ''
+[2025-05-23 13:53:26] Extracted off: "" for https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:53:26] Validation failed: title is empty for URL: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:53:26] No valid data extracted for https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE. Adding to failed links.
+[2025-05-23 13:53:26] 🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:53:26]   └─ خطا: No valid data extracted
+[2025-05-23 13:53:26] ❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:53:26]   └─ خطا: داده محصول نامعتبر
+[2025-05-23 13:53:26] ───────────────────────────────────────────────────────────────
+[2025-05-23 13:53:26] 🗑️  حذف 12 لینک منقضی از صف تلاش مجدد...
+[2025-05-23 13:53:26] 💀 حداکثر تلاش رسیده - حذف شد: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1
+[2025-05-23 13:53:26]   └─ آخرین خطا: داده محصول نامعتبر
+[2025-05-23 13:53:26] 💀 حداکثر تلاش رسیده - حذف شد: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff
+[2025-05-23 13:53:26]   └─ آخرین خطا: داده محصول نامعتبر
+[2025-05-23 13:53:26] 💀 حداکثر تلاش رسیده - حذف شد: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF
+[2025-05-23 13:53:26]   └─ آخرین خطا: داده محصول نامعتبر
+[2025-05-23 13:53:26] 💀 حداکثر تلاش رسیده - حذف شد: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA
+[2025-05-23 13:53:26]   └─ آخرین خطا: داده محصول نامعتبر
+[2025-05-23 13:53:26] 💀 حداکثر تلاش رسیده - حذف شد: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA
+[2025-05-23 13:53:26]   └─ آخرین خطا: داده محصول نامعتبر
+[2025-05-23 13:53:26] 💀 حداکثر تلاش رسیده - حذف شد: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85
+[2025-05-23 13:53:26]   └─ آخرین خطا: داده محصول نامعتبر
+[2025-05-23 13:53:26] 💀 حداکثر تلاش رسیده - حذف شد: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA
+[2025-05-23 13:53:26]   └─ آخرین خطا: داده محصول نامعتبر
+[2025-05-23 13:53:26] 💀 حداکثر تلاش رسیده - حذف شد: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.
+[2025-05-23 13:53:26]   └─ آخرین خطا: داده محصول نامعتبر
+[2025-05-23 13:53:26] 💀 حداکثر تلاش رسیده - حذف شد: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.
+[2025-05-23 13:53:26]   └─ آخرین خطا: داده محصول نامعتبر
+[2025-05-23 13:53:26] 💀 حداکثر تلاش رسیده - حذف شد: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI
+[2025-05-23 13:53:26]   └─ آخرین خطا: داده محصول نامعتبر
+[2025-05-23 13:53:26] 💀 حداکثر تلاش رسیده - حذف شد: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO
+[2025-05-23 13:53:26]   └─ آخرین خطا: داده محصول نامعتبر
+[2025-05-23 13:53:26] 💀 حداکثر تلاش رسیده - حذف شد: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE
+[2025-05-23 13:53:26]   └─ آخرین خطا: داده محصول نامعتبر
+[2025-05-23 13:53:26] ✅ لینک‌های منقضی حذف شدند
+[2025-05-23 13:53:26] ═══════════════════════════════════════════════════════════════
+[2025-05-23 13:53:26] 📊 گزارش تلاش مجدد تکمیل شد:
+[2025-05-23 13:53:26]   ✅ موفق: 0
+[2025-05-23 13:53:26]   ❌ ناموفق: 12
+[2025-05-23 13:53:26] ═══════════════════════════════════════════════════════════════
+[2025-05-23 13:53:26] Successfully processed 0 failed links during retry
+[2025-05-23 13:53:26] Scraping completed! Processed: 12, Failed: 0

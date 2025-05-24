@@ -7320,3 +7320,50 @@
 #26 /var/www/products-shops/artisan(16): Illuminate\\Foundation\\Application->handleCommand()
 #27 {main}
 "} 
+[2025-05-23 06:32:49] local.ERROR: Array to string conversion {"exception":"[object] (ErrorException(code: 0): Array to string conversion at /var/www/html/products-shops/app/Http/Controllers/StartController.php:2493)
+[stacktrace]
+#0 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(256): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError()
+#1 /var/www/html/products-shops/app/Http/Controllers/StartController.php(2493): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->{closure:Illuminate\\Foundation\\Bootstrap\\HandleExceptions::forwardsTo():255}()
+#2 /var/www/html/products-shops/app/Http/Controllers/StartController.php(2175): App\\Http\\Controllers\\StartController->fetchProductLinks()
+#3 /var/www/html/products-shops/app/Console/Commands/StartCommand.php(39): App\\Http\\Controllers\\StartController->scrapeMultiple()
+#4 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\\Console\\Commands\\StartCommand->handle()
+#5 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#6 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(96): Illuminate\\Container\\Util::unwrapIfClosure()
+#7 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod()
+#8 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Container/Container.php(754): Illuminate\\Container\\BoundMethod::call()
+#9 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Console/Command.php(211): Illuminate\\Container\\Container->call()
+#10 /var/www/html/products-shops/vendor/symfony/console/Command/Command.php(279): Illuminate\\Console\\Command->execute()
+#11 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Console/Command.php(180): Symfony\\Component\\Console\\Command\\Command->run()
+#12 /var/www/html/products-shops/vendor/symfony/console/Application.php(1094): Illuminate\\Console\\Command->run()
+#13 /var/www/html/products-shops/vendor/symfony/console/Application.php(342): Symfony\\Component\\Console\\Application->doRunCommand()
+#14 /var/www/html/products-shops/vendor/symfony/console/Application.php(193): Symfony\\Component\\Console\\Application->doRun()
+#15 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(197): Symfony\\Component\\Console\\Application->run()
+#16 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1234): Illuminate\\Foundation\\Console\\Kernel->handle()
+#17 /var/www/html/products-shops/artisan(16): Illuminate\\Foundation\\Application->handleCommand()
+#18 {main}
+"} 
+[2025-05-23 08:59:54] local.ERROR: فایل کانفیگ یافت نشد: /var/www/html/products-shops/storage/app/private/bebetoo.json  
+[2025-05-23 09:19:55] local.ERROR: Too few arguments to function App\Http\Controllers\StartController::extractProductIdFromUrl(), 1 passed in /var/www/html/products-shops/app/Http/Controllers/StartController.php on line 1287 and exactly 3 expected {"exception":"[object] (ArgumentCountError(code: 0): Too few arguments to function App\\Http\\Controllers\\StartController::extractProductIdFromUrl(), 1 passed in /var/www/html/products-shops/app/Http/Controllers/StartController.php on line 1287 and exactly 3 expected at /var/www/html/products-shops/app/Http/Controllers/StartController.php:3466)
+[stacktrace]
+#0 /var/www/html/products-shops/app/Http/Controllers/StartController.php(1287): App\\Http\\Controllers\\StartController->extractProductIdFromUrl('https://kandida...')
+#1 [internal function]: App\\Http\\Controllers\\StartController->{closure:App\\Http\\Controllers\\StartController::scrapeWithPlaywright():1282}(Array)
+#2 /var/www/html/products-shops/app/Http/Controllers/StartController.php(1282): array_map(Object(Closure), Array)
+#3 /var/www/html/products-shops/app/Http/Controllers/StartController.php(2521): App\\Http\\Controllers\\StartController->scrapeWithPlaywright(2, 'https://kandida...')
+#4 /var/www/html/products-shops/app/Http/Controllers/StartController.php(2148): App\\Http\\Controllers\\StartController->fetchProductLinks()
+#5 /var/www/html/products-shops/app/Console/Commands/StartCommand.php(39): App\\Http\\Controllers\\StartController->scrapeMultiple()
+#6 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): App\\Console\\Commands\\StartCommand->handle()
+#7 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#8 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(96): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#9 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Array, Object(Closure))
+#10 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Container/Container.php(754): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Array, Array, NULL)
+#11 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Console/Command.php(211): Illuminate\\Container\\Container->call(Array)
+#12 /var/www/html/products-shops/vendor/symfony/console/Command/Command.php(279): Illuminate\\Console\\Command->execute(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#13 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Console/Command.php(180): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#14 /var/www/html/products-shops/vendor/symfony/console/Application.php(1094): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#15 /var/www/html/products-shops/vendor/symfony/console/Application.php(342): Symfony\\Component\\Console\\Application->doRunCommand(Object(App\\Console\\Commands\\StartCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#16 /var/www/html/products-shops/vendor/symfony/console/Application.php(193): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#17 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(197): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#18 /var/www/html/products-shops/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1234): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#19 /var/www/html/products-shops/artisan(16): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#20 {main}
+"} 

@@ -1,0 +1,515 @@
+اجرای اسکرپر برای کانفیگ sinastyle در تاریخ 2025-05-23 13:51:16 شروع شد...
+Starting flexible scraper...
+Loading configuration from /var/www/html/products-shops/storage/app/private/private/sinastyle.json
+Request delay set to 500 ms.
+Starting scrape operation...
+[1;92mApplied migration: 2025_04_13_073528_create_failed_links_table.php[0m
+[1;92m🔄 STARTING fetchProductLinks - Method: 3[0m
+[1;92m✅ Product links selector found (array): {"type":"css","selector":"div.sc-195bc97-1 > a","attribute":"href"}[0m
+[1;92mTemporary script file created at: /tmp/playwright_method3_tr3gdscjcagaciDWPt6.cjs[0m
+[1;92mExecuting Playwright script: NODE_PATH=/var/www/html/products-shops/node_modules node /tmp/playwright_method3_tr3gdscjcagaciDWPt6.cjs[0m
+[1;93mPlaywright output: Launching headless Chrome browser...[0m
+[1;93mPlaywright output: Creating new browser context...[0m
+[1;93mPlaywright output: Creating new page...[0m
+[1;93mPlaywright output: Processing page 1...[0m
+[1;93mPlaywright output: Navigating to main page: https://sinastyle.ir/products...[0m
+[1;93mPlaywright output: Main page navigation completed.[0m
+[1;93mPlaywright output: Scroll 1 completed.[0m
+[1;93mPlaywright output: Scroll 2 completed.[0m
+[1;93mPlaywright output: Scroll 3 completed.[0m
+[1;93mPlaywright output: Scroll 4 completed.[0m
+[1;93mPlaywright output: Scroll 5 completed.[0m
+[1;93mPlaywright output: Scroll 6 completed.[0m
+[1;93mPlaywright output: Scroll 7 completed.[0m
+[1;93mPlaywright output: Scroll 8 completed.[0m
+[1;93mPlaywright output: Scroll 9 completed.[0m
+[1;93mPlaywright output: Scroll 10 completed.[0m
+[1;93mPlaywright output: Waiting for product links to appear (max 30s)...[0m
+[1;93mPlaywright output: Added new link: /product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA[0m
+[1;93mPlaywright output: Added new link: /product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.[0m
+[1;93mPlaywright output: Added new link: /product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA[0m
+[1;93mPlaywright output: Added new link: /product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85[0m
+[1;93mPlaywright output: Added new link: /product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF[0m
+[1;93mPlaywright output: Added new link: /product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE[0m
+[1;93mPlaywright output: Added new link: /product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA[0m
+[1;93mPlaywright output: Added new link: /product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.[0m
+[1;93mPlaywright output: Added new link: /product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1[0m
+[1;93mPlaywright output: Added new link: /product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff[0m
+[1;93mPlaywright output: Added new link: /product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI[0m
+[1;93mPlaywright output: Added new link: /product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO[0m
+[1;93mPlaywright output: Extracted 12 new product links from page 1.[0m
+[1;93mPlaywright output: Checking for "Next Page" button...[0m
+[1;93mPlaywright output: No "Next Page" button found or not visible. Stopping pagination.[0m
+[1;93mPlaywright output: Total unique links extracted: 12[0m
+[1;93mPlaywright output: Processing link 1: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA[0m
+[1;93mPlaywright output: Navigating to https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA...[0m
+[1;93mPlaywright output: Product page navigation completed.[0m
+[1;93mPlaywright output: Waiting for title selector...[0m
+[1;93mPlaywright output: Extracted title: تیشرت مچینست[0m
+[1;93mPlaywright output: Waiting for price selector...[0m
+[1;93mPlaywright output: Extracted price: 530,000[0m
+[1;93mPlaywright output: Waiting for availability selector...[0m
+[1;93mPlaywright output: Raw availability text: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Product is available based on positive keyword: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Final availability value: 1[0m
+[1;93mPlaywright output: Waiting for image selector...[0m
+[1;93mPlaywright output: Extracted image: https://digifycdn.com/media/item_images/IMG_1141_2tczzZj.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true[0m
+[1;93mPlaywright output: Waiting for category selector...[0m
+[1;93mPlaywright output: Extracted category: محصولات[0m
+[1;93mPlaywright output: No guarantee selector provided. Skipping guarantee extraction.[0m
+[1;93mPlaywright output: Extracting product_id...[0m
+[1;93mPlaywright output: Using URL method for product_id extraction...[0m
+[1;93mPlaywright output: Extracted product_id from URL: 1665489[0m
+[1;93mPlaywright output: Processed product 1: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA[0m
+[1;93mPlaywright output: Processing link 2: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.[0m
+[1;93mPlaywright output: Navigating to https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C....[0m
+[1;93mPlaywright output: Product page navigation completed.[0m
+[1;93mPlaywright output: Waiting for title selector...[0m
+[1;93mPlaywright output: Extracted title: شلوار مام‌.[0m
+[1;93mPlaywright output: Waiting for price selector...[0m
+[1;93mPlaywright output: Extracted price: 898,000[0m
+[1;93mPlaywright output: Waiting for availability selector...[0m
+[1;93mPlaywright output: Raw availability text: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Product is available based on positive keyword: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Final availability value: 1[0m
+[1;93mPlaywright output: Waiting for image selector...[0m
+[1;93mPlaywright output: Extracted image: https://digifycdn.com/media/item_images/IMG_1179_4k0GZiq.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true[0m
+[1;93mPlaywright output: Waiting for category selector...[0m
+[1;93mPlaywright output: Extracted category: شلوار[0m
+[1;93mPlaywright output: No guarantee selector provided. Skipping guarantee extraction.[0m
+[1;93mPlaywright output: Extracting product_id...[0m
+[1;93mPlaywright output: Using URL method for product_id extraction...[0m
+[1;93mPlaywright output: Extracted product_id from URL: 1665485[0m
+[1;93mPlaywright output: Processed product 2: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.[0m
+[1;93mPlaywright output: Processing link 3: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA[0m
+[1;93mPlaywright output: Navigating to https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA...[0m
+[1;93mPlaywright output: Product page navigation completed.[0m
+[1;93mPlaywright output: Waiting for title selector...[0m
+[1;93mPlaywright output: Extracted title: شلوار مام فیت[0m
+[1;93mPlaywright output: Waiting for price selector...[0m
+[1;93mPlaywright output: Extracted price: 898,000[0m
+[1;93mPlaywright output: Waiting for availability selector...[0m
+[1;93mPlaywright output: Raw availability text: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Product is available based on positive keyword: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Final availability value: 1[0m
+[1;93mPlaywright output: Waiting for image selector...[0m
+[1;93mPlaywright output: Extracted image: https://digifycdn.com/media/item_images/IMG_1181_AIEiP2K.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true[0m
+[1;93mPlaywright output: Waiting for category selector...[0m
+[1;93mPlaywright output: Extracted category: شلوار[0m
+[1;93mPlaywright output: No guarantee selector provided. Skipping guarantee extraction.[0m
+[1;93mPlaywright output: Extracting product_id...[0m
+[1;93mPlaywright output: Using URL method for product_id extraction...[0m
+[1;93mPlaywright output: Extracted product_id from URL: 1665481[0m
+[1;93mPlaywright output: Processed product 3: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA[0m
+[1;93mPlaywright output: Processing link 4: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85[0m
+[1;93mPlaywright output: Navigating to https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85...[0m
+[1;93mPlaywright output: Product page navigation completed.[0m
+[1;93mPlaywright output: Waiting for title selector...[0m
+[1;93mPlaywright output: Extracted title: شلوار مام[0m
+[1;93mPlaywright output: Waiting for price selector...[0m
+[1;93mPlaywright output: Extracted price: 980,000[0m
+[1;93mPlaywright output: Waiting for availability selector...[0m
+[1;93mPlaywright output: Raw availability text: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Product is available based on positive keyword: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Final availability value: 1[0m
+[1;93mPlaywright output: Waiting for image selector...[0m
+[1;93mPlaywright output: Extracted image: https://digifycdn.com/media/item_images/IMG_1182_9XioEob.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true[0m
+[1;93mPlaywright output: Waiting for category selector...[0m
+[1;93mPlaywright output: Extracted category: شلوار[0m
+[1;93mPlaywright output: No guarantee selector provided. Skipping guarantee extraction.[0m
+[1;93mPlaywright output: Extracting product_id...[0m
+[1;93mPlaywright output: Using URL method for product_id extraction...[0m
+[1;93mPlaywright output: Extracted product_id from URL: 1665475[0m
+[1;93mPlaywright output: Processed product 4: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85[0m
+[1;93mPlaywright output: Processing link 5: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF[0m
+[1;93mPlaywright output: Navigating to https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF...[0m
+[1;93mPlaywright output: Product page navigation completed.[0m
+[1;93mPlaywright output: Waiting for title selector...[0m
+[1;93mPlaywright output: Extracted title: شلوار بگ[0m
+[1;93mPlaywright output: Waiting for price selector...[0m
+[1;93mPlaywright output: Extracted price: 1,299,000[0m
+[1;93mPlaywright output: Waiting for availability selector...[0m
+[1;93mPlaywright output: Raw availability text: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Product is available based on positive keyword: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Final availability value: 1[0m
+[1;93mPlaywright output: Waiting for image selector...[0m
+[1;93mPlaywright output: Extracted image: https://digifycdn.com/media/item_images/IMG_1178_mUrE0TC.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true[0m
+[1;93mPlaywright output: Waiting for category selector...[0m
+[1;93mPlaywright output: Extracted category: شلوار[0m
+[1;93mPlaywright output: No guarantee selector provided. Skipping guarantee extraction.[0m
+[1;93mPlaywright output: Extracting product_id...[0m
+[1;93mPlaywright output: Using URL method for product_id extraction...[0m
+[1;93mPlaywright output: Extracted product_id from URL: 1665467[0m
+[1;93mPlaywright output: Processed product 5: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF[0m
+[1;93mPlaywright output: Processing link 6: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE[0m
+[1;93mPlaywright output: Navigating to https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE...[0m
+[1;93mPlaywright output: Product page navigation completed.[0m
+[1;93mPlaywright output: Waiting for title selector...[0m
+[1;93mPlaywright output: Extracted title: تیشرتEAGLE[0m
+[1;93mPlaywright output: Waiting for price selector...[0m
+[1;93mPlaywright output: Extracted price: 525,000[0m
+[1;93mPlaywright output: Waiting for availability selector...[0m
+[1;93mPlaywright output: Raw availability text: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Product is available based on positive keyword: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Final availability value: 1[0m
+[1;93mPlaywright output: Waiting for image selector...[0m
+[1;93mPlaywright output: Extracted image: https://digifycdn.com/media/item_images/image_wDUe3dA.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true[0m
+[1;93mPlaywright output: Waiting for category selector...[0m
+[1;93mPlaywright output: Extracted category: تیشرت[0m
+[1;93mPlaywright output: No guarantee selector provided. Skipping guarantee extraction.[0m
+[1;93mPlaywright output: Extracting product_id...[0m
+[1;93mPlaywright output: Using URL method for product_id extraction...[0m
+[1;93mPlaywright output: Extracted product_id from URL: 1663626[0m
+[1;93mPlaywright output: Processed product 6: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE[0m
+[1;93mPlaywright output: Processing link 7: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA[0m
+[1;93mPlaywright output: Navigating to https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA...[0m
+[1;93mPlaywright output: Product page navigation completed.[0m
+[1;93mPlaywright output: Waiting for title selector...[0m
+[1;93mPlaywright output: Extracted title: تیشرت LEIFFA[0m
+[1;93mPlaywright output: Waiting for price selector...[0m
+[1;93mPlaywright output: Extracted price: 525,000[0m
+[1;93mPlaywright output: Waiting for availability selector...[0m
+[1;93mPlaywright output: Raw availability text: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Product is available based on positive keyword: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Final availability value: 1[0m
+[1;93mPlaywright output: Waiting for image selector...[0m
+[1;93mPlaywright output: Extracted image: https://digifycdn.com/media/item_images/image_hBUleqe.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true[0m
+[1;93mPlaywright output: Waiting for category selector...[0m
+[1;93mPlaywright output: Extracted category: تیشرت[0m
+[1;93mPlaywright output: No guarantee selector provided. Skipping guarantee extraction.[0m
+[1;93mPlaywright output: Extracting product_id...[0m
+[1;93mPlaywright output: Using URL method for product_id extraction...[0m
+[1;93mPlaywright output: Extracted product_id from URL: 1663611[0m
+[1;93mPlaywright output: Processed product 7: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA[0m
+[1;93mPlaywright output: Processing link 8: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.[0m
+[1;93mPlaywright output: Navigating to https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1....[0m
+[1;93mPlaywright output: Product page navigation completed.[0m
+[1;93mPlaywright output: Waiting for title selector...[0m
+[1;93mPlaywright output: Extracted title: تیشرت طرح دار.[0m
+[1;93mPlaywright output: Waiting for price selector...[0m
+[1;93mPlaywright output: Extracted price: 535,000[0m
+[1;93mPlaywright output: Waiting for availability selector...[0m
+[1;93mPlaywright output: Raw availability text: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Product is available based on positive keyword: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Final availability value: 1[0m
+[1;93mPlaywright output: Waiting for image selector...[0m
+[1;93mPlaywright output: Extracted image: https://digifycdn.com/media/item_images/image_0pPgpyj.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true[0m
+[1;93mPlaywright output: Waiting for category selector...[0m
+[1;93mPlaywright output: Extracted category: تیشرت[0m
+[1;93mPlaywright output: No guarantee selector provided. Skipping guarantee extraction.[0m
+[1;93mPlaywright output: Extracting product_id...[0m
+[1;93mPlaywright output: Using URL method for product_id extraction...[0m
+[1;93mPlaywright output: Extracted product_id from URL: 1663600[0m
+[1;93mPlaywright output: Processed product 8: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.[0m
+[1;93mPlaywright output: Processing link 9: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1[0m
+[1;93mPlaywright output: Navigating to https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1...[0m
+[1;93mPlaywright output: Product page navigation completed.[0m
+[1;93mPlaywright output: Waiting for title selector...[0m
+[1;93mPlaywright output: Extracted title: تیشرت طرح دار[0m
+[1;93mPlaywright output: Waiting for price selector...[0m
+[1;93mPlaywright output: Extracted price: 525,000[0m
+[1;93mPlaywright output: Waiting for availability selector...[0m
+[1;93mPlaywright output: Raw availability text: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Product is available based on positive keyword: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Final availability value: 1[0m
+[1;93mPlaywright output: Waiting for image selector...[0m
+[1;93mPlaywright output: Extracted image: https://digifycdn.com/media/item_images/image_zUOI8Fw.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true[0m
+[1;93mPlaywright output: Waiting for category selector...[0m
+[1;93mPlaywright output: Extracted category: تیشرت[0m
+[1;93mPlaywright output: No guarantee selector provided. Skipping guarantee extraction.[0m
+[1;93mPlaywright output: Extracting product_id...[0m
+[1;93mPlaywright output: Using URL method for product_id extraction...[0m
+[1;93mPlaywright output: Extracted product_id from URL: 1663586[0m
+[1;93mPlaywright output: Processed product 9: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1[0m
+[1;93mPlaywright output: Processing link 10: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff[0m
+[1;93mPlaywright output: Navigating to https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff...[0m
+[1;93mPlaywright output: Product page navigation completed.[0m
+[1;93mPlaywright output: Waiting for title selector...[0m
+[1;93mPlaywright output: Extracted title: تیشرت staff[0m
+[1;93mPlaywright output: Waiting for price selector...[0m
+[1;93mPlaywright output: Extracted price: 565,000[0m
+[1;93mPlaywright output: Waiting for availability selector...[0m
+[1;93mPlaywright output: Raw availability text: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Product is available based on positive keyword: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Final availability value: 1[0m
+[1;93mPlaywright output: Waiting for image selector...[0m
+[1;93mPlaywright output: Extracted image: https://digifycdn.com/media/item_images/image_okMtM7g.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true[0m
+[1;93mPlaywright output: Waiting for category selector...[0m
+[1;93mPlaywright output: Extracted category: تیشرت[0m
+[1;93mPlaywright output: No guarantee selector provided. Skipping guarantee extraction.[0m
+[1;93mPlaywright output: Extracting product_id...[0m
+[1;93mPlaywright output: Using URL method for product_id extraction...[0m
+[1;93mPlaywright output: Extracted product_id from URL: 1663570[0m
+[1;93mPlaywright output: Processed product 10: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff[0m
+[1;93mPlaywright output: Processing link 11: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI[0m
+[1;93mPlaywright output: Navigating to https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI...[0m
+[1;93mPlaywright output: Product page navigation completed.[0m
+[1;93mPlaywright output: Waiting for title selector...[0m
+[1;93mPlaywright output: Extracted title: تیشرت MAUI[0m
+[1;93mPlaywright output: Waiting for price selector...[0m
+[1;93mPlaywright output: Extracted price: 625,000[0m
+[1;93mPlaywright output: Waiting for availability selector...[0m
+[1;93mPlaywright output: Raw availability text: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Product is available based on positive keyword: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Final availability value: 1[0m
+[1;93mPlaywright output: Waiting for image selector...[0m
+[1;93mPlaywright output: Extracted image: https://digifycdn.com/media/item_images/image_SuSSk6P.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true[0m
+[1;93mPlaywright output: Waiting for category selector...[0m
+[1;93mPlaywright output: Extracted category: تیشرت[0m
+[1;93mPlaywright output: No guarantee selector provided. Skipping guarantee extraction.[0m
+[1;93mPlaywright output: Extracting product_id...[0m
+[1;93mPlaywright output: Using URL method for product_id extraction...[0m
+[1;93mPlaywright output: Extracted product_id from URL: 1663545[0m
+[1;93mPlaywright output: Processed product 11: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI[0m
+[1;93mPlaywright output: Processing link 12: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO[0m
+[1;93mPlaywright output: Navigating to https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO...[0m
+[1;93mPlaywright output: Product page navigation completed.[0m
+[1;93mPlaywright output: Waiting for title selector...[0m
+[1;93mPlaywright output: Extracted title: تیشرت GYRO[0m
+[1;93mPlaywright output: Waiting for price selector...[0m
+[1;93mPlaywright output: Extracted price: 585,000[0m
+[1;93mPlaywright output: Waiting for availability selector...[0m
+[1;93mPlaywright output: Raw availability text: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Product is available based on positive keyword: افزودن به سبد خرید[0m
+[1;93mPlaywright output: Final availability value: 1[0m
+[1;93mPlaywright output: Waiting for image selector...[0m
+[1;93mPlaywright output: Extracted image: https://digifycdn.com/media/item_images/image_0RCHPtY.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true[0m
+[1;93mPlaywright output: Waiting for category selector...[0m
+[1;93mPlaywright output: Extracted category: تیشرت[0m
+[1;93mPlaywright output: No guarantee selector provided. Skipping guarantee extraction.[0m
+[1;93mPlaywright output: Extracting product_id...[0m
+[1;93mPlaywright output: Using URL method for product_id extraction...[0m
+[1;93mPlaywright output: Extracted product_id from URL: 1663532[0m
+[1;93mPlaywright output: Processed product 12: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO[0m
+[1;93mPlaywright output: Final result: {"links":["/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA","/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.","/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA","/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85","/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF","/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE","/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA","/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.","/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1","/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff","/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI","/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO"],"products":[{"url":"https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA","title":"تیشرت مچینست","price":"530,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1141_2tczzZj.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"محصولات","guarantee":"","product_id":"1665489","error":""},{"url":"https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.","title":"شلوار مام‌.","price":"898,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1179_4k0GZiq.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665485","error":""},{"url":"https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA","title":"شلوار مام فیت","price":"898,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1181_AIEiP2K.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665481","error":""},{"url":"https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85","title":"شلوار مام","price":"980,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1182_9XioEob.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665475","error":""},{"url":"https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF","title":"شلوار بگ","price":"1,299,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1178_mUrE0TC.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665467","error":""},{"url":"https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE","title":"تیشرتEAGLE","price":"525,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_wDUe3dA.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663626","error":""},{"url":"https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA","title":"تیشرت LEIFFA","price":"525,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_hBUleqe.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663611","error":""},{"url":"https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.","title":"تیشرت طرح دار.","price":"535,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_0pPgpyj.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663600","error":""},{"url":"https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1","title":"تیشرت طرح دار","price":"525,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_zUOI8Fw.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663586","error":""},{"url":"https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff","title":"تیشرت staff","price":"565,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_okMtM7g.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663570","error":""},{"url":"https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI","title":"تیشرت MAUI","price":"625,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_SuSSk6P.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663545","error":""},{"url":"https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO","title":"تیشرت GYRO","price":"585,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_0RCHPtY.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663532","error":""}],"pages_processed":0,"console_logs":[]}[0m
+[1;93mPlaywright output: Closing browser...[0m
+[1;93mPlaywright output: Browser disconnected unexpectedly.[0m
+[1;93mPlaywright output: Browser closed.[0m
+[1;93mPlaywright output: Final result: {"links":["/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA","/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.","/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA","/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85","/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF","/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE","/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA","/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.","/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1","/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff","/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI","/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO"],"products":[{"url":"https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA","title":"تیشرت مچینست","price":"530,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1141_2tczzZj.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"محصولات","guarantee":"","product_id":"1665489","error":""},{"url":"https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.","title":"شلوار مام‌.","price":"898,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1179_4k0GZiq.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665485","error":""},{"url":"https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA","title":"شلوار مام فیت","price":"898,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1181_AIEiP2K.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665481","error":""},{"url":"https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85","title":"شلوار مام","price":"980,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1182_9XioEob.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665475","error":""},{"url":"https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF","title":"شلوار بگ","price":"1,299,000","availability":1,"image":"https://digifycdn.com/media/item_images/IMG_1178_mUrE0TC.jpeg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"شلوار","guarantee":"","product_id":"1665467","error":""},{"url":"https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE","title":"تیشرتEAGLE","price":"525,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_wDUe3dA.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663626","error":""},{"url":"https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA","title":"تیشرت LEIFFA","price":"525,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_hBUleqe.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663611","error":""},{"url":"https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.","title":"تیشرت طرح دار.","price":"535,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_0pPgpyj.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663600","error":""},{"url":"https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1","title":"تیشرت طرح دار","price":"525,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_zUOI8Fw.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663586","error":""},{"url":"https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff","title":"تیشرت staff","price":"565,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_okMtM7g.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663570","error":""},{"url":"https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI","title":"تیشرت MAUI","price":"625,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_SuSSk6P.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663545","error":""},{"url":"https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO","title":"تیشرت GYRO","price":"585,000","availability":1,"image":"https://digifycdn.com/media/item_images/image_0RCHPtY.jpg?x-img=v1/optimize,q_95/resize,w_500,force_true","category":"تیشرت","guarantee":"","product_id":"1663532","error":""}],"pages_processed":0,"console_logs":["Browser disconnected unexpectedly."]}[0m
+[1;92mPlaywright script execution completed with return code: 0[0m
+[1;92m🆕 محصول جدید اضافه شد: تیشرت مچینست (ID: 1665489)[0m
+[1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665489   |               تیشرت مچینست               |   530000   |  محصولات   |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665489   |               تیشرت مچینست               |   530000   |  محصولات   |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;92m🆕 محصول جدید اضافه شد: شلوار مام‌. (ID: 1665485)[0m
+[1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665485   |               شلوار مام‌.                |   898000   |   شلوار    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665485   |               شلوار مام‌.                |   898000   |   شلوار    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;92m🆕 محصول جدید اضافه شد: شلوار مام فیت (ID: 1665481)[0m
+[1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665481   |              شلوار مام فیت               |   898000   |   شلوار    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665481   |              شلوار مام فیت               |   898000   |   شلوار    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;92m🆕 محصول جدید اضافه شد: شلوار مام (ID: 1665475)[0m
+[1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665475   |                شلوار مام                 |   980000   |   شلوار    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665475   |                شلوار مام                 |   980000   |   شلوار    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;92m🆕 محصول جدید اضافه شد: شلوار بگ (ID: 1665467)[0m
+[1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665467   |                 شلوار بگ                 |  1299000   |   شلوار    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1665467   |                 شلوار بگ                 |  1299000   |   شلوار    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;92m🆕 محصول جدید اضافه شد: تیشرتEAGLE (ID: 1663626)[0m
+[1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663626   |                تیشرتEAGLE                |   525000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663626   |                تیشرتEAGLE                |   525000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;92m🆕 محصول جدید اضافه شد: تیشرت LEIFFA (ID: 1663611)[0m
+[1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663611   |               تیشرت LEIFFA               |   525000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663611   |               تیشرت LEIFFA               |   525000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;92m🆕 محصول جدید اضافه شد: تیشرت طرح دار. (ID: 1663600)[0m
+[1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663600   |              تیشرت طرح دار.              |   535000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663600   |              تیشرت طرح دار.              |   535000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;92m🆕 محصول جدید اضافه شد: تیشرت طرح دار (ID: 1663586)[0m
+[1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663586   |              تیشرت طرح دار               |   525000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663586   |              تیشرت طرح دار               |   525000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;92m🆕 محصول جدید اضافه شد: تیشرت staff (ID: 1663570)[0m
+[1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663570   |               تیشرت staff                |   565000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663570   |               تیشرت staff                |   565000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;92m🆕 محصول جدید اضافه شد: تیشرت MAUI (ID: 1663545)[0m
+[1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663545   |                تیشرت MAUI                |   625000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663545   |                تیشرت MAUI                |   625000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;92m🆕 محصول جدید اضافه شد: تیشرت GYRO (ID: 1663532)[0m
+[1;92m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663532   |                تیشرت GYRO                |   585000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;93m+------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+| Product ID |                  Title                   |   Price    |  Category  | Availability |  Discount  |   Image    | Guarantee  |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+|  1663532   |                تیشرت GYRO                |   585000   |   تیشرت    |    موجود     |     0%     |   موجود    |   ندارد    |
++------------+------------------------------------------+------------+------------+--------------+------------+------------+------------+
+[0m
+[1;91m❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1[0m
+[1;91m❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff[0m
+[1;91m❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF[0m
+[1;91m❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA[0m
+[1;91m❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA[0m
+[1;91m❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85[0m
+[1;91m❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA[0m
+[1;91m❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.[0m
+[1;91m❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.[0m
+[1;91m❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI[0m
+[1;91m❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO[0m
+[1;91m❌ لینک جدید به failed_links اضافه شد: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #2): https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE[0m
+[1;95m🔄 شروع تلاش مجدد برای 12 لینک ناموفق...[0m
+[1;95m═══════════════════════════════════════════════════════════════[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1[0m
+[1;91m❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1663586/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1[0m
+[1;90m───────────────────────────────────────────────────────────────[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff[0m
+[1;91m❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1663570/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-staff[0m
+[1;90m───────────────────────────────────────────────────────────────[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF[0m
+[1;91m❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1665467/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D8%A8%DA%AF[0m
+[1;90m───────────────────────────────────────────────────────────────[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA[0m
+[1;91m❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1663611/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-LEIFFA[0m
+[1;90m───────────────────────────────────────────────────────────────[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA[0m
+[1;91m❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1665489/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D9%85%DA%86%DB%8C%D9%86%D8%B3%D8%AA[0m
+[1;90m───────────────────────────────────────────────────────────────[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85[0m
+[1;91m❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1665475/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85[0m
+[1;90m───────────────────────────────────────────────────────────────[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA[0m
+[1;91m❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1665481/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85-%D9%81%DB%8C%D8%AA[0m
+[1;90m───────────────────────────────────────────────────────────────[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.[0m
+[1;91m❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1663600/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-%D8%B7%D8%B1%D8%AD-%D8%AF%D8%A7%D8%B1.[0m
+[1;90m───────────────────────────────────────────────────────────────[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.[0m
+[1;91m❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1665485/%D8%B4%D9%84%D9%88%D8%A7%D8%B1-%D9%85%D8%A7%D9%85%E2%80%8C.[0m
+[1;90m───────────────────────────────────────────────────────────────[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI[0m
+[1;91m❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1663545/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-MAUI[0m
+[1;90m───────────────────────────────────────────────────────────────[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO[0m
+[1;91m❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1663532/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AA-GYRO[0m
+[1;90m───────────────────────────────────────────────────────────────[0m
+[1;93m🔄 لینک ناموفق آپدیت شد (تلاش #3): https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE[0m
+[1;91m❌ شکست در تلاش مجدد: https://sinastyle.ir/product/1663626/%D8%AA%DB%8C%D8%B4%D8%B1%D8%AAEAGLE[0m
+[1;90m───────────────────────────────────────────────────────────────[0m
+[1;92m✅ لینک‌های منقضی حذف شدند[0m
+[1;95m═══════════════════════════════════════════════════════════════[0m
+[1;92m  ✅ موفق: 0[0m
+[1;91m  ❌ ناموفق: 12[0m
+[1;95m═══════════════════════════════════════════════════════════════[0m
+Scraping completed successfully!
+Total products scraped: 12
+Failed links: 0

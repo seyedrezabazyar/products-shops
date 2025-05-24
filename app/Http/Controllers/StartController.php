@@ -28,6 +28,7 @@ class StartController
     private const COLOR_BLUE = "\033[1;94m";
 
     private const COLOR_GRAY = "\033[1;90m";
+    private const COLOR_CYAN = "\033[1;36m";
     private const COLOR_RESET = "\033[0m";
     private const COLOR_BOLD = "\033[1m";
 
@@ -47,7 +48,7 @@ class StartController
         $this->setRequestDelay($delay);
 
         $this->httpClient = new Client([
-            'proxy' => "http://127.0.0.1:8889",
+
             'timeout' => $this->config['timeout'] ?? 120, // افزایش تایم‌اوت به 120 ثانیه
             'verify' => $this->config['verify_ssl'] ?? false,
             'headers' => [
@@ -59,6 +60,7 @@ class StartController
             ],
         ]);
     }
+
 
     private function scrapeMethodThree(): array
     {
@@ -101,14 +103,18 @@ class StartController
 
             // سلکتورهای صفحه محصول
             $titleSelector = json_encode($this->config['selectors']['product_page']['title']['selector'] ?? '.styles__title___3F4_f');
-            $priceSelector = json_encode($this->config['selectors']['product_page']['price']['selector'][0] ?? '.styles__final-price___1L1AM');
-            $availabilitySelector = json_encode($this->config['selectors']['product_page']['availability']['selector'][0] ?? '#buy-button');
+            $priceSelector = json_encode($this->config['selectors']['product_page']['price']['selector'] ?? '.styles__final-price___1L1AM');
+            $availabilitySelector = json_encode($this->config['selectors']['product_page']['availability']['selector'] ?? '#buy-button');
             $imageSelector = json_encode($this->config['selectors']['product_page']['image']['selector'] ?? 'img.styles__slide___1r6T7');
             $imageAttribute = json_encode($this->config['selectors']['product_page']['image']['attribute'] ?? 'src');
             $categorySelector = json_encode($this->config['selectors']['product_page']['category']['selector'] ?? 'a.styles__bread-crumb-item___3xa5Q:nth-child(3)');
             $guaranteeSelector = json_encode($this->config['selectors']['product_page']['guarantee']['selector'] ?? '');
             $productIdSelector = json_encode($this->config['selectors']['product_page']['product_id']['selector'] ?? 'head > meta:nth-child(9)');
             $productIdAttribute = json_encode($this->config['selectors']['product_page']['product_id']['attribute'] ?? 'content');
+
+            // اضافه کردن تنظیمات product_id_method
+            $productIdMethod = json_encode($this->config['product_id_method'] ?? 'selector');
+            $productIdSource = json_encode($this->config['product_id_source'] ?? 'selector');
 
             // تنظیمات صفحه‌بندی
             $paginationConfig = $this->config['method_settings']['method_3']['navigation']['pagination'] ?? [];
@@ -360,8 +366,18 @@ const initializeBrowser = async () => {
                 productData.guarantee = '';
             }
 
+            // اصلاح قسمت استخراج product_id
             console.log('Extracting product_id...');
-            if (PRODUCT_ID_SELECTOR && PRODUCT_ID_SELECTOR.trim() !== '') {
+            
+            // اول چک کنیم که product_id_method چیه
+            if (PRODUCT_ID_METHOD === 'url' || PRODUCT_ID_SOURCE === 'url') {
+                console.log('Using URL method for product_id extraction...');
+                const urlPattern = /product\/(\d+)/;
+                const match = absoluteLink.match(urlPattern);
+                productData.product_id = match ? match[1] : '';
+                console.log(`Extracted product_id from URL: ${productData.product_id}`);
+            } else if (PRODUCT_ID_SELECTOR && PRODUCT_ID_SELECTOR.trim() !== '') {
+                console.log('Using selector method for product_id extraction...');
                 console.log('Waiting for product_id selector...');
                 await page.waitForSelector(PRODUCT_ID_SELECTOR, { timeout: 5000 }).catch((e) => {
                     console.log(`Product ID selector not found: ${e.message}`);
@@ -372,10 +388,11 @@ const initializeBrowser = async () => {
                 }, { selector: PRODUCT_ID_SELECTOR, attr: PRODUCT_ID_ATTRIBUTE });
                 console.log(`Extracted product_id from selector: ${productData.product_id}`);
             } else {
+                console.log('No product_id method specified, trying URL fallback...');
                 const urlPattern = /product\/(\d+)/;
                 const match = absoluteLink.match(urlPattern);
                 productData.product_id = match ? match[1] : '';
-                console.log(`Extracted product_id from URL: ${productData.product_id}`);
+                console.log(`Extracted product_id from URL (fallback): ${productData.product_id}`);
             }
 
             allProducts.push(productData);
@@ -477,6 +494,8 @@ JAVASCRIPT;
                     'GUARANTEE_SELECTOR',
                     'PRODUCT_ID_SELECTOR',
                     'PRODUCT_ID_ATTRIBUTE',
+                    'PRODUCT_ID_METHOD',
+                    'PRODUCT_ID_SOURCE',
                     'BASEURL',
                     'POSITIVE_KEYWORDS',
                     'NEGATIVE_KEYWORDS',
@@ -501,6 +520,8 @@ JAVASCRIPT;
                     $guaranteeSelector,
                     $productIdSelector,
                     $productIdAttribute,
+                    $productIdMethod,
+                    $productIdSource,
                     $baseurl,
                     $positiveKeywords,
                     $negativeKeywords,
@@ -644,6 +665,472 @@ JAVASCRIPT;
         return [
             'links' => array_unique($allLinks, SORT_REGULAR),
             'pages_processed' => $totalPagesProcessed
+        ];
+    }
+
+
+    private function scrapeWithPlaywright(int $method, string $productUrl): array
+    {
+        if ($method !== 2) {
+            $this->log("Playwright is only supported for method 2", self::COLOR_RED);
+            return ['links' => [], 'pages_processed' => 0];
+        }
+
+        $this->log("Starting Playwright scraping process for URL: $productUrl...", self::COLOR_GREEN);
+
+        // تنظیم تایم‌اوت و حافظه
+        set_time_limit(300);
+        ini_set('memory_limit', '512M');
+
+        // مقادیر کانفیگ
+        $config = $this->config;
+        $maxPages = $config['method_settings']['method_2']['navigation']['max_pages'] ?? 10;
+        $scrollDelay = $config['method_settings']['method_2']['navigation']['scroll_delay'] ?? 3000;
+        $paginationMethod = $config['method_settings']['method_2']['navigation']['pagination']['method'] ?? 'url';
+        $this->log("Pagination method: $paginationMethod", self::COLOR_YELLOW);
+
+        // Selectorها و تنظیمات
+        $linkSelector = addslashes($config['selectors']['main_page']['product_links']['selector'] ?? '');
+        $linkAttribute = addslashes($config['selectors']['main_page']['product_links']['attribute'] ?? 'href');
+        $imageSelector = addslashes($config['selectors']['main_page']['image']['selector'] ?? '');
+        $imageAttribute = addslashes($config['selectors']['main_page']['image']['attribute'] ?? 'src');
+        $productIdSelector = addslashes($config['selectors']['main_page']['product_id']['selector'] ?? '');
+        $productIdAttribute = addslashes($config['selectors']['main_page']['product_id']['attribute'] ?? 'data-product_id');
+        $productIdFromLink = addslashes($config['selectors']['main_page']['product_links']['product_id'] ?? '');
+        $imageMethod = addslashes($config['image_method'] ?? 'main_page');
+        $productIdSource = addslashes($config['product_id_source'] ?? 'main_page');
+        $productIdMethod = addslashes($config['product_id_method'] ?? 'selector');
+        $urlFilter = addslashes($config['selectors']['main_page']['product_links']['url_filter'] ?? '');
+        $userAgent = addslashes($this->randomUserAgent());
+        $container = addslashes($config['container'] ?? '');
+        $baseUrl = addslashes($config['base_urls'][0] ?? '');
+
+        // تنظیمات صفحه‌بندی
+        $paginationConfig = $config['method_settings']['method_2']['navigation']['pagination']['url'] ?? [];
+        $paginationType = addslashes($paginationConfig['type'] ?? 'query');
+        $paginationParam = addslashes($paginationConfig['parameter'] ?? 'page');
+        $paginationSeparator = addslashes($paginationConfig['separator'] ?? '=');
+        $paginationSuffix = addslashes($paginationConfig['suffix'] ?? '');
+        $useSampleUrl = $paginationConfig['use_sample_url'] ?? false;
+        $sampleUrl = addslashes($paginationConfig['sample_url'] ?? '');
+        $forceTrailingSlash = $paginationConfig['force_trailing_slash'] ?? false;
+        $paginationConfigJson = json_encode($paginationConfig, JSON_UNESCAPED_SLASHES);
+
+        // تنظیمات دکمه Next
+        $nextButtonSelector = '';
+        if ($paginationMethod === 'next_button') {
+            $nextButtonSelector = addslashes($config['method_settings']['method_2']['navigation']['pagination']['next_button']['selector'] ?? '');
+            $this->log("Next button selector: $nextButtonSelector", self::COLOR_YELLOW);
+            if (empty($nextButtonSelector)) {
+                $this->log("Next button selector is required for pagination method 'next_button'", self::COLOR_RED);
+                return ['links' => [], 'pages_processed' => 0];
+            }
+        }
+
+        // اسکریپت Playwright
+        $playwrightScript = <<<'JAVASCRIPT'
+const { chromium } = require('playwright');
+
+(async () => {
+    let links = [];
+    let pagesProcessed = 0;
+    let consoleLogs = [];
+
+    try {
+        console.log('Launching browser...');
+        const browser = await chromium.launch({
+            headless: true,
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+        console.log('Browser launched successfully.');
+
+        const context = await browser.newContext({
+            userAgent: "USER_AGENT",
+            extraHTTPHeaders: {
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.5',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Connection': 'keep-alive'
+            }
+        });
+        const page = await context.newPage();
+        console.log('Browser context and page created successfully.');
+
+        page.on('console', (msg) => {
+            consoleLogs.push(`[Console ${msg.type()}] ${msg.text()}`);
+        });
+
+        const paginationConfig = PAGINATION_CONFIG;
+        const buildPaginationUrl = (baseUrl, pageNum) => {
+            let url = baseUrl.replace(/\/$/, '');
+            const config = paginationConfig;
+            const param = "PAGINATION_PARAM";
+            const separator = "PAGINATION_SEPARATOR";
+            const type = "PAGINATION_TYPE";
+            const suffix = "PAGINATION_SUFFIX";
+            const useSampleUrl = USE_SAMPLE_URL;
+            const sampleUrl = "SAMPLE_URL";
+            const forceTrailingSlash = FORCE_TRAILING_SLASH;
+
+            if (useSampleUrl && sampleUrl && pageNum > 1) {
+                const pattern = sampleUrl.replace(new RegExp(`${param}${separator}\\d+`), `${param}${separator}${pageNum}`);
+                return pattern;
+            }
+
+            if (pageNum === 1 && !suffix) {
+                return forceTrailingSlash && type === 'path' ? `${url}/` : url;
+            }
+
+            if (type === 'query') {
+                return `${url}?${param}${separator}${pageNum}${suffix}`;
+            } else if (type === 'path') {
+                return forceTrailingSlash ? `${url}/${param}${separator}${pageNum}${suffix}/` : `${url}/${param}${separator}${pageNum}${suffix}`;
+            }
+            return `${url}?page=${pageNum}`;
+        };
+
+        const maxPages = MAX_PAGES;
+        const linkSelector = "LINK_SELECTOR";
+        const linkAttribute = "LINK_ATTRIBUTE";
+        const imageSelector = "IMAGE_SELECTOR";
+        const imageAttribute = "IMAGE_ATTRIBUTE";
+        const productIdSelector = "PRODUCT_ID_SELECTOR";
+        const productIdAttribute = "PRODUCT_ID_ATTRIBUTE";
+        const productIdFromLink = "PRODUCT_ID_FROM_LINK";
+        const imageMethod = "IMAGE_METHOD";
+        const productIdSource = "PRODUCT_ID_SOURCE";
+        const productIdMethod = "PRODUCT_ID_METHOD";
+        const scrollDelay = SCROLL_DELAY;
+        const urlFilter = "URL_FILTER" ? new RegExp("URL_FILTER") : null;
+        const container = "CONTAINER";
+        const baseUrl = "BASE_URL";
+        const paginationMethod = "PAGINATION_METHOD";
+        const nextButtonSelector = "NEXT_BUTTON_SELECTOR";
+        let currentPage = 1;
+        let hasMorePages = true;
+
+        console.log(`Navigating to URL: PRODUCTS_URL`);
+        await page.goto("PRODUCTS_URL", { waitUntil: 'domcontentloaded', timeout: 120000 });
+
+        while (hasMorePages && currentPage <= maxPages) {
+            let pageUrl = paginationMethod === 'url' ? buildPaginationUrl("PRODUCTS_URL", currentPage) : "PRODUCTS_URL";
+            console.log(`Processing page ${currentPage} at URL: ${pageUrl}...`);
+
+            if (paginationMethod === 'url' || (paginationMethod === 'next_button' && currentPage === 1)) {
+                try {
+                    await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 120000 });
+                } catch (error) {
+                    console.log(`Failed to load page ${currentPage}: ${error.message}`);
+                    hasMorePages = false;
+                    break;
+                }
+            }
+
+            await page.waitForSelector('CONTAINER', { timeout: 10000 }).catch(() => {
+                console.log('Products container not found, continuing...');
+            });
+
+            for (let i = 0; i < 3; i++) {
+                await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+                await page.waitForTimeout(scrollDelay);
+                console.log(`Scroll ${i + 1} completed`);
+            }
+
+            await page.waitForFunction(
+                (selector) => document.querySelectorAll(selector).length > 0,
+                linkSelector,
+                { timeout: 20000 }
+            ).catch(() => {
+                console.log('No links found after waiting, continuing...');
+            });
+
+            const currentPageLinks = await page.evaluate((args) => {
+                const {
+                    linkSel,
+                    linkAttr,
+                    imageSel,
+                    imageAttr,
+                    productIdSel,
+                    productIdAttr,
+                    productIdFromLink,
+                    imageMethod,
+                    productIdSource,
+                    productIdMethod,
+                    urlFilter,
+                    container,
+                    baseUrl
+                } = args;
+                const links = [];
+                const elements = document.querySelectorAll(linkSel);
+                console.log(`Found ${elements.length} elements with selector: ${linkSel}`);
+
+                elements.forEach(node => {
+                    let href = node.getAttribute(linkAttr);
+                    if (href && !href.startsWith('javascript:') && !href.startsWith('#') && (!urlFilter || urlFilter.test(href))) {
+                        const fullUrl = href.startsWith('http') ? href : new URL(href, baseUrl).href;
+                        let image = '';
+                        if (imageSel && imageMethod === 'main_page') {
+                            const parent = node.closest(container);
+                            const imageElement = parent ? parent.querySelector(imageSel) : null;
+                            image = imageElement ? imageElement.getAttribute(imageAttr) : '';
+                        }
+                        let productId = '';
+                        if (productIdSource === 'product_links' && productIdFromLink) {
+                            productId = node.getAttribute(productIdFromLink) || 'unknown';
+                        } else if (productIdSource === 'main_page' && productIdSel) {
+                            const parent = node.closest(container);
+                            const productIdElement = parent ? parent.querySelector(productIdSel) : null;
+                            productId = productIdElement ? productIdElement.getAttribute(productIdAttr) : 'unknown';
+                        } else if (productIdMethod === 'url') {
+                            const match = href.match(/product\/([A-Za-z0-9]+)/);
+                            productId = match ? match[1] : 'unknown';
+                        } else {
+                            productId = 'unknown';
+                        }
+                        links.push({ url: fullUrl, image, product_id: productId });
+                    }
+                });
+                return links;
+            }, {
+                linkSel: linkSelector,
+                linkAttr: linkAttribute,
+                imageSel: imageSelector,
+                imageAttr: imageAttribute,
+                productIdSel: productIdSelector,
+                productIdAttr: productIdAttribute,
+                productIdFromLink: productIdFromLink,
+                imageMethod: imageMethod,
+                productIdSource: productIdSource,
+                productIdMethod: productIdMethod,
+                urlFilter: urlFilter,
+                container: container,
+                baseUrl: baseUrl
+            });
+
+            console.log(`Found ${currentPageLinks.length} links on page ${currentPage}`);
+            links.push(...currentPageLinks);
+            pagesProcessed++;
+            currentPage++;
+
+            if (paginationMethod === 'next_button' && hasMorePages) {
+                try {
+                    await page.waitForSelector(nextButtonSelector, { timeout: 10000 });
+                    const nextButton = await page.$(nextButtonSelector);
+                    if (nextButton) {
+                        const isButtonEnabled = await page.evaluate((selector) => {
+                            const btn = document.querySelector(selector);
+                            return btn && !btn.disabled && btn.offsetParent !== null;
+                        }, nextButtonSelector);
+
+                        if (!isButtonEnabled) {
+                            console.log('Next button is disabled or not visible. Stopping pagination.');
+                            hasMorePages = false;
+                            break;
+                        }
+
+                        await nextButton.scrollIntoViewIfNeeded();
+                        await nextButton.click();
+                        await page.waitForTimeout(10000);
+                    } else {
+                        console.log('Next button not found. Stopping pagination.');
+                        hasMorePages = false;
+                    }
+                } catch (error) {
+                    console.log(`Failed to click next button: ${error.message}`);
+                    hasMorePages = false;
+                }
+            } else if (paginationMethod === 'url') {
+                await page.waitForTimeout(7000);
+            }
+        }
+
+        links = [...new Set(links.map(link => JSON.stringify(link)))].map(str => JSON.parse(str));
+        await browser.close();
+        console.log(JSON.stringify({ links, pagesProcessed, consoleLogs }));
+    } catch (error) {
+        console.error('Error in Playwright script:', error.message);
+        console.log(JSON.stringify({ links: [], pagesProcessed, consoleLogs, error: error.message }));
+    }
+})();
+JAVASCRIPT;
+
+        // جایگذاری مقادیر
+        $playwrightScript = str_replace(
+            [
+                'USER_AGENT',
+                'PRODUCTS_URL',
+                'MAX_PAGES',
+                'LINK_SELECTOR',
+                'LINK_ATTRIBUTE',
+                'IMAGE_SELECTOR',
+                'IMAGE_ATTRIBUTE',
+                'PRODUCT_ID_SELECTOR',
+                'PRODUCT_ID_ATTRIBUTE',
+                'PRODUCT_ID_FROM_LINK',
+                'IMAGE_METHOD',
+                'PRODUCT_ID_SOURCE',
+                'PRODUCT_ID_METHOD',
+                'URL_FILTER',
+                'CONTAINER',
+                'BASE_URL',
+                'SCROLL_DELAY',
+                'PAGINATION_CONFIG',
+                'PAGINATION_TYPE',
+                'PAGINATION_PARAM',
+                'PAGINATION_SEPARATOR',
+                'PAGINATION_SUFFIX',
+                'USE_SAMPLE_URL',
+                'SAMPLE_URL',
+                'FORCE_TRAILING_SLASH',
+                'PAGINATION_METHOD',
+                'NEXT_BUTTON_SELECTOR'
+            ],
+            [
+                $userAgent,
+                addslashes($productUrl),
+                $maxPages,
+                $linkSelector,
+                $linkAttribute,
+                $imageSelector,
+                $imageAttribute,
+                $productIdSelector,
+                $productIdAttribute,
+                $productIdFromLink,
+                $imageMethod,
+                $productIdSource,
+                $productIdMethod,
+                $urlFilter,
+                $container,
+                $baseUrl,
+                $scrollDelay,
+                $paginationConfigJson,
+                $paginationType,
+                $paginationParam,
+                $paginationSeparator,
+                $paginationSuffix,
+                $useSampleUrl ? 'true' : 'false',
+                $sampleUrl,
+                $forceTrailingSlash ? 'true' : 'false',
+                $paginationMethod,
+                $nextButtonSelector
+            ],
+            $playwrightScript
+        );
+
+        // ایجاد فایل موقت
+        $tempFile = tempnam(sys_get_temp_dir(), 'playwright_') . '.cjs';
+        file_put_contents($tempFile, $playwrightScript);
+        chmod($tempFile, 0755);
+        chown($tempFile, 'www-data');
+        $this->log("Temporary script file created at: $tempFile", self::COLOR_GREEN);
+
+        // تنظیم مسیر Node.js
+        $nodePath = '/usr/bin/node'; // مسیر درست Node.js
+        $nodeModulesPath = '/var/www/html/products-shops/node_modules';
+        $browserPath = '/var/www/.cache/ms-playwright';
+
+        // اجرای اسکریپت
+        $command = "PLAYWRIGHT_BROWSERS_PATH={$browserPath} NODE_PATH={$nodeModulesPath} {$nodePath} {$tempFile} 2>&1";
+        $this->log("Executing Playwright script: {$command}", self::COLOR_GREEN);
+
+        $descriptors = [
+            0 => ['pipe', 'r'],
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w']
+        ];
+        $process = proc_open($command, $descriptors, $pipes);
+
+        if (!is_resource($process)) {
+            $this->log("Failed to start Playwright script process.", self::COLOR_RED);
+            unlink($tempFile);
+            return ['links' => [], 'pages_processed' => 0];
+        }
+
+        $output = '';
+        $errorOutput = '';
+        $logFile = storage_path('logs/playwright_' . date('Ymd_His') . '.log');
+        while (!feof($pipes[1])) {
+            $line = fgets($pipes[1]);
+            if ($line !== false) {
+                $output .= $line;
+                if (!preg_match('/^\s*\{.*"links":.*\}/', $line)) {
+                    $this->log("Playwright output: " . trim($line), self::COLOR_YELLOW);
+                }
+                file_put_contents($logFile, "[STDOUT] " . trim($line) . PHP_EOL, FILE_APPEND);
+            }
+        }
+
+        while (!feof($pipes[2])) {
+            $errorLine = fgets($pipes[2]);
+            if ($errorLine !== false) {
+                $errorOutput .= $errorLine;
+                $this->log("Playwright error: " . trim($errorLine), self::COLOR_RED);
+                file_put_contents($logFile, "[STDERR] " . trim($errorLine) . PHP_EOL, FILE_APPEND);
+            }
+        }
+
+        fclose($pipes[0]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_close($process);
+
+        unlink($tempFile);
+        $this->log("Playwright script execution completed.", self::COLOR_GREEN);
+
+        // بررسی خطاها
+        if (!empty($errorOutput)) {
+            $this->log("Playwright errors detected: {$errorOutput}", self::COLOR_RED);
+            $this->saveFailedLink($productUrl, $errorOutput);
+            return ['links' => [], 'pages_processed' => 0];
+        }
+
+        // تجزیه خروجی
+        preg_match('/\{.*\}/s', $output, $matches);
+        if (!isset($matches[0])) {
+            $this->log("Failed to parse Playwright output for {$productUrl}. Raw output: {$output}", self::COLOR_RED);
+            $this->saveFailedLink($productUrl, 'Failed to parse output');
+            return ['links' => [], 'pages_processed' => 0];
+        }
+
+        $result = json_decode($matches[0], true);
+        if (!$result || !isset($result['links'])) {
+            $this->log("Invalid Playwright output format for {$productUrl}.", self::COLOR_RED);
+            $this->saveFailedLink($productUrl, 'Invalid output format');
+            return ['links' => [], 'pages_processed' => 0];
+        }
+
+        // لاگ کردن console logs
+        if (isset($result['console_logs']) && is_array($result['console_logs'])) {
+            foreach ($result['console_logs'] as $log) {
+                $this->log("Playwright console log: {$log}", self::COLOR_YELLOW);
+            }
+        }
+
+        // پردازش لینک‌ها
+        $links = array_map(function ($link) use ($productUrl) {
+            $url = $this->makeAbsoluteUrl($link['url'], $productUrl);
+            $productId = $link['product_id'] ?? 'unknown';
+
+            if ($productId === 'unknown' && ($this->config['product_id_method'] ?? 'selector') === 'url') {
+                $productId = $this->extractProductIdFromUrl($url);
+                $this->log("Extracted product_id from URL: {$productId} for {$url}", self::COLOR_GREEN);
+            }
+
+            return [
+                'url' => $url,
+                'image' => $link['image'] ? $this->makeAbsoluteUrl($link['image'], $productUrl) : '',
+                'product_id' => $productId
+            ];
+        }, $result['links']);
+
+        $this->log("Found " . count($links) . " unique links for {$productUrl}.", self::COLOR_GREEN);
+
+        // ذخیره لینک‌ها در دیتابیس
+        $this->saveProductLinksToDatabase($links);
+
+        return [
+            'links' => array_unique($links, SORT_REGULAR),
+            'pages_processed' => $result['pages_processed'] ?? 0
         ];
     }
 
@@ -839,498 +1326,6 @@ JAVASCRIPT;
 
         $this->log("Extracted category: '$category'", self::COLOR_GREEN);
         return $category;
-    }
-
-    private function scrapeWithPlaywright(int $method, string $productUrl): array
-    {
-        if ($method !== 2) {
-            $this->log("Playwright is only supported for method 2", self::COLOR_RED);
-            return ['links' => [], 'pages_processed' => 0];
-        }
-
-        $this->log("Starting Playwright scraping process for URL: $productUrl...", self::COLOR_GREEN);
-
-        // تنظیم تایم‌اوت و حافظه
-        set_time_limit(300);
-        ini_set('memory_limit', '512M');
-
-        // مقادیر کانفیگ
-        $maxPages = $this->config['method_settings']['method_2']['navigation']['max_pages'] ?? 10;
-        $scrollDelay = $this->config['method_settings']['method_2']['navigation']['scroll_delay'] ?? 3000;
-        $paginationMethod = $this->config['method_settings']['method_2']['navigation']['pagination']['method'] ?? 'url';
-        $this->log("Pagination method: $paginationMethod", self::COLOR_YELLOW); // لاگ برای بررسی
-
-        $linkSelector = addslashes($this->config['selectors']['main_page']['product_links']['selector']);
-        $linkAttribute = addslashes($this->config['selectors']['main_page']['product_links']['attribute']);
-        $imageSelector = addslashes($this->config['selectors']['main_page']['image']['selector'] ?? '');
-        $imageAttribute = addslashes($this->config['selectors']['main_page']['image']['attribute'] ?? 'src');
-        $productIdSelector = addslashes($this->config['selectors']['main_page']['product_id']['selector'] ?? '');
-        $productIdAttribute = addslashes($this->config['selectors']['main_page']['product_id']['attribute'] ?? 'data-product_id');
-        $productIdFromLink = addslashes($this->config['selectors']['main_page']['product_links']['product_id'] ?? '');
-        $imageMethod = addslashes($this->config['image_method']);
-        $productIdSource = addslashes($this->config['product_id_source']);
-        $productIdMethod = addslashes($this->config['product_id_method'] ?? 'selector');
-        $urlFilter = addslashes($this->config['selectors']['main_page']['product_links']['url_filter'] ?? '');
-        $userAgent = addslashes($this->config['user_agent']);
-        $container = addslashes($this->config['container']);
-        $baseUrl = addslashes($this->config['base_urls'][0] ?? '');
-
-        // تنظیمات دکمه Next
-        $nextButtonSelector = '';
-        if ($paginationMethod === 'next_button') {
-            $nextButtonSelector = addslashes($this->config['method_settings']['method_2']['navigation']['pagination']['next_button']['selector'] ?? '');
-            $this->log("Next button selector: $nextButtonSelector", self::COLOR_YELLOW); // لاگ برای بررسی
-            if (empty($nextButtonSelector)) {
-                $this->log("Next button selector is required for pagination method 'next_button'", self::COLOR_RED);
-                return ['links' => [], 'pages_processed' => 0];
-            }
-        }
-
-        // تنظیمات صفحه‌بندی برای روش url
-        $paginationConfig = $this->config['method_settings']['method_2']['navigation']['pagination']['url'] ?? [];
-        $paginationType = addslashes($paginationConfig['type'] ?? 'query');
-        $paginationParam = addslashes($paginationConfig['parameter'] ?? 'page');
-        $paginationSeparator = addslashes($paginationConfig['separator'] ?? '=');
-        $paginationSuffix = addslashes($paginationConfig['suffix'] ?? '');
-        $useSampleUrl = $paginationConfig['use_sample_url'] ?? false;
-        $sampleUrl = addslashes($paginationConfig['sample_url'] ?? '');
-        $forceTrailingSlash = $paginationConfig['force_trailing_slash'] ?? false;
-        $paginationConfigJson = json_encode($paginationConfig, JSON_UNESCAPED_SLASHES);
-
-        // تعریف اسکریپت Playwright
-        $playwrightScript = <<<'JAVASCRIPT'
-const { chromium } = require('playwright');
-
-(async () => {
-    let links = [];
-    let pagesProcessed = 0;
-    let consoleLogs = [];
-
-    try {
-        console.log('Launching browser...');
-        const browser = await chromium.launch({ headless: true });
-        console.log('Browser launched successfully.');
-
-        console.log('Creating new browser context with user agent: USER_AGENT');
-        const context = await browser.newContext({
-            userAgent: "USER_AGENT",
-            extraHTTPHeaders: {
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                'Accept-Language': 'en-US,en;q=0.5',
-                'Accept-Encoding': 'gzip, deflate, br',
-                'Connection': 'keep-alive'
-            }
-        });
-        const page = await context.newPage();
-        console.log('Browser context and page created successfully.');
-
-        page.on('console', (msg) => {
-            consoleLogs.push(`[Console ${msg.type()}] ${msg.text()}`);
-        });
-
-        const paginationConfig = PAGINATION_CONFIG;
-        const buildPaginationUrl = (baseUrl, pageNum) => {
-            let url = baseUrl.replace(/\/$/, '');
-            const config = paginationConfig;
-            const param = "PAGINATION_PARAM";
-            const separator = "PAGINATION_SEPARATOR";
-            const type = "PAGINATION_TYPE";
-            const suffix = "PAGINATION_SUFFIX";
-            const useSampleUrl = USE_SAMPLE_URL;
-            const sampleUrl = "SAMPLE_URL";
-            const forceTrailingSlash = FORCE_TRAILING_SLASH;
-
-            if (useSampleUrl && sampleUrl && pageNum > 1) {
-                const pattern = sampleUrl.replace(new RegExp(`${param}${separator}\\d+`), `${param}${separator}${pageNum}`);
-                return pattern;
-            }
-
-            if (pageNum === 1 && !suffix) {
-                return forceTrailingSlash && type === 'path' ? `${url}/` : url;
-            }
-
-            if (type === 'query') {
-                return `${url}?${param}${separator}${pageNum}${suffix}`;
-            } else if (type === 'path') {
-                return forceTrailingSlash ? `${url}/${param}${separator}${pageNum}${suffix}/` : `${url}/${param}${separator}${pageNum}${suffix}`;
-            }
-            return `${url}?page=${pageNum}`;
-        };
-
-        const maxPages = MAX_PAGES;
-        const linkSelector = "LINK_SELECTOR";
-        const linkAttribute = "LINK_ATTRIBUTE";
-        const imageSelector = "IMAGE_SELECTOR";
-        const imageAttribute = "IMAGE_ATTRIBUTE";
-        const productIdSelector = "PRODUCT_ID_SELECTOR";
-        const productIdAttribute = "PRODUCT_ID_ATTRIBUTE";
-        const productIdFromLink = "PRODUCT_ID_FROM_LINK";
-        const imageMethod = "IMAGE_METHOD";
-        const productIdSource = "PRODUCT_ID_SOURCE";
-        const productIdMethod = "PRODUCT_ID_METHOD";
-        const scrollDelay = SCROLL_DELAY;
-        const urlFilter = "URL_FILTER" ? new RegExp("URL_FILTER") : null;
-        const container = "CONTAINER";
-        const baseUrl = "BASE_URL";
-        const paginationMethod = "PAGINATION_METHOD";
-        const nextButtonSelector = "NEXT_BUTTON_SELECTOR";
-        let currentPage = 1;
-        let hasMorePages = true;
-
-        console.log(`Using pagination method: ${paginationMethod}`);
-
-        while (hasMorePages && currentPage <= maxPages) {
-            let pageUrl = "PRODUCTS_URL";
-            if (paginationMethod === 'url' || (paginationMethod === 'next_button' && currentPage === 1)) {
-                pageUrl = paginationMethod === 'url' ? buildPaginationUrl("PRODUCTS_URL", currentPage) : "PRODUCTS_URL";
-                console.log(`Processing page ${currentPage} at URL: ${pageUrl}...`);
-                try {
-                    await page.goto(pageUrl, { waitUntil: 'domcontentloaded', timeout: 120000 });
-                } catch (error) {
-                    console.log(`Failed to load page ${currentPage}: ${error.message}`);
-                    hasMorePages = false;
-                    break;
-                }
-            } else {
-                console.log(`Processing page ${currentPage} via next button...`);
-            }
-
-            await page.waitForSelector('CONTAINER', { timeout: 10000 }).catch(() => {
-                console.log('Products container not found, continuing...');
-            });
-
-            for (let i = 0; i < 3; i++) {
-                await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-                await page.waitForTimeout(scrollDelay);
-                console.log(`Scroll ${i + 1} completed`);
-            }
-
-            await page.waitForFunction(
-                (selector) => document.querySelectorAll(selector).length > 0,
-                linkSelector,
-                { timeout: 20000 }
-            ).catch(() => {
-                console.log('No links found after waiting, continuing...');
-            });
-            console.log('Page scrolled and dynamic content loaded.');
-
-            const currentPageLinks = await page.evaluate((args) => {
-                const {
-                    linkSel,
-                    linkAttr,
-                    imageSel,
-                    imageAttr,
-                    productIdSel,
-                    productIdAttr,
-                    productIdFromLink,
-                    imageMethod,
-                    productIdSource,
-                    productIdMethod,
-                    urlFilter,
-                    container,
-                    baseUrl
-                } = args;
-                const links = [];
-                const elements = document.querySelectorAll(linkSel);
-                console.log(`Found ${elements.length} elements with selector: ${linkSel}`);
-
-                elements.forEach(node => {
-                    let href = node.getAttribute(linkAttr);
-                    console.log(`Checking href: ${href}`);
-                    if (href && !href.startsWith('javascript:') && !href.startsWith('#') && (!urlFilter || urlFilter.test(href))) {
-                        const fullUrl = href.startsWith('http') ? href : new URL(href, baseUrl).href;
-                        let image = '';
-                        if (imageSel && imageMethod === 'main_page') {
-                            const parent = node.closest(container);
-                            const imageElement = parent ? parent.querySelector(imageSel) : null;
-                            image = imageElement ? imageElement.getAttribute(imageAttr) : '';
-                            console.log(`Image for link ${fullUrl}: ${image}`);
-                        }
-                        let productId = '';
-                        if (productIdSource === 'product_links' && productIdFromLink) {
-                            productId = node.getAttribute(productIdFromLink) || 'unknown';
-                            console.log(`Extracted product_id from link attribute ${productIdFromLink}: ${productId}`);
-                        } else if (productIdSource === 'main_page' && productIdSel) {
-                            const parent = node.closest(container);
-                            const productIdElement = parent ? parent.querySelector(productIdSel) : null;
-                            productId = productIdElement ? productIdElement.getAttribute(productIdAttr) : 'unknown';
-                            console.log(`Extracted product_id from selector ${productIdSel}: ${productId}`);
-                        } else if (productIdMethod === 'url') {
-                            const match = href.match(/product\/(\d+)/);
-                            productId = match ? match[1] : 'unknown';
-                            console.log(`Extracted product_id from URL ${href}: ${productId}`);
-                        } else {
-                            productId = 'unknown';
-                        }
-                        links.push({ url: fullUrl, image, product_id: productId });
-                    }
-                });
-                return links;
-            }, {
-                linkSel: linkSelector,
-                linkAttr: linkAttribute,
-                imageSel: imageSelector,
-                imageAttr: imageAttribute,
-                productIdSel: productIdSelector,
-                productIdAttr: productIdAttribute,
-                productIdFromLink: productIdFromLink,
-                imageMethod: imageMethod,
-                productIdSource: productIdSource,
-                productIdMethod: productIdMethod,
-                urlFilter: urlFilter,
-                container: container,
-                baseUrl: baseUrl
-            });
-
-            console.log(`Found ${currentPageLinks.length} links on page ${currentPage}`);
-            if (currentPageLinks.length === 0) {
-                console.log(`No products found on page ${currentPage}. Stopping...`);
-                hasMorePages = false;
-            } else {
-                links.push(...currentPageLinks);
-            }
-
-            pagesProcessed++;
-            currentPage++;
-
-            if (paginationMethod === 'next_button' && hasMorePages) {
-                try {
-                    console.log(`Attempting to find next button with selector: ${nextButtonSelector}`);
-                    await page.waitForSelector(nextButtonSelector, { timeout: 10000 });
-                    const nextButton = await page.$(nextButtonSelector);
-                    if (nextButton) {
-                        console.log(`Next button found. Checking if enabled...`);
-                        const isButtonEnabled = await page.evaluate((selector) => {
-                            const btn = document.querySelector(selector);
-                            return btn && !btn.disabled && btn.offsetParent !== null;
-                        }, nextButtonSelector);
-
-                        if (!isButtonEnabled) {
-                            console.log('Next button is disabled or not visible. Stopping pagination.');
-                            hasMorePages = false;
-                            break;
-                        }
-
-                        console.log(`Clicking next button with selector: ${nextButtonSelector}`);
-                        const currentUrl = page.url();
-                        console.log(`Current URL before click: ${currentUrl}`);
-                        await nextButton.scrollIntoViewIfNeeded();
-                        await nextButton.click();
-                        await page.waitForTimeout(10000); // انتظار 10 ثانیه برای بارگذاری
-
-                        const newUrl = page.url();
-                        console.log(`New URL after click: ${newUrl}`);
-
-                        const newProductCount = await page.evaluate((selector) => {
-                            return document.querySelectorAll(selector).length;
-                        }, linkSelector);
-                        console.log(`New product count after click: ${newProductCount}`);
-
-                        if (newUrl === currentUrl && newProductCount <= currentPageLinks.length) {
-                            console.log('URL or content did not change after click. Stopping pagination.');
-                            hasMorePages = false;
-                        }
-                    } else {
-                        console.log('Next button not found. Stopping pagination.');
-                        hasMorePages = false;
-                    }
-                } catch (error) {
-                    console.log(`Failed to click next button: ${error.message}`);
-                    hasMorePages = false;
-                }
-            } else if (paginationMethod === 'url') {
-                console.log(`Using URL pagination for page ${currentPage}`);
-                await page.waitForTimeout(7000);
-            }
-        }
-
-        links = [...new Set(links.map(link => JSON.stringify(link)))].map(str => JSON.parse(str));
-        console.log('Scraping completed.');
-        await browser.close();
-
-        console.log(JSON.stringify({ links, pagesProcessed, consoleLogs }));
-    } catch (error) {
-        console.error('Error in Playwright script:', error.message);
-        console.log(JSON.stringify({ links: [], pagesProcessed, consoleLogs, error: error.message }));
-    }
-})();
-JAVASCRIPT;
-
-        // جایگذاری مقادیر PHP
-        $playwrightScript = str_replace(
-            [
-                'USER_AGENT',
-                'PRODUCTS_URL',
-                'MAX_PAGES',
-                'LINK_SELECTOR',
-                'LINK_ATTRIBUTE',
-                'IMAGE_SELECTOR',
-                'IMAGE_ATTRIBUTE',
-                'PRODUCT_ID_SELECTOR',
-                'PRODUCT_ID_ATTRIBUTE',
-                'PRODUCT_ID_FROM_LINK',
-                'IMAGE_METHOD',
-                'PRODUCT_ID_SOURCE',
-                'PRODUCT_ID_METHOD',
-                'URL_FILTER',
-                'CONTAINER',
-                'BASE_URL',
-                'SCROLL_DELAY',
-                'PAGINATION_CONFIG',
-                'PAGINATION_TYPE',
-                'PAGINATION_PARAM',
-                'PAGINATION_SEPARATOR',
-                'PAGINATION_SUFFIX',
-                'USE_SAMPLE_URL',
-                'SAMPLE_URL',
-                'FORCE_TRAILING_SLASH',
-                'PAGINATION_METHOD',
-                'NEXT_BUTTON_SELECTOR'
-            ],
-            [
-                $userAgent,
-                addslashes($productUrl),
-                $maxPages,
-                $linkSelector,
-                $linkAttribute,
-                $imageSelector,
-                $imageAttribute,
-                $productIdSelector,
-                $productIdAttribute,
-                $productIdFromLink,
-                $imageMethod,
-                $productIdSource,
-                $productIdMethod,
-                $urlFilter,
-                $container,
-                $baseUrl,
-                $scrollDelay,
-                $paginationConfigJson,
-                $paginationType,
-                $paginationParam,
-                $paginationSeparator,
-                $paginationSuffix,
-                $useSampleUrl ? 'true' : 'false',
-                $sampleUrl,
-                $forceTrailingSlash ? 'true' : 'false',
-                addslashes($paginationMethod),
-                $nextButtonSelector
-            ],
-            $playwrightScript
-        );
-
-        $this->log("Generated Playwright script for $productUrl:", self::COLOR_YELLOW);
-
-        $tempFileBase = tempnam(sys_get_temp_dir(), 'playwright_');
-        $tempFile = $tempFileBase . '.cjs';
-        rename($tempFileBase, $tempFile);
-        file_put_contents($tempFile, $playwrightScript);
-
-        $this->log("Temporary script file created at: $tempFile", self::COLOR_GREEN);
-
-        $nodeModulesPath = base_path('node_modules');
-        $this->log("Executing Playwright script: NODE_PATH=$nodeModulesPath node $tempFile", self::COLOR_GREEN);
-
-        $command = "NODE_PATH=$nodeModulesPath node $tempFile 2>&1";
-        $descriptors = [
-            0 => ['pipe', 'r'],
-            1 => ['pipe', 'w'],
-            2 => ['pipe', 'w']
-        ];
-        $process = proc_open($command, $descriptors, $pipes);
-
-        if (!is_resource($process)) {
-            $this->log("Failed to start Playwright script process.", self::COLOR_RED);
-            unlink($tempFile);
-            return ['links' => [], 'pages_processed' => 0];
-        }
-
-        $output = '';
-        $errorOutput = ''; // برای ذخیره خطاها
-        $logFile = storage_path('logs/playwright_' . date('Ymd_His') . '.log');
-        while (!feof($pipes[1])) {
-            $line = fgets($pipes[1]);
-            if ($line !== false) {
-                $output .= $line;
-                // فقط لاگ‌هایی که شامل JSON خروجی نیستند نمایش داده شوند
-                if (!preg_match('/^\s*\{.*"links":.*\}/', $line)) {
-                    $this->log("Playwright output: " . trim($line), self::COLOR_YELLOW);
-                }
-                file_put_contents($logFile, "[STDOUT] " . trim($line) . PHP_EOL, FILE_APPEND);
-            }
-        }
-
-        while (!feof($pipes[2])) {
-            $errorLine = fgets($pipes[2]);
-            if ($errorLine !== false) {
-                $errorOutput .= $errorLine; // جمع‌آوری خطاها
-                $this->log("Playwright error: " . trim($errorLine), self::COLOR_RED);
-                file_put_contents($logFile, "[STDERR] " . trim($errorLine) . PHP_EOL, FILE_APPEND);
-            }
-        }
-
-        fclose($pipes[0]);
-        fclose($pipes[1]);
-        fclose($pipes[2]);
-        $returnCode = proc_close($process);
-
-        $this->log("Playwright script execution completed with return code: $returnCode", self::COLOR_GREEN);
-
-        // بررسی خطای داخلی در خروجی یا خطاها
-        if ($returnCode !== 0 || strpos($errorOutput, "Target page, context or browser has been closed") !== false || strpos($output, "Target page, context or browser has been closed") !== false) {
-            $this->log("Internal Playwright error detected for URL: $productUrl. Will retry later.", self::COLOR_YELLOW);
-            $this->failedUrlsDueToInternalError[] = $productUrl; // اضافه کردن URL به لیست خطاهای داخلی
-            unlink($tempFile);
-            return ['links' => [], 'pages_processed' => 0];
-        }
-
-        // تجزیه خروجی
-        preg_match('/\{.*\}/s', $output, $matches);
-        if (!isset($matches[0])) {
-            $this->log("Failed to parse Playwright output for $productUrl.", self::COLOR_RED);
-            $this->log("Raw output: $output", self::COLOR_RED);
-            unlink($tempFile);
-            return ['links' => [], 'pages_processed' => 0];
-        }
-
-        $result = json_decode($matches[0], true);
-        if (!$result || !isset($result['links'])) {
-            $this->log("Invalid Playwright output format for $productUrl.", self::COLOR_RED);
-            unlink($tempFile);
-            return ['links' => [], 'pages_processed' => 0];
-        }
-
-        if (isset($result['console_logs']) && is_array($result['console_logs'])) {
-            foreach ($result['console_logs'] as $log) {
-                $this->log("Playwright console log: $log", self::COLOR_YELLOW);
-            }
-        }
-
-        // مپ کردن لینک‌ها و اطمینان از استخراج product_id اگه خالی بود
-        $links = array_map(function ($link) use ($productUrl) {
-            $url = $this->makeAbsoluteUrl($link['url']);
-            $productId = $link['product_id'] ?? 'unknown';
-
-            // اگه product_id خالیه و روش url هست، از URL استخراج کن
-            if ($productId === 'unknown' && ($this->config['product_id_method'] ?? 'selector') === 'url') {
-                $productId = $this->extractProductIdFromUrl($url, '', new Crawler());
-                $this->log("Extracted product_id from URL in PHP: $productId for $url", self::COLOR_GREEN);
-            }
-
-            return [
-                'url' => $url,
-                'image' => $link['image'] ? $this->makeAbsoluteUrl($link['image']) : '',
-                'product_id' => $productId
-            ];
-        }, $result['links']);
-
-        $this->log("Found " . count($links) . " unique links for $productUrl.", self::COLOR_GREEN);
-
-        unlink($tempFile);
-        return [
-            'links' => array_unique($links, SORT_REGULAR),
-            'pages_processed' => $result['pages_processed'] ?? 0 // مقدار پیش‌فرض در صورت عدم وجود
-        ];
     }
 
     private function getDatabaseNameFromBaseUrl(): string
@@ -2255,16 +2250,22 @@ JAVASCRIPT;
 
     private function fetchPageContent(string $url, bool $useDeep, bool $isProductPage = true): ?string
     {
+        $this->log("🌐 FETCHING: $url", self::COLOR_PURPLE);
+
         $maxRetries = $this->config['max_retries'] ?? 3;
         $attempt = 1;
 
-
         while ($attempt <= $maxRetries) {
             $userAgent = $this->randomUserAgent();
-            $this->log("Attempt $attempt of $maxRetries to fetch URL: $url", self::COLOR_GREEN);
-            try {
-                $response = $this->httpClient->get($url, [
+            $this->log("🔄 Attempt $attempt/$maxRetries - UserAgent: " . substr($userAgent, 0, 50) . "...", self::COLOR_GREEN);
 
+            try {
+                // تست DNS resolution
+                $parsedUrl = parse_url($url);
+                $host = $parsedUrl['host'] ?? 'unknown';
+                $this->log("🔍 Testing DNS for host: $host", self::COLOR_PURPLE);
+
+                $response = $this->httpClient->get($url, [
                     'allow_redirects' => [
                         'track_redirects' => true,
                         'max' => 5
@@ -2276,57 +2277,75 @@ JAVASCRIPT;
                         'User-Agent' => $userAgent,
                         'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
                         'Accept-Language' => 'en-US,en;q=0.5',
-                        'Referer' => $this->config['base_urls'][0],
+                        'Accept-Encoding' => 'gzip, deflate',
+                        'Referer' => $this->config['base_urls'][0] ?? '',
                         'Connection' => 'keep-alive',
+                        'Cache-Control' => 'no-cache',
                     ],
                 ]);
 
                 $statusCode = $response->getStatusCode();
-                $this->log("Received response with status code: $statusCode for $url", self::COLOR_GREEN);
+                $this->log("✅ HTTP $statusCode - Content-Type: " . $response->getHeaderLine('Content-Type'), self::COLOR_GREEN);
 
-                $finalUrl = $response->getHeaderLine('X-Guzzle-Redirect-History')
-                    ? end($response->getHeader('X-Guzzle-Redirect-History'))
-                    : $url;
-
-                $normalizedUrl = $this->normalizeUrl($url);
-                $normalizedFinalUrl = $this->normalizeUrl($finalUrl);
-
-                $ignoreRedirects = $this->config['method_settings']['method_1']['pagination']['ignore_redirects'] ?? false;
-
-                if (!$ignoreRedirects && $normalizedUrl !== $normalizedFinalUrl) {
-                    $this->log("Redirect detected: Requested $url but got $finalUrl. Attempting to continue.", self::COLOR_YELLOW);
-                    $url = $finalUrl; // ادامه با URL ریدایرکت‌شده
-                    $attempt++;
-                    continue;
-                }
+                // چک کردن response headers
+                $contentLength = $response->getHeaderLine('Content-Length');
+                $server = $response->getHeaderLine('Server');
+                $this->log("📊 Server: $server, Content-Length: $contentLength", self::COLOR_YELLOW);
 
                 $body = (string)$response->getBody();
-                $this->log("Response body length: " . strlen($body) . " bytes for $url", self::COLOR_GREEN);
+                $bodyLength = strlen($body);
+                $this->log("📄 Response body length: $bodyLength bytes", self::COLOR_GREEN);
 
                 if (empty($body)) {
-                    $this->log("Empty response body received for $url. Retrying...", self::COLOR_YELLOW);
+                    $this->log("⚠️ Empty response body for $url", self::COLOR_YELLOW);
                     $attempt++;
                     continue;
                 }
 
+                // چک کردن محتوا برای anti-bot patterns
+                $lowercaseBody = strtolower(substr($body, 0, 1000));
+                $suspiciousPatterns = ['cloudflare', 'captcha', 'access denied', 'blocked', 'forbidden'];
+
+                foreach ($suspiciousPatterns as $pattern) {
+                    if (strpos($lowercaseBody, $pattern) !== false) {
+                        $this->log("🚨 Suspicious pattern detected: '$pattern' in response", self::COLOR_RED);
+                    }
+                }
+
+                $this->log("✅ Successfully fetched content from $url", self::COLOR_GREEN);
                 return $body;
+
             } catch (RequestException $e) {
                 $statusCode = $e->hasResponse() ? $e->getResponse()->getStatusCode() : 'N/A';
-                $responseBody = $e->hasResponse() ? substr((string)$e->getResponse()->getBody(), 0, 500) : 'No response';
-                $this->log("Request failed for $url on attempt $attempt: {$e->getMessage()}. Status code: $statusCode. Response: $responseBody", self::COLOR_RED);
+                $responseBody = $e->hasResponse() ? substr((string)$e->getResponse()->getBody(), 0, 200) : 'No response';
+
+                $this->log("❌ Request failed (Attempt $attempt): " . $e->getMessage(), self::COLOR_RED);
+                $this->log("📊 Status: $statusCode, Response: $responseBody", self::COLOR_RED);
+
+                // مشخص کردن نوع خطا
+                if ($e instanceof \GuzzleHttp\Exception\ConnectException) {
+                    $this->log("🔌 Connection error - Check network/firewall/DNS", self::COLOR_RED);
+                } elseif ($e instanceof \GuzzleHttp\Exception\ClientException) {
+                    $this->log("👤 Client error (4xx) - Possible blocking/authentication issue", self::COLOR_RED);
+                } elseif ($e instanceof \GuzzleHttp\Exception\ServerException) {
+                    $this->log("🖥️ Server error (5xx) - Target server issue", self::COLOR_RED);
+                }
+
                 if ($attempt < $maxRetries) {
                     $delay = $this->exponentialBackoff($attempt);
-                    $this->log("Retrying after $delay ms...", self::COLOR_YELLOW);
+                    $this->log("⏳ Retrying after $delay ms...", self::COLOR_YELLOW);
                     usleep($delay * 1000);
                 }
                 $attempt++;
+
             } catch (\Exception $e) {
-                $this->log("Unexpected error fetching $url on attempt $attempt: {$e->getMessage()}", self::COLOR_RED);
+                $this->log("💥 Unexpected error: " . $e->getMessage(), self::COLOR_RED);
+                $this->log("📍 Exception type: " . get_class($e), self::COLOR_RED);
                 return null;
             }
         }
 
-        $this->log("Failed to fetch $url after $maxRetries attempts. Skipping page.", self::COLOR_RED);
+        $this->log("🔴 FAILED to fetch $url after $maxRetries attempts", self::COLOR_RED);
         return null;
     }
 
@@ -2457,142 +2476,117 @@ JAVASCRIPT;
     private function fetchProductLinks(): array
     {
         $method = $this->config['method'] ?? 1;
-        $this->log("Fetching product links using method: $method", self::COLOR_GREEN);
+        $this->log("🔄 STARTING fetchProductLinks - Method: $method", self::COLOR_GREEN);
 
-        // ذخیره لینک‌ها در دیتابیس بعد از جمع آوری
-        $runMethod = $this->config['run_method'] ?? 'new';
-        $this->log("Run method: $runMethod", self::COLOR_GREEN);
+        // چک کردن کانفیگ اولیه
+        $this->log("📄 Config check - products_urls count: " . count($this->config['products_urls'] ?? []), self::COLOR_PURPLE);
+        $this->log("📄 Config check - base_urls: " . json_encode($this->config['base_urls'] ?? []), self::COLOR_PURPLE);
 
         if (!isset($this->config['selectors']['main_page']['product_links'])) {
             throw new \Exception("Main page product_links selector is required.");
+        }
+
+        // رفع مشکل Array to string conversion
+        $productLinksSelector = $this->config['selectors']['main_page']['product_links'];
+        if (is_array($productLinksSelector)) {
+            $this->log("✅ Product links selector found (array): " . json_encode($productLinksSelector), self::COLOR_GREEN);
+        } else {
+            $this->log("✅ Product links selector found: " . $productLinksSelector, self::COLOR_GREEN);
         }
 
         $allLinks = [];
         $totalPagesProcessed = 0;
         $processedUrls = [];
 
-        // برای روش ۳، مستقیماً scrapeMethodThree را فراخوانی کنید و حلقه را حذف کنید
+        // برای روش ۳
         if ($method === 3) {
-            $this->log("Using scrapeMethodThree for method 3...", self::COLOR_GREEN);
+            $this->log("🎯 Using scrapeMethodThree for method 3...", self::COLOR_GREEN);
             $result = $this->scrapeMethodThree();
             $allLinks = $result['links'] ?? [];
             $totalPagesProcessed = $result['pages_processed'] ?? 0;
+            $this->log("📊 Method 3 result - Links: " . count($allLinks) . ", Pages: $totalPagesProcessed", self::COLOR_GREEN);
+            return [
+                'links' => array_values($allLinks),
+                'pages_processed' => $totalPagesProcessed
+            ];
+        }
 
-            $this->log("Total links collected from method 3: " . count($allLinks), self::COLOR_GREEN);
-        } else {
-            // پردازش اولیه برای روش‌های ۱ و ۲
-            foreach ($this->config['products_urls'] as $index => $productUrl) {
-                $normalizedUrl = $this->normalizeUrl($productUrl);
-                if (in_array($normalizedUrl, $processedUrls)) {
-                    $this->log("Skipping duplicate products_url: $productUrl", self::COLOR_YELLOW);
+        // پردازش اولیه برای روش‌های ۱ و ۲
+        $this->log("🔄 Processing " . count($this->config['products_urls']) . " product URLs...", self::COLOR_PURPLE);
+
+        foreach ($this->config['products_urls'] as $index => $productUrl) {
+            $this->log("🌐 Processing URL " . ($index + 1) . "/" . count($this->config['products_urls']) . ": $productUrl", self::COLOR_PURPLE);
+
+            $normalizedUrl = $this->normalizeUrl($productUrl);
+            if (in_array($normalizedUrl, $processedUrls)) {
+                $this->log("⚠️ Skipping duplicate products_url: $productUrl", self::COLOR_YELLOW);
+                continue;
+            }
+            $processedUrls[] = $normalizedUrl;
+
+            try {
+                // تست اتصال اولیه
+                $this->log("🔗 Testing connection to: $productUrl", self::COLOR_PURPLE);
+                $testContent = $this->fetchPageContent($productUrl, false, false);
+
+                if ($testContent === null) {
+                    $this->log("❌ CRITICAL: Cannot fetch content from $productUrl", self::COLOR_RED);
                     continue;
                 }
-                $processedUrls[] = $normalizedUrl;
 
-                $this->log("Processing products_url " . ($index + 1) . ": $productUrl", self::COLOR_PURPLE);
+                $this->log("✅ Connection successful - Content length: " . strlen($testContent), self::COLOR_GREEN);
 
-                // در خط 35 تقریباً، قبل از match
-                $this->log("About to call scrapeWithPlaywright for: $productUrl", self::COLOR_PURPLE);
+                // بررسی محتوا برای debugging
+                $this->log("📄 First 200 chars of content: " . substr($testContent, 0, 200), self::COLOR_YELLOW);
 
                 $result = match ($method) {
                     1 => $this->scrapeMethodOneForUrl($productUrl),
                     2 => $this->scrapeWithPlaywright(2, $productUrl),
-                    default => throw new \Exception("Invalid method specified in config: $method. Use 1 or 2."),
+                    default => throw new \Exception("Invalid method: $method"),
                 };
 
-// بعد از match این خط رو اضافه کن:
-                $this->log("Result from scrapeWithPlaywright: " . json_encode($result, JSON_PRETTY_PRINT), self::COLOR_YELLOW);
+                $this->log("📊 Scrape result: " . json_encode([
+                        'links_count' => count($result['links'] ?? []),
+                        'pages_processed' => $result['pages_processed'] ?? 0
+                    ]), self::COLOR_YELLOW);
 
                 $rawLinks = $result['links'] ?? [];
                 $pagesProcessed = $result['pages_processed'] ?? 0;
                 $totalPagesProcessed += $pagesProcessed;
 
-                $this->log("Found " . count($rawLinks) . " links from $productUrl", self::COLOR_GREEN);
+                $this->log("🔗 Found " . count($rawLinks) . " raw links from $productUrl", self::COLOR_GREEN);
 
-                $filteredLinks = array_filter($rawLinks, function ($link) use (&$allLinks, $productUrl) {
-                    $url = is_array($link) ? ($link['url'] ?? $link) : $link;
-                    $isValid = $url && !$this->isUnwantedDomain($url) && !in_array($url, array_column($allLinks, 'url'));
-                    if (!$isValid) {
-                        $this->log("Filtered out invalid, unwanted, or duplicate link: $url", self::COLOR_YELLOW);
-                        return false;
-                    }
-                    // ذخیره لینک همراه با sourceUrl
-                    $allLinks[] = [
-                        'url' => $url,
-                        'sourceUrl' => $productUrl
-                    ];
-                    return true;
-                });
-            }
-        }
-
-        // مرحله تلاش مجدد برای لینک‌های شکست‌خورده (برای روش‌های ۱ و ۲)
-        if ($method !== 3 && !empty($this->failedUrlsDueToInternalError)) {
-            $this->log("Retrying " . count($this->failedUrlsDueToInternalError) . " URLs that failed due to internal errors...", self::COLOR_PURPLE);
-
-            foreach ($this->failedUrlsDueToInternalError as $index => $failedUrl) {
-                $normalizedUrl = $this->normalizeUrl($failedUrl);
-                if (in_array($normalizedUrl, $processedUrls)) {
-                    $this->log("Skipping already processed URL during retry: $failedUrl", self::COLOR_YELLOW);
-                    continue;
+                // نمونه لینک‌ها برای debugging
+                if (!empty($rawLinks)) {
+                    $this->log("📋 Sample links: " . json_encode(array_slice($rawLinks, 0, 3)), self::COLOR_YELLOW);
                 }
-                $processedUrls[] = $normalizedUrl;
 
-                $this->log("Retrying URL " . ($index + 1) . ": $failedUrl", self::COLOR_PURPLE);
-
-                $result = match ($method) {
-                    1 => $this->scrapeMethodOneForUrl($failedUrl),
-                    2 => $this->scrapeWithPlaywright(2, $failedUrl),
-                    default => throw new \Exception("Invalid method specified in config: $method. Use 1 or 2."),
-                };
-
-                $rawLinks = $result['links'] ?? [];
-                $pagesProcessed = $result['pages_processed'] ?? 0;
-                $totalPagesProcessed += $pagesProcessed;
-
-                $this->log("Found " . count($rawLinks) . " links from $failedUrl during retry", self::COLOR_GREEN);
-
-                $filteredLinks = array_filter($rawLinks, function ($link) use (&$allLinks, $failedUrl) {
+                foreach ($rawLinks as $link) {
                     $url = is_array($link) ? ($link['url'] ?? $link) : $link;
-                    $isValid = $url && !$this->isUnwantedDomain($url) && !in_array($url, array_column($allLinks, 'url'));
-                    if (!$isValid) {
-                        $this->log("Filtered out invalid, unwanted, or duplicate link: $url", self::COLOR_YELLOW);
-                        return false;
+                    if ($url && !$this->isUnwantedDomain($url) && !in_array($url, array_column($allLinks, 'url'))) {
+                        $allLinks[] = [
+                            'url' => $url,
+                            'sourceUrl' => $productUrl
+                        ];
                     }
-                    // ذخیره لینک همراه با sourceUrl
-                    $allLinks[] = [
-                        'url' => $url,
-                        'sourceUrl' => $failedUrl
-                    ];
-                    return true;
-                });
-            }
+                }
 
-            // پاک کردن آرایه بعد از تلاش مجدد
-            $this->failedUrlsDueToInternalError = [];
-        }
+                $this->log("📈 Total links so far: " . count($allLinks), self::COLOR_GREEN);
 
-        // حذف لینک‌های تکراری
-        $uniqueLinks = [];
-        $urlSet = [];
-        foreach ($allLinks as $link) {
-            $url = $link['url'];
-            if (!in_array($url, $urlSet)) {
-                $urlSet[] = $url;
-                $uniqueLinks[] = $link;
+            } catch (\Exception $e) {
+                $this->log("💥 ERROR processing $productUrl: " . $e->getMessage(), self::COLOR_RED);
+                $this->log("📍 Stack trace: " . $e->getTraceAsString(), self::COLOR_RED);
             }
         }
 
-        $this->log("Total unique links collected: " . count($uniqueLinks), self::COLOR_GREEN);
-        $this->log("Links structure: " . json_encode($uniqueLinks, JSON_PRETTY_PRINT), self::COLOR_YELLOW);
+        $this->log("🏁 FINAL RESULT - Total unique links: " . count($allLinks), self::COLOR_GREEN);
 
-        // ذخیره لینک‌ها در دیتابیس
-        if (isset($uniqueLinks) && !empty($uniqueLinks)) {
-            $this->saveProductLinksToDatabase($uniqueLinks);
+        if (empty($allLinks)) {
+            $this->log("🚨 CRITICAL: NO LINKS FOUND AT ALL!", self::COLOR_RED);
         }
 
         return [
-            'links' => array_values($uniqueLinks),
+            'links' => array_values($allLinks),
             'pages_processed' => $totalPagesProcessed
         ];
     }
@@ -3893,7 +3887,13 @@ JAVASCRIPT;
             str_contains($cleanMessage, 'Invalid link') ||
 
             // گزارش‌ها
-            str_contains($cleanMessage, '═══') || str_contains($cleanMessage, '───')
+            str_contains($cleanMessage, '═══') || str_contains($cleanMessage, '───') ||
+
+            // لاگ‌های Playwright
+            str_contains($cleanMessage, 'Playwright') || // اضافه کردن لاگ‌های Playwright
+            str_contains($cleanMessage, 'Starting Playwright') ||
+            str_contains($cleanMessage, 'Temporary script file') ||
+            str_contains($cleanMessage, 'Playwright console log')
         ];
 
         return array_reduce($displayConditions, function ($carry, $condition) {

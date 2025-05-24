@@ -514,111 +514,129 @@ class ConfigController extends Controller
         return $navigation;
     }
 
-    public function runScraper($filename)
-    {
-        $configPath = $this->configPath . 'private/' . $filename . '.json';
 
-        if (!file_exists($configPath)) {
-            return redirect()->route('configs.index')->with('error', 'فایل کانفیگ یافت نشد!');
-        }
 
-        $runFileName = $filename . '.json';
-        $runFilePath = 'private/runs/' . $runFileName;
 
-        if (Storage::exists($runFilePath)) {
-            $existingRun = json_decode(Storage::get($runFilePath), true);
+public function runScraper($filename)
+{
+    $configPath = $this->configPath . 'private/' . $filename . '.json';
 
-            if (isset($existingRun['status']) && $existingRun['status'] === 'running' && isset($existingRun['pid'])) {
-                if ($this->isProcessRunning($existingRun['pid'])) {
-                    return redirect()->route('configs.index')->with('error', 'اسکرپر برای کانفیگ ' . $filename . ' در حال حاضر در حال اجراست! لطفاً ابتدا آن را متوقف کنید.');
-                }
-
-                $command = "ps aux | grep 'scrape:start.*{$filename}' | grep -v grep";
-                exec($command, $output);
-
-                if (!empty($output)) {
-                    return redirect()->route('configs.index')->with('error', 'اسکرپر برای کانفیگ ' . $filename . ' در حال حاضر در حال اجراست! لطفاً ابتدا آن را متوقف کنید.');
-                }
-
-                $existingRun['status'] = 'crashed';
-                $existingRun['stopped_at'] = date('Y-m-d H:i:s');
-                Storage::put($runFilePath, json_encode($existingRun, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-            }
-        }
-
-        $logDirectory = storage_path('logs/scrapers');
-        if (!file_exists($logDirectory)) {
-            mkdir($logDirectory, 0755, true);
-        }
-
-        $logFileName = $filename . '_' . date('Y-m-d_H-i-s') . '.log';
-        $logFile = $logDirectory . '/' . $logFileName;
-
-        file_put_contents($logFile, "اجرای اسکرپر برای کانفیگ {$filename} در تاریخ " . date('Y-m-d H:i:s') . " شروع شد...\n");
-
-        $cmd = sprintf(
-            'nohup php %s scrape:start --config=%s >> %s 2>&1 & echo $!',
-            base_path('artisan'),
-            $configPath,
-            $logFile
-        );
-
-        $pid = exec($cmd);
-
-        if (empty($pid) || $pid == 0) {
-            file_put_contents($logFile, "\n[" . date('Y-m-d H:i:s') . "] خطا در اجرای اسکرپر: PID نامعتبر\n", FILE_APPEND);
-            return redirect()->route('configs.index')->with('error', 'خطا در اجرای اسکرپر. لطفاً لاگ‌ها را بررسی کنید.');
-        }
-
-        if (!Storage::exists('private/runs')) {
-            Storage::makeDirectory('private/runs', 0755);
-        }
-
-        $runInfo = [];
-
-        if (Storage::exists($runFilePath)) {
-            $runInfo = json_decode(Storage::get($runFilePath), true);
-
-            if (!isset($runInfo['history'])) {
-                $runInfo['history'] = [];
-            }
-
-            if (isset($runInfo['started_at']) && isset($runInfo['log_file'])) {
-                $previousRun = [
-                    'started_at' => $runInfo['started_at'],
-                    'log_file' => $runInfo['log_file']
-                ];
-
-                if (isset($runInfo['stopped_at'])) {
-                    $previousRun['stopped_at'] = $runInfo['stopped_at'];
-                }
-
-                if (isset($runInfo['status'])) {
-                    $previousRun['status'] = $runInfo['status'];
-                }
-
-                array_unshift($runInfo['history'], $previousRun);
-
-                if (count($runInfo['history']) > 10) {
-                    $runInfo['history'] = array_slice($runInfo['history'], 0, 10);
-                }
-            }
-        }
-
-        $runInfo['filename'] = $filename;
-        $runInfo['log_file'] = $logFileName;
-        $runInfo['started_at'] = date('Y-m-d H:i:s');
-        $runInfo['pid'] = (int)$pid;
-        $runInfo['status'] = 'running';
-
-        if (isset($runInfo['stopped_at'])) {
-            unset($runInfo['stopped_at']);
-        }
-
-        Storage::put($runFilePath, json_encode($runInfo, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-
-        return redirect()->route('configs.index')->with('success', 'اسکرپر برای کانفیگ ' . $filename . ' با موفقیت اجرا شد. می‌توانید لاگ‌ها را مشاهده کنید.');
+    if (!file_exists($configPath)) {
+        return redirect()->route('configs.index')->with('error', 'فایل کانفیگ یافت نشد!');
     }
+
+    $runFileName = $filename . '.json';
+    $runFilePath = 'private/runs/' . $runFileName;
+
+    if (Storage::exists($runFilePath)) {
+        $existingRun = json_decode(Storage::get($runFilePath), true);
+
+        if (isset($existingRun['status']) && $existingRun['status'] === 'running' && isset($existingRun['pid'])) {
+            if ($this->isProcessRunning($existingRun['pid'])) {
+                return redirect()->route('configs.index')->with('error', 'اسکرپر برای کانفیگ ' . $filename . ' در حال حاضر در حال اجراست! لطفاً ابتدا آن را متوقف کنید.');
+            }
+
+            $command = "ps aux | grep 'scrape:start.*{$filename}' | grep -v grep";
+            exec($command, $output);
+
+            if (!empty($output)) {
+                return redirect()->route('configs.index')->with('error', 'اسکرپر برای کانفیگ ' . $filename . ' در حال حاضر در حال اجراست! لطفاً ابتدا آن را متوقف کنید.');
+            }
+
+            $existingRun['status'] = 'crashed';
+            $existingRun['stopped_at'] = date('Y-m-d H:i:s');
+            Storage::put($runFilePath, json_encode($existingRun, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        }
+    }
+
+    $logDirectory = storage_path('logs/scrapers');
+    if (!file_exists($logDirectory)) {
+        mkdir($logDirectory, 0755, true);
+    }
+
+    $logFileName = $filename . '_' . date('Y-m-d_H-i-s') . '.log';
+    $logFile = $logDirectory . '/' . $logFileName;
+
+    file_put_contents($logFile, "اجرای اسکرپر برای کانفیگ {$filename} در تاریخ " . date('Y-m-d H:i:s') . " شروع شد...\n");
+
+    // تنظیم متغیرهای محیطی برای Playwright
+    $envVars = [
+        'PLAYWRIGHT_BROWSERS_PATH=/var/www/.cache/ms-playwright',
+        'NODE_PATH=' . base_path('node_modules'),
+        'HOME=' . env('HOME', '/var/www'),
+        'USER=' . get_current_user(),
+    ];
+
+    $envString = implode(' ', $envVars);
+
+    // اجرای دستور بدون sudo و با متغیرهای محیطی مناسب
+    $cmd = sprintf(
+        'nohup bash -c "%s php %s scrape:start --config=%s" >> %s 2>&1 & echo $!',
+        $envString,
+        base_path('artisan'),
+        $configPath,
+        $logFile
+    );
+
+    $pid = exec($cmd);
+
+    if (empty($pid) || $pid == 0) {
+        file_put_contents($logFile, "\n[" . date('Y-m-d H:i:s') . "] خطا در اجرای اسکرپر: PID نامعتبر\n", FILE_APPEND);
+        return redirect()->route('configs.index')->with('error', 'خطا در اجرای اسکرپر. لطفاً لاگ‌ها را بررسی کنید.');
+    }
+
+    if (!Storage::exists('private/runs')) {
+        Storage::makeDirectory('private/runs', 0755);
+    }
+
+    $runInfo = [];
+
+    if (Storage::exists($runFilePath)) {
+        $runInfo = json_decode(Storage::get($runFilePath), true);
+
+        if (!isset($runInfo['history'])) {
+            $runInfo['history'] = [];
+        }
+
+        if (isset($runInfo['started_at']) && isset($runInfo['log_file'])) {
+            $previousRun = [
+                'started_at' => $runInfo['started_at'],
+                'log_file' => $runInfo['log_file']
+            ];
+
+            if (isset($runInfo['stopped_at'])) {
+                $previousRun['stopped_at'] = $runInfo['stopped_at'];
+            }
+
+            if (isset($runInfo['status'])) {
+                $previousRun['status'] = $runInfo['status'];
+            }
+
+            array_unshift($runInfo['history'], $previousRun);
+
+            if (count($runInfo['history']) > 10) {
+                $runInfo['history'] = array_slice($runInfo['history'], 0, 10);
+            }
+        }
+    }
+
+    $runInfo['filename'] = $filename;
+    $runInfo['log_file'] = $logFileName;
+    $runInfo['started_at'] = date('Y-m-d H:i:s');
+    $runInfo['pid'] = (int)$pid;
+    $runInfo['status'] = 'running';
+
+    if (isset($runInfo['stopped_at'])) {
+        unset($runInfo['stopped_at']);
+    }
+
+    Storage::put($runFilePath, json_encode($runInfo, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+
+    return redirect()->route('configs.index')->with('success', 'اسکرپر برای کانفیگ ' . $filename . ' با موفقیت اجرا شد. می‌توانید لاگ‌ها را مشاهده کنید.');
+}
+
+
+   
 
     public function history()
     {
