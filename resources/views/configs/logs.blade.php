@@ -224,9 +224,12 @@
                 </svg>
                 <h1 class="text-3xl font-bold text-cream-400">لاگ‌های کانفیگ {{ $filename }}</h1>
             </div>
+
+
             <a href="{{ route('configs.index') }}"
                class="btn-secondary px-6 py-3 rounded-lg flex items-center shadow-lg hover:shadow-xl transition-all duration-300">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20"
+                     fill="currentColor">
                     <path fill-rule="evenodd"
                           d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
                           clip-rule="evenodd"/>
@@ -356,61 +359,79 @@
         </div>
     </div>
 </div>
-<script>
-    let currentLogFile = null;
+<div class="flex flex-col md:flex-row gap-3">
+    @if(count($logFiles) > 0)
+        <form action="{{ route('configs.logs.deleteAllLogs') }}" method="POST" class="inline-block"
+              onsubmit="return confirm('آیا از حذف تمام فایل‌های لاگ این کانفیگ اطمینان دارید؟ این عمل قابل بازگشت نیست!')">
+            @csrf
+            @method('DELETE')
+            <input type="hidden" name="config_filename" value="{{ $filename }}">
+            <button type="submit"
+                    class="btn-danger px-6 py-3 rounded-lg flex items-center shadow-lg hover:shadow-xl transition-all duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24"
+                     stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+                حذف همه لاگ‌ها
+            </button>
+        </form>
+    @endif
+    <script>
+        let currentLogFile = null;
 
-    function showLogContent(logFile) {
-        currentLogFile = logFile;
-        document.getElementById('log-content-section').classList.remove('hidden');
-        document.getElementById('log-title').textContent = 'محتوای لاگ: ' + logFile;
-        fetchLogContent();
-    }
+        function showLogContent(logFile) {
+            currentLogFile = logFile;
+            document.getElementById('log-content-section').classList.remove('hidden');
+            document.getElementById('log-title').textContent = 'محتوای لاگ: ' + logFile;
+            fetchLogContent();
+        }
 
-    function fetchLogContent() {
-        if (!currentLogFile) return;
-        fetch("{{ url('configs/log-content') }}/" + currentLogFile)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('خطا در دریافت محتوای لاگ');
-                }
-                return response.text();
-            })
-            .then(data => {
-                const logContent = document.getElementById('log-content');
-                const lines = data.split('\n');
-                let formattedContent = '';
-                lines.forEach(line => {
-                    if (!line.trim()) return;
-                    let lineClass = 'log-line';
-                    if (line.includes('ERROR') || line.includes('خطا') || line.includes('exception')) {
-                        lineClass += ' log-error';
-                    } else if (line.includes('SUCCESS') || line.includes('موفق')) {
-                        lineClass += ' log-success';
-                    } else if (line.includes('WARNING') || line.includes('هشدار')) {
-                        lineClass += ' log-warning';
-                    } else if (line.includes('INFO') || line.includes('اطلاعات')) {
-                        lineClass += ' log-info';
+        function fetchLogContent() {
+            if (!currentLogFile) return;
+            fetch("{{ url('configs/log-content') }}/" + currentLogFile)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('خطا در دریافت محتوای لاگ');
                     }
-                    const escapedLine = line
-                        .replace(/&/g, '&amp;')
-                        .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;')
-                        .replace(/"/g, '&quot;')
-                        .replace(/'/g, '&#039;');
-                    formattedContent += `<div class="${lineClass}" dir="auto">${escapedLine}</div>`;
+                    return response.text();
+                })
+                .then(data => {
+                    const logContent = document.getElementById('log-content');
+                    const lines = data.split('\n');
+                    let formattedContent = '';
+                    lines.forEach(line => {
+                        if (!line.trim()) return;
+                        let lineClass = 'log-line';
+                        if (line.includes('ERROR') || line.includes('خطا') || line.includes('exception')) {
+                            lineClass += ' log-error';
+                        } else if (line.includes('SUCCESS') || line.includes('موفق')) {
+                            lineClass += ' log-success';
+                        } else if (line.includes('WARNING') || line.includes('هشدار')) {
+                            lineClass += ' log-warning';
+                        } else if (line.includes('INFO') || line.includes('اطلاعات')) {
+                            lineClass += ' log-info';
+                        }
+                        const escapedLine = line
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                            .replace(/"/g, '&quot;')
+                            .replace(/'/g, '&#039;');
+                        formattedContent += `<div class="${lineClass}" dir="auto">${escapedLine}</div>`;
+                    });
+                    logContent.innerHTML = formattedContent;
+                    logContent.scrollTop = logContent.scrollHeight;
+                })
+                .catch(error => {
+                    console.error('Error fetching log content:', error);
+                    document.getElementById('log-content').textContent = 'خطا در دریافت محتوای لاگ: ' + error.message;
                 });
-                logContent.innerHTML = formattedContent;
-                logContent.scrollTop = logContent.scrollHeight;
-            })
-            .catch(error => {
-                console.error('Error fetching log content:', error);
-                document.getElementById('log-content').textContent = 'خطا در دریافت محتوای لاگ: ' + error.message;
-            });
-    }
+        }
 
-    document.getElementById('refresh-button').addEventListener('click', function () {
-        fetchLogContent();
-    });
-</script>
+        document.getElementById('refresh-button').addEventListener('click', function () {
+            fetchLogContent();
+        });
+    </script>
 </body>
 </html>

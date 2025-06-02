@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\FailedLink;
+use App\Models\Link;
 use App\Models\Product;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
@@ -13,7 +14,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class StartController
 {
-    private array $config;
+    public array $config;
     private Client $httpClient;
     private $chromedriverPid = null;
     private array $failedUrlsDueToInternalError = [];
@@ -34,33 +35,52 @@ class StartController
 
     public function __construct(array $config)
     {
-        ini_set('memory_limit', '1024M'); // افزایش حافظه
-        set_time_limit(0); // حذف محدودیت زمانی
+        ini_set('memory_limit', '1024M');
+        set_time_limit(0);
         $this->config = $config;
-        // اعتبارسنجی و تصحیح کانفیگ قبل از ادامه
-        $this->validateAndFixConfig();
 
-        // تنظیم زمان تاخیر بین درخواست‌ها
+        // ✅ بررسی حالت تست محصول قبل از اعتبارسنجی معمولی
+        $isProductTestMode = $this->config['product_test'] ?? false;
+
+        if ($isProductTestMode) {
+            $this->log("🧪 Product Test Mode - Skipping standard config validation", self::COLOR_PURPLE);
+            // فقط اعتبارسنجی مخصوص حالت تست
+            $this->validateProductTestConfig();
+        } else {
+            // اعتبارسنجی و تصحیح کانفیگ معمولی
+            $this->validateAndFixConfig();
+        }
+
+        // تنظیم زمان تاخیر
         $delay = $this->config['request_delay'] ?? mt_rand(
             $this->config['request_delay_min'] ?? 500,
             $this->config['request_delay_max'] ?? 2000
         );
         $this->setRequestDelay($delay);
 
-        $this->httpClient = new Client([
+        // تنظیم HTTP Client
+        $baseUrl = '';
+        if ($isProductTestMode && !empty($this->config['product_urls'])) {
+            // در حالت تست، از اولین URL محصول برای تنظیم Referer استفاده می‌کنیم
+            $firstUrl = $this->config['product_urls'][0];
+            $parsedUrl = parse_url($firstUrl);
+            $baseUrl = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
+        } elseif (!empty($this->config['base_urls'])) {
+            $baseUrl = $this->config['base_urls'][0];
+        }
 
-            'timeout' => $this->config['timeout'] ?? 120, // افزایش تایم‌اوت به 120 ثانیه
+        $this->httpClient = new Client([
+            'timeout' => $this->config['timeout'] ?? 120,
             'verify' => $this->config['verify_ssl'] ?? false,
             'headers' => [
                 'User-Agent' => $this->randomUserAgent(),
                 'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
                 'Accept-Language' => 'en-US,en;q=0.5',
-                'Referer' => $this->config['base_urls'][0],
+                'Referer' => $baseUrl,
                 'Connection' => 'keep-alive',
             ],
         ]);
     }
-
 
     private function scrapeMethodThree(): array
     {
@@ -368,7 +388,7 @@ const initializeBrowser = async () => {
 
             // اصلاح قسمت استخراج product_id
             console.log('Extracting product_id...');
-            
+
             // اول چک کنیم که product_id_method چیه
             if (PRODUCT_ID_METHOD === 'url' || PRODUCT_ID_SOURCE === 'url') {
                 console.log('Using URL method for product_id extraction...');
@@ -608,11 +628,25 @@ JAVASCRIPT;
 
             // پردازش محصولات و ذخیره در دیتابیس
             $links = [];
+            $successfulProducts = 0;
+            $failedProducts = 0;
+
             foreach ($result['products'] as $productData) {
-                $this->log("Processing product: {$productData['url']}, Availability: {$productData['availability']}", self::COLOR_YELLOW);
+                $this->log("Processing product: {$productData['url']}", self::COLOR_YELLOW);
+
+                // اگر خطا داریم، فقط failed link اضافه کن و ادامه بده
                 if (!empty($productData['error'])) {
                     $this->log("Error processing product {$productData['url']}: {$productData['error']}", self::COLOR_RED);
                     $this->saveFailedLink($productData['url'], $productData['error']);
+                    $failedProducts++;
+                    continue;
+                }
+
+                // بررسی اینکه آیا داده‌های اساسی موجود هستند
+                if (empty($productData['title']) && empty($productData['price'])) {
+                    $this->log("Product has no title or price: {$productData['url']}", self::COLOR_RED);
+                    $this->saveFailedLink($productData['url'], "Missing essential data (title and price)");
+                    $failedProducts++;
                     continue;
                 }
 
@@ -634,6 +668,7 @@ JAVASCRIPT;
                     'off' => (int)$this->cleanOff($productData['off'] ?? '0')
                 ];
 
+                // validation و ذخیره محصول
                 if ($this->validateProductData($processedData)) {
                     try {
                         $this->saveProductToDatabase($processedData);
@@ -643,16 +678,26 @@ JAVASCRIPT;
                             'image' => $processedData['image'],
                             'product_id' => $processedData['product_id']
                         ];
+
+                        $successfulProducts++;
+                        $this->log("✅ Product saved successfully: {$processedData['page_url']}", self::COLOR_GREEN);
+
+                        // 🔥 مهم: اگر محصول موفقیت‌آمیز ذخیره شد، از failed_links حذفش کن
+                        $this->removeFromFailedLinks($processedData['page_url']);
+
                     } catch (\Exception $e) {
                         $this->log("Failed to save product {$processedData['page_url']}: {$e->getMessage()}", self::COLOR_RED);
                         $this->saveFailedLink($processedData['page_url'], "Database error: {$e->getMessage()}");
+                        $failedProducts++;
                     }
                 } else {
                     $this->log("Invalid product data for {$processedData['page_url']}", self::COLOR_RED);
                     $this->saveFailedLink($processedData['page_url'], "Invalid product data");
+                    $failedProducts++;
                 }
             }
 
+            $this->log("Products processing summary - Successful: $successfulProducts, Failed: $failedProducts", self::COLOR_PURPLE);
             $allLinks = array_merge($allLinks, $links);
             $totalPagesProcessed += $result['pages_processed'] ?? 0;
 
@@ -668,6 +713,19 @@ JAVASCRIPT;
         ];
     }
 
+    private function removeFromFailedLinks(string $url): void
+    {
+        try {
+            $deletedCount = FailedLink::where('url', $url)->delete();
+
+            if ($deletedCount > 0) {
+                $this->log("🧹 لینک از failed_links حذف شد: $url", self::COLOR_GREEN);
+            }
+
+        } catch (\Exception $e) {
+            $this->log("💥 خطا در حذف failed_link $url: {$e->getMessage()}", self::COLOR_RED);
+        }
+    }
 
     private function scrapeWithPlaywright(int $method, string $productUrl): array
     {
@@ -1109,9 +1167,9 @@ JAVASCRIPT;
         // پردازش لینک‌ها
         $links = array_map(function ($link) use ($productUrl) {
             $url = $this->makeAbsoluteUrl($link['url'], $productUrl);
-            $productId = $link['product_id'] ?? 'unknown';
+            $productId = $link['product_id'] ?? '';
 
-            if ($productId === 'unknown' && ($this->config['product_id_method'] ?? 'selector') === 'url') {
+            if ($productId === '' && ($this->config['product_id_method'] ?? 'selector') === 'url') {
                 $productId = $this->extractProductIdFromUrl($url);
                 $this->log("Extracted product_id from URL: {$productId} for {$url}", self::COLOR_GREEN);
             }
@@ -1311,21 +1369,76 @@ JAVASCRIPT;
         ];
     }
 
-    private function extractCategoryFromTitle(string $title, int $wordCount = 1): string
+    private function extractCategoryFromTitle(string $title, $wordCount = 1): string
     {
-        $this->log("Extracting category from title: '$title' with word count: $wordCount", self::COLOR_YELLOW);
+        $this->log("Extracting category from title: '$title' with word count: " . (is_array($wordCount) ? json_encode($wordCount) : $wordCount), self::COLOR_YELLOW);
+
+        // پاک کردن کاراکترهای ناخواسته از عنوان
+        $cleanTitle = $this->cleanCategoryText($title);
 
         // تقسیم عنوان به کلمات
-        $words = preg_split('/\s+/', trim($title), -1, PREG_SPLIT_NO_EMPTY);
+        $words = preg_split('/\s+/', trim($cleanTitle), -1, PREG_SPLIT_NO_EMPTY);
 
-        // گرفتن تعداد کلمات موردنظر
-        $categoryWords = array_slice($words, 0, min($wordCount, count($words)));
+        if (empty($words)) {
+            $this->log("No words found in title", self::COLOR_RED);
+            return '';
+        }
 
-        // ترکیب کلمات به‌عنوان دسته‌بندی
-        $category = implode(' ', $categoryWords);
+        $categories = [];
 
-        $this->log("Extracted category: '$category'", self::COLOR_GREEN);
-        return $category;
+        // اگر wordCount یک آرایه باشد، برای هر عنصر یک دسته‌بندی بساز
+        if (is_array($wordCount)) {
+            foreach ($wordCount as $count) {
+                if (is_numeric($count) && $count > 0 && $count <= count($words)) {
+                    $categoryWords = array_slice($words, 0, $count);
+                    $category = implode(' ', $categoryWords);
+                    if (!empty($category)) {
+                        $categories[] = $category;
+                    }
+                } else {
+                    $this->log("Invalid word count: $count (should be positive integer <= " . count($words) . ")", self::COLOR_YELLOW);
+                }
+            }
+        } else {
+            // روش قدیمی: فقط یک دسته‌بندی
+            if (is_numeric($wordCount) && $wordCount > 0) {
+                $categoryWords = array_slice($words, 0, min($wordCount, count($words)));
+                $category = implode(' ', $categoryWords);
+                if (!empty($category)) {
+                    $categories[] = $category;
+                }
+            } else {
+                $this->log("Invalid word count: $wordCount (should be positive integer)", self::COLOR_YELLOW);
+            }
+        }
+
+        // حذف دسته‌بندی‌های تکراری و خالی
+        $categories = array_filter(array_unique($categories), function ($cat) {
+            return !empty(trim($cat));
+        });
+
+        // حذف محدودیت تعداد دسته‌بندی - همه دسته‌بندی‌های پیدا شده حفظ می‌شوند
+
+        // ترکیب دسته‌بندی‌ها با کاما
+        $finalCategory = implode(', ', $categories);
+
+        $this->log("Extracted category: '$finalCategory' (Total: " . count($categories) . ")", self::COLOR_GREEN);
+        return $finalCategory;
+    }
+
+    private function cleanCategoryText(string $text): string
+    {
+        // حذف کاراکترهای HTML
+        $text = strip_tags($text);
+
+        // حذف کاراکترهای ویژه (اختیاری - بر اساس نیاز سایت)
+        $text = preg_replace('/[^\p{L}\p{N}\s\-_,]/u', '', $text);
+
+        // تبدیل چند فاصله به یک فاصله
+        $text = preg_replace('/\s+/', ' ', $text);
+
+        // حذف فاصله‌های ابتدا و انتها
+        return trim($text);
     }
 
     private function getDatabaseNameFromBaseUrl(): string
@@ -1491,7 +1604,7 @@ JAVASCRIPT;
                     $product = $filteredProducts[$index];
                     $url = is_array($product) ? $product['url'] : $product;
                     $image = is_array($product) && isset($product['image']) ? $product['image'] : null;
-                    $productId = is_array($product) && isset($product['product_id']) ? $product['product_id'] : 'unknown';
+                    $productId = is_array($product) && isset($product['product_id']) ? $product['product_id'] : '';
 
                     if (in_array($url, $processedUrls)) {
                         $this->log("Skipping duplicate URL: $url", self::COLOR_YELLOW);
@@ -1556,7 +1669,7 @@ JAVASCRIPT;
                 foreach ($batch as $product) {
                     $url = is_array($product) ? $product['url'] : $product;
                     $image = is_array($product) && isset($product['image']) ? $product['image'] : null;
-                    $productId = is_array($product) && isset($product['product_id']) ? $product['product_id'] : 'unknown';
+                    $productId = is_array($product) && isset($product['product_id']) ? $product['product_id'] : '';
 
                     if (in_array($url, $processedUrls)) {
                         $this->log("Skipping duplicate URL: $url", self::COLOR_YELLOW);
@@ -1578,7 +1691,7 @@ JAVASCRIPT;
 
                         $productData['page_url'] = $url;
                         $productData['image'] = $image ?? ($productData['image'] ?? '');
-                        $productData['product_id'] = $productId !== 'unknown' ? $productId : ($productData['product_id'] ?? 'unknown');
+                        $productData['product_id'] = $productId !== '' ? $productId : ($productData['product_id'] ?? '');
                         $productData['availability'] = isset($productData['availability']) ? (int)$productData['availability'] : 0;
                         $productData['off'] = isset($productData['off']) ? (int)$productData['off'] : 0;
                         $productData['category'] = $productData['category'] ?? '';
@@ -1626,7 +1739,7 @@ JAVASCRIPT;
                 foreach ($batch as $product) {
                     $url = is_array($product) ? $product['url'] : $product;
                     $image = is_array($product) && isset($product['image']) ? $product['image'] : null;
-                    $productId = is_array($product) && isset($product['product_id']) ? $product['product_id'] : 'unknown';
+                    $productId = is_array($product) && isset($product['product_id']) ? $product['product_id'] : '';
 
                     if (in_array($url, $processedUrls)) {
                         $this->log("Skipping duplicate URL: $url", self::COLOR_YELLOW);
@@ -1648,7 +1761,7 @@ JAVASCRIPT;
 
                         $productData['page_url'] = $url;
                         $productData['image'] = $image ?? ($productData['image'] ?? '');
-                        $productData['product_id'] = $productId !== 'unknown' ? $productId : ($productData['product_id'] ?? 'unknown');
+                        $productData['product_id'] = $productId !== '' ? $productId : ($productData['product_id'] ?? '');
                         $productData['availability'] = isset($productData['availability']) ? (int)$productData['availability'] : 0;
                         $productData['off'] = isset($productData['off']) ? (int)$productData['off'] : 0;
                         $productData['category'] = $productData['category'] ?? '';
@@ -2123,6 +2236,19 @@ JAVASCRIPT;
         $this->log("Inside scrapeMultiple method", self::COLOR_PURPLE);
         $this->log("Starting scraper with start_id: " . ($start_id ?? 'not set'), self::COLOR_GREEN);
 
+        // ✅ بررسی حالت تست محصول
+        $isProductTestMode = $this->config['product_test'] ?? false;
+        if ($isProductTestMode) {
+            $this->log("🧪 Product Test Mode Detected - Testing individual products", self::COLOR_PURPLE);
+            return $this->runProductTestMode();
+        }
+
+        // بررسی حالت update
+        $isUpdateMode = $this->config['update_mode'] ?? false;
+        if ($isUpdateMode) {
+            $this->log("Update mode detected", self::COLOR_PURPLE);
+        }
+
         // لاگ محتوای کانفیگ برای دیباگ
         $this->log("Config contents: " . json_encode($this->config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), self::COLOR_YELLOW);
 
@@ -2132,9 +2258,15 @@ JAVASCRIPT;
         // تنظیم دیتابیس
         $this->setupDatabase();
 
+        // اگر در حالت update هستیم، ابتدا reset انجام میدهیم
+        // IMPORTANT: Reset باید بعد از setupDatabase انجام شود
+        if ($isUpdateMode) {
+            $this->resetProductsAndLinks();
+        }
+
         // تنظیم اولیه
         $this->processedCount = 0;
-        $this->failedLinksCount = 0; // Changed from array to counter
+        $this->failedLinksCount = 0;
 
         // اعتبارسنجی start_id
         if ($start_id !== null && $start_id <= 0) {
@@ -2149,11 +2281,53 @@ JAVASCRIPT;
         $links = [];
         $pagesProcessed = 0;
 
-        if ($runMethod === 'continue') {
+        if ($runMethod === 'continue' || $isUpdateMode) {
             $this->log("Continuing with links from database" . ($start_id ? " starting from ID $start_id" : "") . "...", self::COLOR_GREEN);
-            $result = $this->getProductLinksFromDatabase($start_id);
-            $links = $result['links'] ?? [];
-            $pagesProcessed = $result['pages_processed'] ?? 0;
+
+            // در حالت update، ابتدا بررسی می‌کنیم آیا لینکی در دیتابیس وجود دارد یا نه
+            if ($isUpdateMode) {
+                $totalLinksInDb = Link::count();
+                $this->log("Total links in database: $totalLinksInDb", self::COLOR_BLUE);
+
+                if ($totalLinksInDb == 0) {
+                    $this->log("No links found in database for update mode. Need to fetch from web first.", self::COLOR_YELLOW);
+
+                    // اگر لینکی وجود ندارد، از web بگیریم
+                    $this->log("Fetching product links from web for update mode...", self::COLOR_GREEN);
+                    $result = $this->fetchProductLinks();
+                    $links = $result['links'] ?? [];
+                    $pagesProcessed = $result['pages_processed'] ?? 0;
+
+                    $this->log("Got " . count($links) . " unique product links from web", self::COLOR_GREEN);
+
+                    if (!empty($links)) {
+                        $this->saveProductLinksToDatabase($links);
+                        // حالا از دیتابیس بگیریم
+                        $result = $this->getProductLinksFromDatabase($start_id);
+                        $links = $result['links'] ?? [];
+                        $pagesProcessed = $result['pages_processed'] ?? 0;
+                    } else {
+                        $this->log("No links collected from web. Stopping scrape.", self::COLOR_YELLOW);
+                        return [
+                            'status' => 'success',
+                            'total_products' => 0,
+                            'failed_links' => 0,
+                            'total_pages_count' => $pagesProcessed,
+                            'products' => []
+                        ];
+                    }
+                } else {
+                    // لینک‌ها در دیتابیس موجود است، از آنها استفاده کنیم
+                    $result = $this->getProductLinksFromDatabase($start_id);
+                    $links = $result['links'] ?? [];
+                    $pagesProcessed = $result['pages_processed'] ?? 0;
+                }
+            } else {
+                // حالت عادی continue
+                $result = $this->getProductLinksFromDatabase($start_id);
+                $links = $result['links'] ?? [];
+                $pagesProcessed = $result['pages_processed'] ?? 0;
+            }
 
             $this->log("Got " . count($links) . " links from database", self::COLOR_GREEN);
             if (empty($links)) {
@@ -2879,23 +3053,25 @@ JAVASCRIPT;
             return true;
         }
 
-        // بررسی وضعیت "قیمت‌گذاری نشده"
+        // ✅ بررسی فلگ price_status که در extractProductData ست می‌شه
         if (isset($productData['price_status']) && $productData['price_status'] == 'unpriced') {
             $this->log("Product has no price but is marked as 'unpriced'. Accepting product for URL: {$productData['page_url']}", self::COLOR_YELLOW);
             return true;
         }
 
-        // بررسی متن قیمت برای کلمات کلیدی "قیمت‌گذاری نشده" یا "تماس بگیرید"
-        if (empty($productData['price']) && isset($productData['price_text']) &&
-            (strpos($productData['price_text'], 'قیمت‌گذاری نشده') !== false ||
-                strpos($productData['price_text'], 'قیمت تعیین نشده') !== false ||
-                strpos($productData['price_text'], 'تماس بگیرید') !== false)) {
-            $this->log("Product has price text indicating 'unpriced'. Accepting product for URL: {$productData['page_url']}", self::COLOR_YELLOW);
-            return true;
+        // ✅ بررسی مستقیم متن قیمت با کلمات کلیدی (نه price_text که وجود نداره!)
+        if (!empty($productData['price']) && !is_numeric($productData['price'])) {
+            $priceKeywords = $this->config['price_keywords']['unpriced'] ?? [];
+            foreach ($priceKeywords as $keyword) {
+                if (mb_strpos($productData['price'], $keyword) !== false) {
+                    $this->log("Product price contains unpriced keyword: '{$keyword}'. Accepting product for URL: {$productData['page_url']}", self::COLOR_YELLOW);
+                    return true;
+                }
+            }
         }
 
         // اگر قیمت خالی است، هشدار می‌دهیم اما محصول را می‌پذیریم
-        if (empty($productData['price'])) {
+        if (empty($productData['price']) || $productData['price'] === '0') {
             $this->log("Warning: price is empty for available product, but product will be saved for URL: {$productData['page_url']}", self::COLOR_YELLOW);
             return true;
         }
@@ -2904,14 +3080,14 @@ JAVASCRIPT;
         return true;
     }
 
-    private function extractProductData(string $url, ?string $body = null, ?string $mainPageImage = null, ?string $mainPageProductId = null): ?array
+    public function extractProductData(string $url, ?string $body = null, ?string $mainPageImage = null, ?string $mainPageProductId = null): ?array
     {
         $data = [
             'title' => '',
             'price' => $this->config['keep_price_format'] ?? false ? '' : '0',
             'product_id' => $mainPageProductId ?? '',
             'page_url' => $url,
-            'availability' => null, // تغییر: null به جای 0 تا بفهمیم آیا پردازش شده یا نه
+            'availability' => null,
             'image' => $mainPageImage ?? '',
             'category' => '',
             'off' => 0,
@@ -2951,27 +3127,31 @@ JAVASCRIPT;
                     if ($field === 'guarantee') {
                         $data[$field] = $this->extractGuaranteeFromSelector($crawler, $selector, $data['title']);
                     } elseif ($field === 'category' && ($this->config['category_method'] ?? 'selector') === 'selector' && !isset($this->config['set_category'])) {
-                        $value = $this->extractData($crawler, $selector);
-                        $data[$field] = $value;
-                        $this->log("Extracted category from selector: {$data[$field]}", self::COLOR_GREEN);
+                        // استخراج دسته‌بندی با دو سلکتور
+                        $data[$field] = $this->extractCategoriesFromSelectors($crawler, $selector);
+                        $this->log("Extracted categories from selectors: {$data[$field]}", self::COLOR_GREEN);
                     } elseif ($field === 'image' && $this->config['image_method'] === 'product_page') {
                         $value = $this->extractData($crawler, $selector);
                         $data[$field] = $this->makeAbsoluteUrl($value);
                         $this->log("Extracted image from product_page: {$data[$field]}", self::COLOR_GREEN);
-                    } elseif ($field === 'product_id' && $this->config['product_id_source'] === 'product_page') {
-                        $value = $this->extractData($crawler, $selector);
-                        $data[$field] = $value;
-                        $this->log("Extracted product_id from product_page: {$data[$field]}", self::COLOR_GREEN);
-                    } else {
-                        $value = $this->extractData($crawler, $selector);
-                        $this->log("Raw $field extracted: '$value'", self::COLOR_YELLOW);
+                    } // بخش مربوط به product_id در تابع extractProductData را با این کد جایگزین کنید:
 
-                        if ($field === 'title') {
-                            $data[$field] = $value;
-                            $data[$field] = $this->applyTitlePrefix($data[$field], $url);
-                            $this->log("Title after applying prefix: {$data[$field]}", self::COLOR_GREEN);
-                        } elseif ($field === 'price') {
-                            // منطق قیمت بدون تغییر
+                    elseif ($field === 'product_id' && $this->config['product_id_source'] === 'product_page') {
+                        // استفاده از متد بهبود یافته extractProductIdFromUrl که حالا فرمت جدید را پشتیبانی می‌کند
+                        $extractedId = $this->extractProductIdFromUrl($url, $data['title'] ?? '', $crawler);
+                        if (!empty($extractedId)) {
+                            $data[$field] = $extractedId;
+                            $this->log("Extracted product_id from updated method: {$data[$field]}", self::COLOR_GREEN);
+                        } else {
+                            $this->log("No product_id extracted, keeping mainPageProductId or empty", self::COLOR_YELLOW);
+                        }
+                    } elseif ($field === 'price') {
+                        // ✅ پردازش price با متد جدید یا قدیم
+                        if (method_exists($this, 'extractPriceWithPriority')) {
+                            $value = $this->extractPriceWithPriority($crawler, $selector);
+                            $this->log("Raw price extracted with priority method: '$value'", self::COLOR_YELLOW);
+                        } else {
+                            // fallback به روش قدیم
                             $priceSelectors = is_array($selector['selector']) ? $selector['selector'] : [$selector['selector']];
                             $value = '';
 
@@ -2981,8 +3161,6 @@ JAVASCRIPT;
                                 if ($elements->count() > 0) {
                                     $value = trim($elements->text());
                                     $this->log("Price extracted from primary selector: '$value'", self::COLOR_GREEN);
-                                } else {
-                                    $this->log("No price found with primary selector: '{$priceSelectors[0]}'", self::COLOR_YELLOW);
                                 }
                             }
 
@@ -2992,32 +3170,46 @@ JAVASCRIPT;
                                 if ($elements->count() > 0) {
                                     $value = trim($elements->text());
                                     $this->log("Price extracted from secondary selector: '$value'", self::COLOR_GREEN);
-                                } else {
-                                    $this->log("No price found with secondary selector: '{$priceSelectors[1]}'", self::COLOR_YELLOW);
                                 }
                             }
+                        }
 
-                            $priceKeywords = $this->config['price_keywords']['unpriced'] ?? [];
-                            $isUnpriced = false;
-                            foreach ($priceKeywords as $keyword) {
-                                if (!empty($value) && strpos($value, $keyword) !== false) {
-                                    $isUnpriced = true;
-                                    $data[$field] = trim($value);
-                                    $this->log("Price is marked as unpriced text: '$value'", self::COLOR_YELLOW);
-                                    break;
-                                }
+                        // بررسی کلمات کلیدی "قیمت‌گذاری نشده"
+                        $priceKeywords = $this->config['price_keywords']['unpriced'] ?? [];
+                        $isUnpriced = false;
+
+                        foreach ($priceKeywords as $keyword) {
+                            if (!empty($value) && mb_strpos($value, $keyword) !== false) {
+                                $isUnpriced = true;
+                                $data[$field] = trim($value); // متن اصلی
+                                $data['price_status'] = 'unpriced'; // فلگ اضافه کردن
+                                $this->log("Price is marked as unpriced text: '$value'", self::COLOR_YELLOW);
+                                break;
                             }
+                        }
 
-                            if (!$isUnpriced && !empty($value)) {
+                        // ✅ فقط در صورتی که unpriced نباشد، قیمت رو پردازش کن
+                        if (!$isUnpriced) {
+                            if (!empty($value)) {
                                 if ($this->config['keep_price_format'] ?? false) {
                                     $data[$field] = $this->cleanPriceWithFormat($value);
                                 } else {
                                     $data[$field] = (string)$this->cleanPrice($value);
                                 }
-                            } else if (!$isUnpriced) {
+                            } else {
                                 $data[$field] = $this->config['keep_price_format'] ?? false ? '' : '0';
                                 $this->log("No valid price found, setting default: '{$data[$field]}'", self::COLOR_YELLOW);
                             }
+                        }
+                    } else {
+                        // سایر فیلدها
+                        $value = $this->extractData($crawler, $selector);
+                        $this->log("Raw $field extracted: '$value'", self::COLOR_YELLOW);
+
+                        if ($field === 'title') {
+                            $data[$field] = $value;
+                            $data[$field] = $this->applyTitlePrefix($data[$field], $url);
+                            $this->log("Title after applying prefix: {$data[$field]}", self::COLOR_GREEN);
                         } elseif ($field === 'availability') {
                             // پردازش availability با parseAvailability
                             $transform = $this->config['data_transformers'][$field] ?? null;
@@ -3032,9 +3224,13 @@ JAVASCRIPT;
                         } elseif ($field === 'off') {
                             $transform = $this->config['data_transformers'][$field] ?? null;
                             if ($transform && method_exists($this, $transform)) {
-                                $data[$field] = (int)$this->$transform($value);
+                                $data[$field] = $this->$transform($value); // حذف (int) cast
+                                $this->log("Off processed by $transform: {$data[$field]}", self::COLOR_CYAN);
                             } else {
-                                $data[$field] = (string)$value;
+                                // fallback: تلاش برای استخراج عدد از متن
+                                preg_match('/\d+/', $value, $matches);
+                                $data[$field] = !empty($matches) ? (int)$matches[0] : 0;
+                                $this->log("Off fallback processing: {$data[$field]}", self::COLOR_YELLOW);
                             }
                         } else {
                             $transform = $this->config['data_transformers'][$field] ?? null;
@@ -3044,9 +3240,9 @@ JAVASCRIPT;
                                 $data[$field] = (string)$value;
                             }
                         }
-
-                        $this->log("Extracted $field: \"{$data[$field]}\" for $url", self::COLOR_GREEN);
                     }
+
+                    $this->log("Extracted $field: \"{$data[$field]}\" for $url", self::COLOR_GREEN);
                 }
             }
 
@@ -3081,7 +3277,6 @@ JAVASCRIPT;
 
             // اطمینان از نوع داده‌ها
             $data['availability'] = (int)$data['availability'];
-            $data['off'] = (int)$data['off'];
 
             foreach ($data as $key => $value) {
                 if ($key !== 'availability' && $key !== 'off' && is_numeric($value)) {
@@ -3103,6 +3298,124 @@ JAVASCRIPT;
             $this->saveFailedLink($url, $e->getMessage());
             return null;
         }
+    }
+
+    private function extractPriceWithPriority(Crawler $crawler, array $selector): string
+    {
+        $selectors = is_array($selector['selector']) ? $selector['selector'] : [$selector['selector']];
+        $foundSelectors = [];
+        $value = '';
+
+        $this->log("Starting price extraction with priority from " . count($selectors) . " selectors", self::COLOR_YELLOW);
+
+        // بررسی وجود هر سلکتور و ذخیره آنها
+        foreach ($selectors as $index => $sel) {
+            $this->log("Checking selector [$index]: '$sel'", self::COLOR_YELLOW);
+            $elements = $selector['type'] === 'css' ? $crawler->filter($sel) : $crawler->filterXPath($sel);
+
+            if ($elements->count() > 0) {
+                $extractedValue = $selector['attribute'] ?? false
+                    ? ($elements->attr($selector['attribute']) ?? '')
+                    : trim($elements->text());
+
+                if (!empty($extractedValue)) {
+                    $foundSelectors[$index] = [
+                        'selector' => $sel,
+                        'value' => $extractedValue
+                    ];
+                    $this->log("Found value with selector [$index] '$sel': '$extractedValue'", self::COLOR_GREEN);
+                }
+            }
+        }
+
+        // اگر هیچ سلکتوری پیدا نشد
+        if (empty($foundSelectors)) {
+            $this->log("No valid selectors found for price extraction", self::COLOR_RED);
+            return '';
+        }
+
+        // انتخاب آخرین سلکتور موجود (بالاترین اولویت)
+        $selectedIndex = max(array_keys($foundSelectors));
+        $selectedData = $foundSelectors[$selectedIndex];
+
+        $this->log("Selected price from selector [$selectedIndex] '{$selectedData['selector']}': '{$selectedData['value']}'", self::COLOR_GREEN);
+
+        // لاگ سلکتورهای نادیده گرفته شده
+        foreach ($foundSelectors as $index => $data) {
+            if ($index !== $selectedIndex) {
+                $this->log("Ignored selector [$index] '{$data['selector']}' with value: '{$data['value']}'", self::COLOR_YELLOW);
+            }
+        }
+
+        return $selectedData['value'];
+    }
+
+    private function extractCategoriesFromSelectors(Crawler $crawler, array $selector): string
+    {
+        $categories = [];
+
+        // چک کردن اینکه آیا سلکتور آرایه‌ای از سلکتورها است یا یک سلکتور ساده
+        $selectors = is_array($selector['selector']) ? $selector['selector'] : [$selector['selector']];
+
+        $this->log("Starting category extraction with " . count($selectors) . " selectors", self::COLOR_YELLOW);
+
+        foreach ($selectors as $index => $selectorString) {
+            if (empty($selectorString)) {
+                $this->log("Skipping empty selector at index $index", self::COLOR_YELLOW);
+                continue;
+            }
+
+            $this->log("Trying category selector [$index]: '$selectorString'", self::COLOR_YELLOW);
+
+            try {
+                // انتخاب المان‌ها بر اساس نوع سلکتور (CSS یا XPath)
+                $elements = $selector['type'] === 'css'
+                    ? $crawler->filter($selectorString)
+                    : $crawler->filterXPath($selectorString);
+
+                if ($elements->count() > 0) {
+                    // اگر چندین المان وجود داشت، همه را پردازش کن
+                    $elements->each(function (Crawler $element) use (&$categories, $selector, $index) {
+                        // استخراج متن از attribute مشخص شده یا text
+                        $categoryText = $selector['attribute'] ?? false
+                            ? ($element->attr($selector['attribute']) ?? '')
+                            : trim($element->text());
+
+                        if (!empty($categoryText)) {
+                            // پاک کردن فاصله‌های اضافی و کاراکترهای ناخواسته
+                            $categoryText = $this->cleanCategoryText($categoryText);
+
+                            if (!empty($categoryText)) {
+                                $categories[] = $categoryText;
+                                $this->log("Found category with selector [$index]: '$categoryText'", self::COLOR_GREEN);
+                            }
+                        }
+                    });
+                } else {
+                    $this->log("No elements found with selector [$index]: '$selectorString'", self::COLOR_YELLOW);
+                }
+            } catch (\Exception $e) {
+                $this->log("Error with selector [$index] '$selectorString': {$e->getMessage()}", self::COLOR_RED);
+            }
+        }
+
+        // حذف دسته‌بندی‌های تکراری و خالی
+        $categories = array_filter(array_unique($categories), function ($cat) {
+            return !empty(trim($cat));
+        });
+
+        // حذف محدودیت تعداد دسته‌بندی - همه دسته‌بندی‌های پیدا شده حفظ می‌شوند
+
+        // ترکیب دسته‌بندی‌ها با کاما
+        $finalCategory = implode(', ', $categories);
+
+        if (!empty($finalCategory)) {
+            $this->log("Final combined categories: '$finalCategory' (Total: " . count($categories) . ")", self::COLOR_GREEN);
+        } else {
+            $this->log("No categories found from any selectors", self::COLOR_RED);
+        }
+
+        return $finalCategory;
     }
 
     private function extractGuaranteeFromSelector(Crawler $crawler, array $selector, ?string $title = null): string
@@ -3137,26 +3450,44 @@ JAVASCRIPT;
     private function extractData(Crawler $crawler, array $selector, ?string $field = null): string
     {
         $selectors = is_array($selector['selector']) ? $selector['selector'] : [$selector['selector']];
+        $attributes = isset($selector['attribute'])
+            ? (is_array($selector['attribute']) ? $selector['attribute'] : [$selector['attribute']])
+            : [null];
+
         $value = '';
 
         foreach ($selectors as $index => $sel) {
             $this->log("Trying selector [$index]: '$sel' for field: " . ($field ?? 'unknown'), self::COLOR_YELLOW);
+
             $elements = $selector['type'] === 'css' ? $crawler->filter($sel) : $crawler->filterXPath($sel);
+
             if ($elements->count() > 0) {
-                $value = $selector['attribute'] ?? false
-                    ? ($elements->attr($selector['attribute']) ?? '')
-                    : trim($elements->text());
+                // تعیین attribute مربوط به این سلکتور
+                $currentAttribute = $attributes[$index] ?? $attributes[0] ?? null;
+
+                if ($currentAttribute) {
+                    $value = $elements->attr($currentAttribute) ?? '';
+                    $this->log("Extracting attribute '$currentAttribute' from selector '$sel'", self::COLOR_CYAN);
+                } else {
+                    $value = trim($elements->text());
+                    $this->log("Extracting text content from selector '$sel'", self::COLOR_CYAN);
+                }
+
                 if (!empty($value)) {
                     $this->log("Found value: '$value' with selector '$sel' for field: " . ($field ?? 'unknown'), self::COLOR_GREEN);
                     break; // اگر مقدار معتبر پیدا شد، از حلقه خارج شو
+                } else {
+                    $this->log("Empty value from selector '$sel' for field: " . ($field ?? 'unknown'), self::COLOR_YELLOW);
                 }
+            } else {
+                $this->log("No elements found with selector '$sel' for field: " . ($field ?? 'unknown'), self::COLOR_YELLOW);
             }
-            $this->log("No value found with selector '$sel' for field: " . ($field ?? 'unknown'), self::COLOR_YELLOW);
         }
 
         if (empty($value)) {
             $this->log("No value found for selectors: " . json_encode($selectors) . " for field: " . ($field ?? 'unknown'), self::COLOR_RED);
         }
+
         return $value;
     }
 
@@ -3250,232 +3581,173 @@ JAVASCRIPT;
         return '';
     }
 
-    private function parseAvailability(string $text, Crawler $crawler): int
+    private function parseAvailability(string $value, Crawler $crawler): int
     {
-        $availabilityMode = $this->config['availability_mode'] ?? 'smart';
-        $stockSelector = $this->config['selectors']['product_page']['availability'] ?? null;
-        $addToCartSelector = $this->config['selectors']['product_page']['add_to_cart_button'] ?? null;
+        $this->validateConfig($this->config, [
+            'availability_mode',
+            'selectors',
+            'availability_keywords',
+            'out_of_stock_button',
+            'out_of_stock_selector'
+        ]);
+
+        $outOfStockButton = $this->config['out_of_stock_button'] ?? false;
         $outOfStockSelector = $this->config['selectors']['product_page']['out_of_stock'] ?? null;
-        $positiveKeywords = $this->config['availability_keywords']['positive'] ?? ["در انبار موجود است", "موجود", "افزودن به سبد خرید", "افزودن به سبد", "تماس بگیرید", "برای استعلام قیمت تماس بگیرید"];
-        $negativeKeywords = $this->config['availability_keywords']['negative'] ?? ["ناموجود", "اتمام موجودی", "تمام شد"];
+        $availabilitySelector = $this->config['selectors']['product_page']['availability'] ?? null;
+        $positiveKeywords = $this->config['availability_keywords']['positive'] ?? ['موجود', 'افزودن به سبد خرید'];
+        $negativeKeywords = $this->config['availability_keywords']['negative'] ?? ['ناموجود', 'اتمام موجودی'];
 
-        // حالت هوشمند: بررسی همه حالات ممکن
-        if ($availabilityMode === 'smart') {
-            return $this->smartAvailabilityDetection($crawler, $stockSelector, $addToCartSelector, $outOfStockSelector, $positiveKeywords, $negativeKeywords);
-        } // حالت selector: فقط بررسی وجود سلکتور اصلی
-        elseif ($availabilityMode === 'selector') {
-            if (!$stockSelector || empty($stockSelector['selector'])) {
-                $this->log("No availability selector defined for selector mode", self::COLOR_YELLOW);
-                return 0;
-            }
+        // ✅ اضافه کردن کلمات کلیدی قیمت
+        $unpricedKeywords = $this->config['price_keywords']['unpriced'] ?? [];
 
-            $selectors = is_array($stockSelector['selector']) ? $stockSelector['selector'] : [$stockSelector['selector']];
-            foreach ($selectors as $sel) {
-                $this->log("Checking availability selector: $sel", self::COLOR_YELLOW);
-                $elements = $crawler->filter($sel);
-                if ($elements->count() > 0) {
-                    $this->log("Availability selector found, product is available", self::COLOR_GREEN);
+        $this->log("Starting availability detection with value: '$value'", self::COLOR_CYAN);
+
+        // ✅ Priority 0: Check if value contains unpriced keywords (highest priority)
+        if (!empty($value)) {
+            foreach ($unpricedKeywords as $keyword) {
+                if (stripos($value, $keyword) !== false) {
+                    $this->log("✅ Product available due to unpriced keyword: '$keyword' in availability text", self::COLOR_GREEN);
                     return 1;
                 }
             }
-
-            $this->log("Availability selector not found, product is out of stock", self::COLOR_RED);
-            return 0;
-        } // حالت keyword: بررسی بر اساس کلمات کلیدی
-        elseif ($availabilityMode === 'keyword') {
-            return $this->keywordBasedAvailability($crawler, $stockSelector, $positiveKeywords, $negativeKeywords);
-        } // حالت selector_presence: بررسی وجود سلکتور و کلمه کلیدی خاص
-        elseif ($availabilityMode === 'selector_presence') {
-            if (!$stockSelector || empty($stockSelector['selector'])) {
-                $this->log("No availability selector defined for selector_presence mode", self::COLOR_YELLOW);
-                return 1;
-            }
-
-            $keyword = $stockSelector['keyword'] ?? 'ناموجود';
-            $selectors = is_array($stockSelector['selector']) ? $stockSelector['selector'] : [$stockSelector['selector']];
-
-            foreach ($selectors as $sel) {
-                $this->log("Checking stock button with selector: $sel", self::COLOR_YELLOW);
-                $elements = $crawler->filter($sel);
-                if ($elements->count() > 0) {
-                    $stockText = trim($elements->text());
-                    $this->log("Stock button text: '$stockText'", self::COLOR_YELLOW);
-
-                    if (stripos($stockText, $keyword) !== false) {
-                        $this->log("Product is out of stock based on keyword: $keyword", self::COLOR_RED);
-                        return 0;
-                    }
-                }
-            }
-
-            $this->log("Stock button not found or no matching keyword, assuming available", self::COLOR_GREEN);
-            return 1;
         }
 
-        // پیش‌فرض: استفاده از حالت هوشمند
-        return $this->smartAvailabilityDetection($crawler, $stockSelector, $addToCartSelector, $outOfStockSelector, $positiveKeywords, $negativeKeywords);
-    }
-
-    private function smartAvailabilityDetection(Crawler $crawler, ?array $stockSelector, ?array $addToCartSelector, ?array $outOfStockSelector, array $positiveKeywords, array $negativeKeywords): int
-    {
-        $this->log("Starting smart availability detection", self::COLOR_CYAN);
-
-        // مرحله 1: بررسی سلکتور مخصوص "ناموجود"
-        if ($outOfStockSelector && !empty($outOfStockSelector['selector'])) {
-            $outOfStockSelectors = is_array($outOfStockSelector['selector']) ? $outOfStockSelector['selector'] : [$outOfStockSelector['selector']];
-            foreach ($outOfStockSelectors as $sel) {
-                $this->log("Checking out-of-stock selector: $sel", self::COLOR_YELLOW);
-                $elements = $crawler->filter($sel);
-                if ($elements->count() > 0) {
-                    $this->log("Out-of-stock selector found, product is unavailable", self::COLOR_RED);
-                    return 0;
-                }
+        // Priority 1: Check out-of-stock selector if out_of_stock_button is true
+        if ($outOfStockButton) {
+            $outOfStockResult = $this->checkOutOfStockWithPriority($crawler, $outOfStockSelector);
+            if ($outOfStockResult === 0) {
+                $this->log("Final decision: Product unavailable due to out-of-stock selector", self::COLOR_RED);
+                return 0;
             }
         }
 
-        // مرحله 2: بررسی سلکتور دکمه "افزودن به سبد خرید"
-        $addToCartFound = false;
-        if ($addToCartSelector && !empty($addToCartSelector['selector'])) {
-            $addToCartSelectors = is_array($addToCartSelector['selector']) ? $addToCartSelector['selector'] : [$addToCartSelector['selector']];
-            foreach ($addToCartSelectors as $sel) {
-                $this->log("Checking add-to-cart selector: $sel", self::COLOR_YELLOW);
-                $elements = $crawler->filter($sel);
-                if ($elements->count() > 0) {
-                    $addToCartFound = true;
-                    $this->log("Add-to-cart button found", self::COLOR_GREEN);
-                    break;
-                }
-            }
-        }
-
-        // مرحله 3: بررسی سلکتور اصلی availability و کلمات کلیدی
-        $availabilityStatus = null;
-        if ($stockSelector && !empty($stockSelector['selector'])) {
-            $selectors = is_array($stockSelector['selector']) ? $stockSelector['selector'] : [$stockSelector['selector']];
-            foreach ($selectors as $sel) {
-                $this->log("Checking main availability selector: $sel", self::COLOR_YELLOW);
-                $elements = $crawler->filter($sel);
-                if ($elements->count() > 0) {
-                    $stockText = trim($elements->text());
-                    $this->log("Availability text found: '$stockText'", self::COLOR_YELLOW);
-
-                    // بررسی کلمات کلیدی منفی (اولویت دارد)
-                    foreach ($negativeKeywords as $keyword) {
-                        if (stripos($stockText, $keyword) !== false) {
-                            $this->log("Product is out of stock based on negative keyword: $keyword", self::COLOR_RED);
-                            return 0;
-                        }
-                    }
-
-                    // بررسی کلمات کلیدی مثبت
-                    foreach ($positiveKeywords as $keyword) {
-                        if (stripos($stockText, $keyword) !== false) {
-                            $this->log("Product is available based on positive keyword: $keyword", self::COLOR_GREEN);
-                            $availabilityStatus = 1;
-                            break;
-                        }
-                    }
-
-                    // اگر متن وجود داره ولی هیچ کلمه کلیدی منفی نداره، احتمالاً موجوده
-                    if ($availabilityStatus === null) {
-                        $availabilityStatus = 1;
-                        $this->log("Availability text exists with no negative keywords, assuming available", self::COLOR_GREEN);
-                    }
-                    break;
-                }
-            }
-        }
-
-        // مرحله 4: تصمیم‌گیری نهایی بر اساس اولویت‌ها
-
-        // اگر دکمه افزودن به سبد خرید وجود داره و هیچ نشانه منفی پیدا نشده
-        if ($addToCartFound && $availabilityStatus !== 0) {
-            $this->log("Add-to-cart button exists and no negative indicators, product is available", self::COLOR_GREEN);
-            return 1;
-        }
-
-        // اگر از availability selector نتیجه گرفتیم
+        // Priority 2: Check availability selectors
+        $availabilityStatus = $this->checkMultipleAvailabilitySelectors($crawler, $availabilitySelector, $positiveKeywords, $negativeKeywords, $unpricedKeywords);
         if ($availabilityStatus !== null) {
+            $this->log("Final decision: Product availability set to " . ($availabilityStatus ? 'Available' : 'Unavailable'), $availabilityStatus ? self::COLOR_GREEN : self::COLOR_RED);
             return $availabilityStatus;
         }
 
-        // اگر دکمه افزودن به سبد خرید وجود داره ولی availability مشخص نیست
-        if ($addToCartFound) {
-            $this->log("Add-to-cart button found but availability unclear, assuming available", self::COLOR_GREEN);
-            return 1;
-        }
-
-        // اگر هیچ سلکتوری تعریف نشده
-        if ((!$stockSelector || empty($stockSelector['selector'])) &&
-            (!$addToCartSelector || empty($addToCartSelector['selector'])) &&
-            (!$outOfStockSelector || empty($outOfStockSelector['selector']))) {
-            $this->log("No availability selectors defined, assuming available", self::COLOR_GREEN);
-            return 1;
-        }
-
-        // در غیر این صورت، فرض بر ناموجود بودن
-        $this->log("No positive availability indicators found, assuming out of stock", self::COLOR_RED);
-        return 0;
+        // Fallback: Assume unavailable if no clear indicators
+        $fallback = $this->config['default_availability'] ?? 0;
+        $this->log("No clear availability indicators found, using fallback: " . ($fallback ? 'Available' : 'Unavailable'), $fallback ? self::COLOR_GREEN : self::COLOR_RED);
+        return $fallback;
     }
 
-    private function keywordBasedAvailability(Crawler $crawler, ?array $stockSelector, array $positiveKeywords, array $negativeKeywords): int
+    private function checkMultipleAvailabilitySelectors(Crawler $crawler, ?array $stockSelector, array $positiveKeywords, array $negativeKeywords, array $unpricedKeywords = []): ?int
     {
         if (!$stockSelector || empty($stockSelector['selector'])) {
-            $this->log("No availability selector defined for keyword mode", self::COLOR_YELLOW);
-            return 0;
+            $this->log("Availability selector not defined", self::COLOR_YELLOW);
+            return null;
         }
 
         $selectors = is_array($stockSelector['selector']) ? $stockSelector['selector'] : [$stockSelector['selector']];
 
-        foreach ($selectors as $sel) {
-            $this->log("Checking stock button with selector: $sel", self::COLOR_YELLOW);
-            $elements = $crawler->filter($sel);
+        foreach ($selectors as $index => $selector) {
+            $this->log("📦 Checking availability selector [$index]: $selector", self::COLOR_YELLOW);
+            $elements = $this->getElements($crawler, ['selector' => $selector, 'type' => $stockSelector['type'] ?? 'css']);
+
             if ($elements->count() > 0) {
-                $stockText = trim($elements->text());
-                $this->log("Stock button text: '$stockText'", self::COLOR_YELLOW);
+                $stockText = $this->extractData($crawler, ['selector' => $selector, 'type' => $stockSelector['type'] ?? 'css'], 'availability');
 
-                // بررسی کلمات کلیدی منفی (اولویت دارد)
-                foreach ($negativeKeywords as $keyword) {
-                    if (stripos($stockText, $keyword) !== false) {
-                        $this->log("Product is out of stock based on negative keyword: $keyword", self::COLOR_RED);
-                        return 0;
+                if (!empty($stockText)) {
+                    $this->log("📄 Availability text found: '$stockText'", self::COLOR_YELLOW);
+
+                    // ✅ Check unpriced keywords first (highest priority)
+                    foreach ($unpricedKeywords as $keyword) {
+                        if (stripos($stockText, $keyword) !== false) {
+                            $this->log("💰 Product available due to unpriced keyword: '$keyword'", self::COLOR_GREEN);
+                            return 1;
+                        }
                     }
-                }
 
-                // بررسی کلمات کلیدی مثبت
-                foreach ($positiveKeywords as $keyword) {
-                    if (stripos($stockText, $keyword) !== false) {
-                        $this->log("Product is available based on positive keyword: $keyword", self::COLOR_GREEN);
-                        return 1;
+                    // Check negative keywords second
+                    foreach ($negativeKeywords as $keyword) {
+                        if (stripos($stockText, $keyword) !== false) {
+                            $this->log("🚫 Product unavailable due to negative keyword: $keyword", self::COLOR_RED);
+                            return 0;
+                        }
                     }
-                }
 
-                // اگر متن وجود داره ولی هیچ کلمه کلیدی منفی نداره
-                $this->log("Stock button exists with no negative keywords, assuming available", self::COLOR_GREEN);
-                return 1;
+                    // Check positive keywords last
+                    foreach ($positiveKeywords as $keyword) {
+                        if (stripos($stockText, $keyword) !== false) {
+                            $this->log("✅ Product available due to positive keyword: $keyword", self::COLOR_GREEN);
+                            return 1;
+                        }
+                    }
+
+                    $this->log("⚠️ Availability text found but no matching keywords: '$stockText'", self::COLOR_YELLOW);
+                    return null; // Text found but no keyword match
+                } else {
+                    $this->log("⚠️ Availability selector found but no content extracted", self::COLOR_YELLOW);
+                    return null;
+                }
             }
         }
 
-        $this->log("Stock button not found, assuming out of stock", self::COLOR_RED);
-        return 0;
+        $this->log("❌ No availability selectors found", self::COLOR_YELLOW);
+        return null;
+    }
+
+    private function checkOutOfStockWithPriority(Crawler $crawler, ?array $outOfStockSelector): ?int
+    {
+        if (!$outOfStockSelector || empty($outOfStockSelector['selector'])) {
+            $this->log("Out-of-stock selector not defined", self::COLOR_YELLOW);
+            return null;
+        }
+
+        $selectors = is_array($outOfStockSelector['selector']) ? $outOfStockSelector['selector'] : [$outOfStockSelector['selector']];
+
+        foreach ($selectors as $index => $selector) {
+            $this->log("🔍 Checking out-of-stock selector [$index]: $selector", self::COLOR_YELLOW);
+            $elements = $this->getElements($crawler, ['selector' => $selector, 'type' => $outOfStockSelector['type'] ?? 'css']);
+
+            if ($elements->count() > 0) {
+                $this->log("🚨 Out-of-stock selector found, product is unavailable", self::COLOR_RED);
+                return 0; // Selector exists, product is unavailable
+            }
+        }
+
+        $this->log("✅ No out-of-stock selectors found, proceeding with availability check", self::COLOR_GREEN);
+        return null; // No out-of-stock selector found, continue with other checks
     }
 
     private function cleanOff(string $text): int
     {
         $this->log("Raw off value: '$text'", self::COLOR_YELLOW);
         $text = trim($text);
+
+        if (empty($text)) {
+            $this->log("Off value is empty, returning 0", self::COLOR_YELLOW);
+            return 0;
+        }
+
+        // بررسی وجود علامت درصد
         if (strpos($text, '%') !== false) {
+            // استخراج عدد قبل از علامت درصد
+            preg_match('/(\d+)%/', $text, $matches);
+            if (!empty($matches[1])) {
+                $value = (int)$matches[1];
+                $this->log("Processed off (percentage with regex): $value", self::COLOR_GREEN);
+                return $value;
+            }
+
+            // fallback: حذف علامت درصد و تبدیل به عدد
             $value = (int)str_replace('%', '', $text);
-            $this->log("Processed off (percentage): $value", self::COLOR_GREEN);
+            $this->log("Processed off (percentage with str_replace): $value", self::COLOR_GREEN);
             return $value;
         }
+
+        // استخراج اولین عدد موجود در متن
         preg_match('/\d+/', $text, $matches);
         if (!empty($matches)) {
             $value = (int)$matches[0];
             $this->log("Processed off (numeric): $value", self::COLOR_GREEN);
             return $value;
         }
-        $this->log("No valid number found in off value, returning 0", self::COLOR_RED);
+
+        $this->log("No valid number found in off value '$text', returning 0", self::COLOR_RED);
         return 0;
     }
 
@@ -3531,22 +3803,32 @@ JAVASCRIPT;
             }
         }
 
-        // ادامه کد برای product_page و fallbackها...
+        // پردازش product_id از product_page با ساختار جدید
         if ($this->config['product_id_source'] === 'product_page') {
-            $selector = $this->config['selectors']['product_page']['product_id']['selector'] ?? '';
-            if (!empty($selector)) {
-                $value = $this->extractData($crawler, $this->config['selectors']['product_page']['product_id']);
-                if (!empty($value)) {
-                    $this->log("Extracted product_id from product_page selector: $value for $url", self::COLOR_GREEN);
-                    return $value;
+            $productIdConfig = $this->config['selectors']['product_page']['product_id'] ?? [];
+
+            if (!empty($productIdConfig)) {
+                // بررسی فرمت جدید (آرایه از اشیاء) یا قدیم
+                if ($this->isNewProductIdFormat($productIdConfig)) {
+                    $this->log("Processing product_id with new array format", self::COLOR_CYAN);
+                    return $this->extractProductIdWithNewFormat($crawler, $productIdConfig, $url);
                 } else {
-                    $this->log("No product_id found with selector: $selector for $url", self::COLOR_YELLOW);
+                    // فرمت قدیمی - استفاده از extractData
+                    $this->log("Processing product_id with legacy format", self::COLOR_CYAN);
+                    $value = $this->extractData($crawler, $productIdConfig, 'product_id');
+                    if (!empty($value)) {
+                        $this->log("Extracted product_id from legacy format: $value for $url", self::COLOR_GREEN);
+                        return $value;
+                    } else {
+                        $this->log("No product_id found with legacy format for $url", self::COLOR_YELLOW);
+                    }
                 }
             }
 
-            // تلاش برای استخراج از اسکریپت‌ها
+            // تلاش برای استخراج از اسکریپت‌ها (fallback)
             $patterns = $this->config['product_id_fallback_script_patterns'] ?? [];
             if (!empty($patterns)) {
+                $this->log("Trying fallback script patterns for product_id extraction", self::COLOR_CYAN);
                 $scripts = $crawler->filter('script')->each(function (Crawler $node) {
                     return $node->text();
                 });
@@ -3564,6 +3846,72 @@ JAVASCRIPT;
         }
 
         $this->log("Failed to extract product_id, returning empty string for $url", self::COLOR_RED);
+        return '';
+    }
+
+    /**
+     * بررسی اینکه آیا کانفیگ product_id در فرمت جدید است یا نه
+     */
+    private function isNewProductIdFormat(array $config): bool
+    {
+        // اگر کلید selector وجود نداشته باشد، احتمالاً فرمت جدید است
+        if (!isset($config['selector'])) {
+            return true;
+        }
+
+        // اگر selector یک آرایه است و عنصر اول آن یک آرایه است، فرمت جدید است
+        if (is_array($config['selector']) && isset($config['selector'][0]) && is_array($config['selector'][0])) {
+            return true;
+        }
+
+        // اگر مستقیماً آرایه‌ای از اشیاء باشد (بدون کلید selector)
+        if (isset($config[0]) && is_array($config[0]) && isset($config[0]['type'])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * استخراج product_id با فرمت جدید
+     */
+    private function extractProductIdWithNewFormat(Crawler $crawler, array $config, string $url): string
+    {
+        // تعیین آرایه سلکتورها
+        $selectors = [];
+
+        if (isset($config[0]) && is_array($config[0])) {
+            // فرمت: [{"type": "css", "selector": "...", "attribute": "..."}, {...}]
+            $selectors = $config;
+        } elseif (isset($config['selector']) && is_array($config['selector']) && is_array($config['selector'][0])) {
+            // فرمت: {"selector": [{"type": "css", "selector": "...", "attribute": "..."}, {...}]}
+            $selectors = $config['selector'];
+        }
+
+        foreach ($selectors as $index => $selectorConfig) {
+            $this->log("Trying product_id selector [$index]: '{$selectorConfig['selector']}'", self::COLOR_YELLOW);
+
+            $elements = $selectorConfig['type'] === 'css'
+                ? $crawler->filter($selectorConfig['selector'])
+                : $crawler->filterXPath($selectorConfig['selector']);
+
+            if ($elements->count() > 0) {
+                $value = isset($selectorConfig['attribute'])
+                    ? ($elements->attr($selectorConfig['attribute']) ?? '')
+                    : trim($elements->text());
+
+                if (!empty($value)) {
+                    $this->log("Extracted product_id from selector [$index] '{$selectorConfig['selector']}': $value for $url", self::COLOR_GREEN);
+                    return $value;
+                } else {
+                    $this->log("Empty value from selector [$index] '{$selectorConfig['selector']}' for $url", self::COLOR_YELLOW);
+                }
+            } else {
+                $this->log("No elements found with selector [$index] '{$selectorConfig['selector']}' for $url", self::COLOR_YELLOW);
+            }
+        }
+
+        $this->log("No product_id found with any new format selectors for $url", self::COLOR_RED);
         return '';
     }
 
@@ -3620,8 +3968,9 @@ JAVASCRIPT;
 
         try {
             $query = DB::table('links')
-                ->where('is_processed', 0) // Changed from 'processed' to 'is_processed' to match schema
-                ->select('url', 'source_url', 'product_id'); // Removed 'image' and 'off' columns that don't exist
+                ->where('is_processed', 0)
+                ->select('id', 'url', 'source_url', 'product_id') // اضافه کردن id برای بهتر tracking
+                ->orderBy('id'); // مرتب‌سازی برای consistency
 
             if ($start_id !== null) {
                 $query->where('id', '>=', $start_id);
@@ -3629,30 +3978,31 @@ JAVASCRIPT;
 
             $links = $query->get()->map(function ($link) {
                 return [
+                    'id' => $link->id, // اضافه کردن id
                     'url' => $link->url,
-                    'sourceUrl' => $link->source_url, // Changed to match the database column name
+                    'sourceUrl' => $link->source_url,
                     'product_id' => $link->product_id
                 ];
             })->toArray();
 
-            $this->log("Retrieved " . count($links) . " links from database" . ($start_id ? " with ID >= $start_id" : ""), self::COLOR_GREEN);
+            $this->log("Retrieved " . count($links) . " unprocessed links from database" . ($start_id ? " with ID >= $start_id" : ""), self::COLOR_GREEN);
 
             // لاگ بازه IDها برای دیباگ
             if (!empty($links)) {
-                $ids = DB::table('links')
-                    ->whereIn('url', array_column($links, 'url'))
-                    ->pluck('id')
-                    ->toArray();
-
-                if (!empty($ids)) {
-                    $this->log("Link ID range: " . min($ids) . " to " . max($ids), self::COLOR_YELLOW);
-                }
+                $ids = array_column($links, 'id');
+                $this->log("Link ID range: " . min($ids) . " to " . max($ids), self::COLOR_YELLOW);
             }
+
+            // محاسبه صفحات پردازش شده بر اساس source_url های منحصر به فرد
+            $pagesProcessed = DB::table('links')
+                ->distinct()
+                ->count('source_url');
 
             return [
                 'links' => $links,
-                'pages_processed' => 0
+                'pages_processed' => $pagesProcessed
             ];
+
         } catch (\Exception $e) {
             $this->log("Failed to fetch links from database: {$e->getMessage()}", self::COLOR_RED);
             return [
@@ -3664,62 +4014,116 @@ JAVASCRIPT;
 
     private function saveProductLinksToDatabase(array $links): void
     {
+        if (empty($links)) {
+            $this->log("No links to save to database", self::COLOR_YELLOW);
+            return;
+        }
+
         $this->log("Saving " . count($links) . " product links to database...", self::COLOR_GREEN);
 
-        foreach ($links as $link) {
-            $url = is_array($link) ? $link['url'] : $link;
-            $sourceUrl = is_array($link) && isset($link['sourceUrl']) ? $link['sourceUrl'] : null;
-            $productId = is_array($link) && isset($link['product_id']) ? $link['product_id'] : null;
+        try {
+            $insertData = [];
+            $duplicateCount = 0;
+            $batchSize = 1000; // پردازش batch برای performance بهتر
 
-            // بررسی تکراری نبودن لینک در دیتابیس
-            $existingLink = DB::table('links')->where('url', $url)->first();
+            // آماده‌سازی داده‌ها برای insert
+            foreach ($links as $link) {
+                $url = is_array($link) ? $link['url'] : $link;
+                $sourceUrl = is_array($link) && isset($link['sourceUrl']) ? $link['sourceUrl'] : null;
+                $productId = is_array($link) && isset($link['product_id']) ? $link['product_id'] : null;
 
-            if (!$existingLink) {
-                DB::table('links')->insert([
+                // بررسی معتبر بودن URL
+                if (empty($url) || !filter_var($url, FILTER_VALIDATE_URL)) {
+                    $this->log("Invalid URL skipped: " . ($url ?? 'empty'), self::COLOR_YELLOW);
+                    continue;
+                }
+
+                $insertData[] = [
                     'url' => $url,
                     'source_url' => $sourceUrl,
                     'is_processed' => false,
                     'product_id' => $productId,
                     'created_at' => now(),
                     'updated_at' => now()
-                ]);
-            } else {
-                $this->log("Skipping duplicate link in database: $url", self::COLOR_YELLOW);
+                ];
             }
-        }
 
-        $this->log("Product links saved to database successfully", self::COLOR_GREEN);
+            if (empty($insertData)) {
+                $this->log("No valid links to insert", self::COLOR_YELLOW);
+                return;
+            }
+
+            // استفاده از upsert برای جلوگیری از duplicate entries
+            $chunks = array_chunk($insertData, $batchSize);
+            $totalInserted = 0;
+
+            foreach ($chunks as $chunk) {
+                try {
+                    // استفاده از insertOrIgnore برای جلوگیری از خطای duplicate
+                    $inserted = DB::table('links')->insertOrIgnore($chunk);
+                    $totalInserted += $inserted;
+
+                } catch (\Exception $e) {
+                    $this->log("Error inserting batch: " . $e->getMessage(), self::COLOR_RED);
+
+                    // اگر batch insert شکست خورد، یکی یکی امتحان کنیم
+                    foreach ($chunk as $item) {
+                        try {
+                            $existingLink = DB::table('links')->where('url', $item['url'])->exists();
+                            if (!$existingLink) {
+                                DB::table('links')->insert($item);
+                                $totalInserted++;
+                            } else {
+                                $duplicateCount++;
+                            }
+                        } catch (\Exception $individualError) {
+                            $this->log("Failed to insert link {$item['url']}: " . $individualError->getMessage(), self::COLOR_RED);
+                        }
+                    }
+                }
+            }
+
+            $this->log("Successfully saved $totalInserted new links to database", self::COLOR_GREEN);
+
+            if ($duplicateCount > 0) {
+                $this->log("Skipped $duplicateCount duplicate links", self::COLOR_YELLOW);
+            }
+
+        } catch (\Exception $e) {
+            $this->log("Critical error saving links to database: " . $e->getMessage(), self::COLOR_RED);
+            throw $e;
+        }
     }
 
     private function updateLinkProcessedStatus(string $url, bool $status = true): void
     {
-        // بروزرسانی وضعیت لینک به پردازش شده
-        $affected = DB::table('links')
-            ->where('url', $url)
-            ->update([
-                'is_processed' => $status,
-                'updated_at' => now()
-            ]);
+        try {
+            // بررسی معتبر بودن URL
+            if (empty($url)) {
+                $this->log("Cannot update status: empty URL provided", self::COLOR_RED);
+                return;
+            }
 
-        if ($affected === 0) {
-            $this->log("Link not found in database for status update: $url", self::COLOR_YELLOW);
+            $affected = DB::table('links')
+                ->where('url', $url)
+                ->update([
+                    'is_processed' => $status,
+                    'updated_at' => now()
+                ]);
+
+            if ($affected === 0) {
+                $this->log("Link not found in database for status update: $url", self::COLOR_YELLOW);
+            } else {
+                $statusText = $status ? 'processed' : 'unprocessed';
+                // فقط برای debug mode لاگ کنیم تا spam نشود
+                if ($this->config['debug'] ?? false) {
+                    $this->log("Marked $affected link(s) as $statusText: $url", self::COLOR_BLUE);
+                }
+            }
+
+        } catch (\Exception $e) {
+            $this->log("Error updating link status for $url: " . $e->getMessage(), self::COLOR_RED);
         }
-    }
-
-    public function processFailedLinks(): int
-    {
-        $this->log("Starting to process failed links...", self::COLOR_BLUE);
-
-        // Store current counter to calculate successful retries
-        $initialProcessedCount = $this->processedCount;
-
-        // Retry failed links
-        $this->retryFailedLinks();
-
-        $successfulRetries = $this->processedCount - $initialProcessedCount;
-        $this->log("Completed processing failed links. Successfully processed: $successfulRetries", self::COLOR_GREEN);
-
-        return $successfulRetries;
     }
 
     private function mb_str_pad(string $input, int $pad_length, string $pad_string = ' ', int $pad_type = STR_PAD_RIGHT): string
@@ -3970,6 +4374,12 @@ JAVASCRIPT;
 
     private function validateAndFixConfig(): void
     {
+        $isProductTestMode = $this->config['product_test'] ?? false;
+        if ($isProductTestMode) {
+            $this->log("🧪 Product Test Mode - Using test-specific validation", self::COLOR_PURPLE);
+            $this->validateProductTestConfig();
+            return; // در حالت تست، نیاز به اعتبارسنجی معمولی نیست
+        }
         // بررسی صحت کلیدهای مهم کانفیگ
         $this->log("Validating configuration...", self::COLOR_GREEN);
 
@@ -4010,16 +4420,31 @@ JAVASCRIPT;
 
     private function validateConfig(): void
     {
+
+        $isProductTestMode = $this->config['product_test'] ?? false;
+        if ($isProductTestMode) {
+            $this->log("🧪 Product Test Mode - Using test-specific validation", self::COLOR_PURPLE);
+            $this->validateProductTestConfig();
+            return; // در حالت تست، نیاز به اعتبارسنجی معمولی نیست
+        }
         $requiredFields = [
             'base_urls' => 'Base URLs are required.',
             'products_urls' => 'Products URLs are required.',
             'method' => 'Scraping method is required (1, 2, or 3).',
             'selectors' => 'Selectors configuration is required.',
+            'out_of_stock_button' => 'Out of stock button configuration is required.',
         ];
 
         foreach ($requiredFields as $field => $message) {
-            if (empty($this->config[$field])) {
-                throw new \Exception("Validation Error: $message");
+            // برای out_of_stock_button از isset استفاده کن نه empty چون false مقدار معتبری است
+            if ($field === 'out_of_stock_button') {
+                if (!isset($this->config[$field])) {
+                    throw new \Exception("Validation Error: $message");
+                }
+            } else {
+                if (empty($this->config[$field])) {
+                    throw new \Exception("Validation Error: $message");
+                }
             }
         }
 
@@ -4128,7 +4553,245 @@ JAVASCRIPT;
             }
         }
 
+        // بررسی نوع داده out_of_stock_button - حالا که isset شده، بررسی می‌کنیم نوعش boolean باشد
+        if (!is_bool($this->config['out_of_stock_button'])) {
+            throw new \Exception("Validation Error: 'out_of_stock_button' must be a boolean value (true or false).");
+        }
+
+        // اگر out_of_stock_button فعال است، بررسی کن که selector های مربوطه تعریف شده باشند
+        if ($this->config['out_of_stock_button'] === true) {
+            if (!isset($this->config['selectors']['product_page']['out_of_stock']) ||
+                empty($this->config['selectors']['product_page']['out_of_stock']['selector'])) {
+                throw new \Exception("Validation Error: 'selectors.product_page.out_of_stock' must be defined with a non-empty 'selector' when 'out_of_stock_button' is true.");
+            }
+            $selector = $this->config['selectors']['product_page']['out_of_stock']['selector'];
+            if (!is_string($selector) && !is_array($selector)) {
+                throw new \Exception("Validation Error: 'selectors.product_page.out_of_stock.selector' must be a string or array.");
+            }
+            if (is_array($selector) && empty($selector)) {
+                throw new \Exception("Validation Error: 'selectors.product_page.out_of_stock.selector' array cannot be empty.");
+            }
+            // بررسی نوع سلکتور (css یا xpath)
+            if (!isset($this->config['selectors']['product_page']['out_of_stock']['type']) ||
+                !in_array($this->config['selectors']['product_page']['out_of_stock']['type'], ['css', 'xpath'])) {
+                throw new \Exception("Validation Error: 'selectors.product_page.out_of_stock.type' must be 'css' or 'xpath'.");
+            }
+        }
+
         $this->log('Configuration validated successfully.', self::COLOR_GREEN);
     }
 
+    private function resetProductsAndLinks(): void
+    {
+        $this->log("Reset mode activated - clearing products and marking all links as unprocessed...", self::COLOR_YELLOW);
+
+        // اطمینان از پاکسازی transaction‌های قبلی در صورت وجود
+        while (DB::transactionLevel() > 0) {
+            try {
+                DB::rollBack();
+            } catch (\Exception $e) {
+                // ادامه می‌دهیم حتی اگر rollback ناموفق باشد
+                break;
+            }
+        }
+
+        try {
+            // شروع transaction تازه
+            DB::beginTransaction();
+
+            // ریست کردن جدول products (حذف تمام محصولات)
+            $productsCount = Product::count();
+            if ($productsCount > 0) {
+                Product::truncate();
+                $this->log("Cleared $productsCount products from database", self::COLOR_GREEN);
+            } else {
+                $this->log("No products found to clear", self::COLOR_YELLOW);
+            }
+
+            // ریست کردن وضعیت is_processed در جدول links
+            $linksUpdated = Link::where('is_processed', 1)->update(['is_processed' => 0]);
+            $this->log("Reset $linksUpdated links to unprocessed state", self::COLOR_GREEN);
+
+            // پاک کردن جدول failed_links برای شروع تازه
+            $failedLinksCount = FailedLink::count();
+            if ($failedLinksCount > 0) {
+                FailedLink::truncate();
+                $this->log("Cleared $failedLinksCount failed links from database", self::COLOR_GREEN);
+            } else {
+                $this->log("No failed links found to clear", self::COLOR_YELLOW);
+            }
+
+            // commit کردن transaction
+            DB::commit();
+            $this->log("Database reset completed successfully", self::COLOR_GREEN);
+
+        } catch (\Exception $e) {
+            // rollback در صورت بروز خطا
+            try {
+                if (DB::transactionLevel() > 0) {
+                    DB::rollBack();
+                }
+            } catch (\Exception $rollbackException) {
+                $this->log("Failed to rollback transaction: " . $rollbackException->getMessage(), self::COLOR_RED);
+            }
+
+            $this->log("Failed to reset database: " . $e->getMessage(), self::COLOR_RED);
+            throw $e;
+        }
+    }
+
+    private function validateProductTestConfig(): void
+    {
+        $this->log("Validating Product Test Mode configuration...", self::COLOR_BLUE);
+
+        // بررسی وجود product_urls
+        if (!isset($this->config['product_urls']) || empty($this->config['product_urls'])) {
+            throw new \InvalidArgumentException("product_urls is required for Product Test Mode");
+        }
+
+        if (!is_array($this->config['product_urls'])) {
+            throw new \InvalidArgumentException("product_urls must be an array");
+        }
+
+        // بررسی معتبر بودن URLs
+        foreach ($this->config['product_urls'] as $index => $url) {
+            if (!is_string($url) || !filter_var($url, FILTER_VALIDATE_URL)) {
+                throw new \InvalidArgumentException("Invalid URL at index $index: $url");
+            }
+        }
+
+        // بررسی وجود selectors برای product_page
+        if (!isset($this->config['selectors']['product_page'])) {
+            throw new \InvalidArgumentException("product_page selectors are required for Product Test Mode");
+        }
+
+        // بررسی حداقل selectors ضروری
+        $requiredSelectors = ['title', 'price'];
+        $productPageSelectors = $this->config['selectors']['product_page'];
+
+        foreach ($requiredSelectors as $selector) {
+            if (!isset($productPageSelectors[$selector]) || empty($productPageSelectors[$selector]['selector'])) {
+                throw new \InvalidArgumentException("Required selector '$selector' is missing or empty in product_page");
+            }
+        }
+
+        // اعتبارسنجی timeout
+        $timeout = $this->config['timeout'] ?? 60;
+        if (!is_numeric($timeout) || $timeout <= 0) {
+            $this->log("Invalid timeout value, using default: 60", self::COLOR_YELLOW);
+            $this->config['timeout'] = 60;
+        }
+
+        // اعتبارسنجی delays
+        $delayMin = $this->config['request_delay_min'] ?? 1000;
+        $delayMax = $this->config['request_delay_max'] ?? 1000;
+
+        if (!is_numeric($delayMin) || $delayMin < 0) {
+            $this->log("Invalid request_delay_min, using default: 1000", self::COLOR_YELLOW);
+            $this->config['request_delay_min'] = 1000;
+        }
+
+        if (!is_numeric($delayMax) || $delayMax < $delayMin) {
+            $this->log("Invalid request_delay_max, using default: 1000", self::COLOR_YELLOW);
+            $this->config['request_delay_max'] = 1000;
+        }
+
+        $this->log("✅ Product Test Mode configuration is valid", self::COLOR_GREEN);
+        $this->log("📝 Testing " . count($this->config['product_urls']) . " product URLs", self::COLOR_BLUE);
+    }
+
+    private function runProductTestMode(): array
+    {
+        $this->log("🚀 Starting Product Test Mode", self::COLOR_GREEN);
+
+        // بررسی وجود product_urls
+        $productUrls = $this->config['product_urls'] ?? [];
+        if (empty($productUrls)) {
+            $this->log("❌ No product_urls found in config for test mode", self::COLOR_RED);
+            return [
+                'status' => 'error',
+                'message' => 'No product_urls provided for test mode',
+                'total_products' => 0,
+                'failed_links' => 0,
+                'products' => []
+            ];
+        }
+
+        $this->log("📝 Found " . count($productUrls) . " product URLs to test", self::COLOR_GREEN);
+
+        $successfulProducts = [];
+        $failedProducts = [];
+
+        foreach ($productUrls as $index => $url) {
+            $this->log("🔍 Testing product " . ($index + 1) . "/" . count($productUrls) . ": $url", self::COLOR_BLUE);
+
+            try {
+                // استخراج داده‌های محصول with detailed logging
+                $this->log("📡 Attempting to extract product data...", self::COLOR_YELLOW);
+                $productData = $this->extractProductData($url);
+
+                if ($productData !== null) {
+                    $successfulProducts[] = $productData;
+                    $this->log("✅ Product data extracted successfully!", self::COLOR_GREEN);
+
+                    // نمایش خلاصه اطلاعات (بدون جدول کامل)
+                    $this->log("📦 Product: {$productData['title']}", self::COLOR_BLUE);
+                    $this->log("💰 Price: {$productData['price']}", self::COLOR_BLUE);
+                    $this->log("📊 Available: " . ($productData['availability'] ? 'Yes' : 'No'), self::COLOR_BLUE);
+
+                } else {
+                    $failedProducts[] = $url;
+                    $this->log("❌ Failed to extract data - productData is null", self::COLOR_RED);
+                }
+
+            } catch (\Exception $e) {
+                $failedProducts[] = $url;
+                $this->log("💥 Exception occurred: " . $e->getMessage(), self::COLOR_RED);
+                $this->log("📍 File: " . $e->getFile() . " Line: " . $e->getLine(), self::COLOR_YELLOW);
+            }
+
+            // مختصر کردن تاخیر برای تست
+            $this->log("⏱️ Applying delay...", self::COLOR_YELLOW);
+            $delay = mt_rand(500, 1000); // کاهش تاخیر برای تست سریع‌تر
+            usleep($delay * 1000);
+            $this->log("✅ Delay completed, continuing...", self::COLOR_GREEN);
+        }
+
+        // خلاصه نتایج
+        $this->log("", null); // فاصله
+        $this->log("📊 Test Results Summary:", self::COLOR_PURPLE);
+        $successCount = count($successfulProducts);
+        $failCount = count($failedProducts);
+        $totalCount = count($productUrls);
+
+        $this->log("  ✅ Successful: $successCount", self::COLOR_GREEN);
+        $this->log("  ❌ Failed: $failCount", self::COLOR_RED);
+
+        if ($totalCount > 0) {
+            $successRate = round(($successCount / $totalCount) * 100, 2);
+            $this->log("  📈 Success Rate: {$successRate}%", self::COLOR_BLUE);
+        }
+
+        // نمایش URL های شکست خورده
+        if (!empty($failedProducts)) {
+            $this->log("", null);
+            $this->log("💀 Failed URLs:", self::COLOR_RED);
+            foreach ($failedProducts as $failedUrl) {
+                $this->log("  - $failedUrl", self::COLOR_YELLOW);
+            }
+        }
+
+        $this->log("🏁 Product Test Mode completed!", self::COLOR_GREEN);
+
+        return [
+            'status' => 'success',
+            'test_mode' => true,
+            'total_tested' => $totalCount,
+            'total_products' => $successCount,
+            'failed_links' => $failCount,
+            'success_rate' => $totalCount > 0 ? round(($successCount / $totalCount) * 100, 2) : 0,
+            'products' => $successfulProducts,
+            'failed_urls' => $failedProducts
+        ];
+    }
 }

@@ -2,18 +2,19 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Http\Controllers\StartController;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
 
-    class StartCommand extends Command
+class StartCommand extends Command
 {
     protected $signature = 'scrape:start
                             {--config= : Path to the configuration JSON file}
                             {--delay=500 : Delay between requests in milliseconds}
                             {--urls= : Comma-separated list of base URLs}
                             {--products-urls= : Comma-separated list of product listing URLs}
-                            {--batch-size=100 : Number of products per batch}';
+                            {--batch-size=100 : Number of products per batch}
+                            {--update : Reset products and mark all links as unprocessed for re-scraping}';
 
     protected $description = 'A flexible web scraper configurable via CLI or JSON file.';
 
@@ -24,6 +25,14 @@ use Illuminate\Support\Facades\File;
         $config = $this->loadConfiguration();
         if (!$config) {
             return 1;
+        }
+
+        // اگر گزینه --update فعال است، کانفیگ را برای حالت update تنظیم می‌کنیم
+        if ($this->option('update')) {
+            $this->info('Update mode activated - will reset products and reprocess all links');
+            $config['database'] = 'continue'; // از دیتابیس موجود استفاده کن
+            $config['run_method'] = 'continue'; // از لینک‌های موجود استفاده کن
+            $config['update_mode'] = true; // فلگ جدید برای شناسایی حالت update
         }
 
         $scraper = new StartController($config);
@@ -47,11 +56,6 @@ use Illuminate\Support\Facades\File;
 
         $this->error("Scraping failed: {$result['message']}");
         return 1;
-
-        if (json_last_error() !== JSON_ERROR_NONE) {
-                $this->error("Invalid JSON configuration file.");
-                return 1;
-            }
     }
 
     private function loadConfiguration(): array|bool
@@ -70,6 +74,21 @@ use Illuminate\Support\Facades\File;
             }
             $config = $fileConfig;
         }
+        $isProductTestMode = $config['product_test'] ?? false;
+
+        if ($isProductTestMode) {
+            $this->info('🧪 Product Test Mode detected');
+
+            // در حالت تست محصول فقط product_urls نیاز داریم
+            if (empty($config['product_urls'])) {
+                $this->error('Product Test Mode requires product_urls in configuration.');
+                return false;
+            }
+
+            $this->info('Found ' . count($config['product_urls']) . ' product URLs for testing');
+            return $config; // در حالت تست، نیازی به بررسی base_urls و products_urls نیست
+        }
+
 
         if ($this->option('urls')) {
             $config['base_urls'] = array_map('trim', explode(',', $this->option('urls')));

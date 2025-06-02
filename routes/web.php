@@ -4,6 +4,7 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
 // روت‌های عمومی (بدون نیاز به احراز هویت)
@@ -27,8 +28,10 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
     Route::post('/configs/{filename}/run', [ConfigController::class, 'runScraper'])->name('configs.run');
+    Route::post('/configs/{filename}/update', [ConfigController::class, 'updateScraper'])->name('configs.update-scraper'); // روت جدید اضافه شده
     Route::get('/configs/{filename}/logs', [ConfigController::class, 'showLogs'])->name('configs.logs');
     Route::delete('/configs/logs/delete-all', [ConfigController::class, 'deleteAllLogs'])->name('configs.logs.deleteAll');
+    Route::delete('/configs/logs/delete-all-logs', [ConfigController::class, 'deleteConfigLogs'])->name('configs.logs.deleteAllLogs');
     Route::get('/configs/history', [ConfigController::class, 'history'])->name('configs.history');
     Route::get('/configs/log-content/{logfile}', [ConfigController::class, 'getLogContent'])->name('configs.log-content');
     Route::post('/configs/{filename}/stop', [ConfigController::class, 'stopScraper'])->name('configs.stop');
@@ -42,3 +45,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/api', [ApiController::class, 'index'])->name('api.index');
     Route::get('/api/{store}', [ProductController::class, 'index'])->name('store.products');
 });
+Route::get('/search', [SearchController::class, 'index'])->name('search.index');
+Route::post('/search', [SearchController::class, 'search'])->name('search.api');
+
+// روت‌های تست برای نمایش نتایج (اختیاری)
+Route::get('/category/{slug}', function ($slug) {
+    return view('test.category', compact('slug'));
+})->name('category.show');
+
+Route::get('/product/{slug}', function ($slug) {
+    return view('test.product', compact('slug'));
+})->name('product.show');

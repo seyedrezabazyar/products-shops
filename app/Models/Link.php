@@ -9,6 +9,8 @@ class Link extends Model
 {
     use HasFactory;
 
+    protected $connection = 'dynamic'; // اتصال به دیتابیس داینامیک
+
     /**
      * The attributes that are mass assignable.
      *

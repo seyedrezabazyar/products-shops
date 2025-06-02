@@ -483,11 +483,7 @@
 
                             <div class="flex flex-wrap justify-between gap-2 pt-4 border-t border-sepia-200">
                                 <div class="flex flex-wrap gap-2">
-                                    <a href="{{ route('configs.edit', $config['filename']) }}"
-                                       class="btn-classic px-3 py-2 rounded text-sm flex items-center">
-                                        <i class="fas fa-edit ml-1"></i>
-                                        ویرایش
-                                    </a>
+
 
                                     <form action="{{ route('configs.run', $config['filename']) }}" method="POST"
                                           class="inline-block">
@@ -496,6 +492,16 @@
                                                 class="btn-success px-3 py-2 rounded text-sm flex items-center">
                                             <i class="fas fa-play ml-1"></i>
                                             اجرا
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('configs.update-scraper', $config['filename']) }}"
+                                          method="POST"
+                                          class="inline-block">
+                                        @csrf
+                                        <button type="submit"
+                                                class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-2 rounded text-sm flex items-center">
+                                            <i class="fas fa-sync-alt ml-1"></i>
+                                            اپدیت
                                         </button>
                                     </form>
 
@@ -508,6 +514,11 @@
                                             توقف
                                         </button>
                                     </form>
+                                    <a href="{{ route('configs.edit', $config['filename']) }}"
+                                       class="btn-classic px-3 py-2 rounded text-sm flex items-center">
+                                        <i class="fas fa-edit ml-1"></i>
+                                        ویرایش
+                                    </a>
 
                                     <a href="{{ route('configs.logs', $config['filename']) }}"
                                        class="btn-classic px-3 py-2 rounded text-sm flex items-center">
@@ -603,6 +614,16 @@
                                                 class="btn-success px-2 py-1 rounded text-xs flex items-center">
                                             <i class="fas fa-play ml-1"></i>
                                             اجرا
+                                        </button>
+                                    </form>
+                                    <form action="{{ route('configs.update-scraper', $config['filename']) }}"
+                                          method="POST"
+                                          class="inline-block">
+                                        @csrf
+                                        <button type="submit"
+                                                class="bg-purple-600 hover:bg-purple-700 text-white px-2 py-1 rounded text-xs flex items-center">
+                                            <i class="fas fa-sync-alt ml-1"></i>
+                                            اپدیت
                                         </button>
                                     </form>
 
