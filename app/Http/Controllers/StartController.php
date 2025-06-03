@@ -15,12 +15,8 @@ class StartController
 {
     public array $config;
     private Client $httpClient;
-    private $chromedriverPid = null;
-    private array $failedUrlsDueToInternalError = [];
     private $outputCallback = null;
     private int $processedCount = 0;
-    protected array $failedLinks = [];
-    private array $sharedProductIds = [];
 
     // Color constants
     private const COLOR_GREEN = "\033[1;92m";
@@ -31,7 +27,6 @@ class StartController
     private const COLOR_GRAY = "\033[1;90m";
     private const COLOR_CYAN = "\033[1;36m";
     private const COLOR_RESET = "\033[0m";
-    private const COLOR_BOLD = "\033[1m";
 
     // Helper classes
     private ConfigValidator $configValidator;
@@ -55,7 +50,7 @@ class StartController
         $this->productProcessor = new ProductDataProcessor($config);
         $this->productProcessor->setOutputCallback([$this, 'handleOutput']);
 
-        // ✅ بررسی حالت تست محصول قبل از اعتبارسنجی معمولی
+        // بررسی حالت تست محصول قبل از اعتبارسنجی معمولی
         $isProductTestMode = $this->config['product_test'] ?? false;
 
         if ($isProductTestMode) {
@@ -115,7 +110,7 @@ class StartController
         $this->log("Inside scrapeMultiple method", self::COLOR_PURPLE);
         $this->log("Starting scraper with start_id: " . ($start_id ?? 'not set'), self::COLOR_GREEN);
 
-        // ✅ بررسی حالت تست محصول
+        // بررسی حالت تست محصول
         $isProductTestMode = $this->config['product_test'] ?? false;
         if ($isProductTestMode) {
             $this->log("🧪 Product Test Mode Detected - Testing individual products", self::COLOR_PURPLE);
@@ -127,9 +122,6 @@ class StartController
         if ($isUpdateMode) {
             $this->log("Update mode detected", self::COLOR_PURPLE);
         }
-
-        // لاگ محتوای کانفیگ برای دیباگ
-        $this->log("Config contents: " . json_encode($this->config, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE), self::COLOR_YELLOW);
 
         // اعتبارسنجی کانفیگ
         $this->configValidator->validateConfig($this->config);
@@ -219,7 +211,6 @@ class StartController
             $pagesProcessed = $result['pages_processed'] ?? 0;
 
             $this->log("Got " . count($links) . " unique product links from web", self::COLOR_GREEN);
-            $this->log("Links structure: " . json_encode(array_slice($links, 0, 5), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "...", self::COLOR_YELLOW);
 
             if (!empty($links)) {
                 $this->databaseManager->saveProductLinksToDatabase($links);
@@ -244,7 +235,7 @@ class StartController
         // پردازش لینک‌های جمع‌آوری‌شده
         $processingMethod = $this->config['processing_method'] ?? $this->config['method'] ?? 1;
         $this->log("Processing links using method: $processingMethod", self::COLOR_GREEN);
-        $processedResult = $this->processPagesInBatches($uniqueLinks, $processingMethod);
+        $this->processPagesInBatches($uniqueLinks, $processingMethod);
 
         // Get failed links count from database
         $failedLinksCount = FailedLink::count();
@@ -252,7 +243,6 @@ class StartController
         // تلاش مجدد برای لینک‌های شکست‌خورده
         if ($failedLinksCount > 0) {
             $this->log("Found $failedLinksCount failed links in database. Attempting to retry...", self::COLOR_PURPLE);
-
             $processedBefore = $this->processedCount;
             $this->retryFailedLinks();
             $processedDuringRetry = $this->processedCount - $processedBefore;
@@ -295,8 +285,6 @@ class StartController
         $totalProducts = count($links);
         $this->processedCount = 0;
         $processedUrls = [];
-
-        $this->log("Input links: " . json_encode(array_slice($links, 0, 5), JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "...", self::COLOR_YELLOW);
 
         // فیلتر کردن لینک‌های نامعتبر
         $filteredProducts = array_filter($links, function ($product) {
@@ -400,169 +388,235 @@ class StartController
                     $this->log("Processing product {$this->processedCount}/{$totalProducts}: $url", self::COLOR_GREEN);
 
                     try {
-                        if ($method === 2) {
-                            $productData = $this->processProductPageWithPlaywright($url);
-                        } else {
-                            $productData = $this->productProcessor->extractProductData($url, null, $image, $productId);
-                        }
+                        // برای متد 2 یا 3، ابتدا محتوای صفحه را با LinkScraper بگیریم
+                        $body = $this->linkScraper->fetchPageContent($url, false, true);
 
-                        if ($productData === null || (isset($productData['error']) && $productData['error'])) {
-                            $error = isset($productData['error']) ? $productData['error'] : "Failed to extract product data";
-                            $this->saveFailedLink($url, $error);
-                            $this->log("Failed: $url - $error", self::COLOR_RED);
+                        if ($body === null) {
+                            $this->saveFailedLink($url, "Failed to fetch page content");
+                            $this->log("Failed to fetch content: $url", self::COLOR_RED);
                             continue;
                         }
 
-                        $productData['page_url'] = $url;
-                        $productData['image'] = $image ?? ($productData['image'] ?? '');
-                        $productData['product_id'] = $productId !== '' ? $productId : ($productData['product_id'] ?? '');
-                        $productData['availability'] = isset($productData['availability']) ? (int)$productData['availability'] : 0;
-                        $productData['off'] = isset($productData['off']) ? (int)$productData['off'] : 0;
-                        $productData['category'] = $productData['category'] ?? '';
-                        $productData['guarantee'] = $productData['guarantee'] ?? '';
+                        $productData = $this->productProcessor->extractProductData($url, $body, $image, $productId);
 
-                        if ($this->productProcessor->validateProductData($productData)) {
-                            DB::beginTransaction();
-                            try {
-                                $this->productProcessor->saveProductToDatabase($productData);
-                                $this->databaseManager->updateLinkProcessedStatus($url);
-                                DB::commit();
-
-                                $processedUrls[] = $url;
-                                $this->log("Successfully processed: $url", self::COLOR_GREEN);
-                            } catch (\Exception $e) {
-                                DB::rollBack();
-                                $this->saveFailedLink($url, "Database error: " . $e->getMessage());
-                                $this->log("Failed to save product: $url - {$e->getMessage()}", self::COLOR_RED);
-                            }
-                        } else {
-                            $this->saveFailedLink($url, "Invalid product data: " . json_encode($productData, JSON_UNESCAPED_UNICODE));
-                            $this->log("Invalid product data: $url", self::COLOR_RED);
+                        if ($productData === null) {
+                            $this->saveFailedLink($url, "Failed to extract product data");
+                            $this->log("Failed to extract data: $url", self::COLOR_RED);
+                            continue;
                         }
+
+                        if (!$this->productProcessor->validateProductData($productData)) {
+                            $this->saveFailedLink($url, "Invalid product data");
+                            $this->log("Invalid product data: $url", self::COLOR_RED);
+                            continue;
+                        }
+
+                        if (is_array($product) && isset($product['off'])) {
+                            $productData['off'] = $product['off'];
+                        }
+
+                        DB::beginTransaction();
+                        try {
+                            $this->productProcessor->saveProductToDatabase($productData);
+                            $this->databaseManager->updateLinkProcessedStatus($url);
+                            DB::commit();
+
+                            $processedUrls[] = $url;
+                            $this->log("Successfully processed: $url", self::COLOR_GREEN);
+                        } catch (\Exception $e) {
+                            DB::rollBack();
+                            $this->saveFailedLink($url, "Database error: " . $e->getMessage());
+                            $this->log("Failed to save product: $url - {$e->getMessage()}", self::COLOR_RED);
+                        }
+
+                        // Add delay between requests to avoid rate limiting
+                        $delay = mt_rand(
+                            $this->config['request_delay_min'] ?? 500,
+                            $this->config['request_delay_max'] ?? 2000
+                        );
+                        usleep($delay * 1000);
+
                     } catch (\Exception $e) {
                         $this->saveFailedLink($url, "Processing error: " . $e->getMessage());
                         $this->log("Processing error: $url - {$e->getMessage()}", self::COLOR_RED);
                     }
+                }
 
-                    // Add delay between requests
-                    usleep(rand($this->config['request_delay_min'] ?? 1000, $this->config['request_delay_max'] ?? 3000) * 1000);
+                // Add delay between batches
+                if ($batchIndex < count($batches) - 1) {
+                    $batchDelay = $this->config['batch_delay'] ?? 5000;
+                    $this->log("Waiting {$batchDelay}ms before next batch...", self::COLOR_YELLOW);
+                    usleep($batchDelay * 1000);
                 }
             }
         }
 
-        $failedLinksCount = FailedLink::count();
-        $this->log("Batch processing completed. Processed: {$this->processedCount}, Failed: {$failedLinksCount}", self::COLOR_GREEN);
-
-        return [
-            'processed' => $this->processedCount,
-            'failed' => $failedLinksCount,
-            'pages_processed' => count($filteredProducts)
-        ];
+        return $processedUrls;
     }
 
     private function runProductTestMode(): array
     {
-        $this->log("🚀 Starting Product Test Mode", self::COLOR_GREEN);
+        $this->log("🧪 Running in Product Test Mode", self::COLOR_PURPLE);
 
         $productUrls = $this->config['product_urls'] ?? [];
         if (empty($productUrls)) {
-            $this->log("❌ No product_urls found in config for test mode", self::COLOR_RED);
+            $this->log("❌ No product URLs provided for testing", self::COLOR_RED);
             return [
                 'status' => 'error',
-                'message' => 'No product_urls provided for test mode',
+                'message' => 'No product URLs provided for testing',
                 'total_products' => 0,
                 'failed_links' => 0,
                 'products' => []
             ];
         }
 
-        $this->log("📝 Found " . count($productUrls) . " product URLs to test", self::COLOR_GREEN);
+        $this->log("Testing " . count($productUrls) . " product URLs", self::COLOR_GREEN);
 
-        $successfulProducts = [];
-        $failedProducts = [];
+        $results = [];
+        $successCount = 0;
+        $failedCount = 0;
 
         foreach ($productUrls as $index => $url) {
-            $this->log("🔍 Testing product " . ($index + 1) . "/" . count($productUrls) . ": $url", self::COLOR_BLUE);
+            $this->log("Testing product " . ($index + 1) . "/" . count($productUrls) . ": $url", self::COLOR_CYAN);
 
             try {
-                $this->log("📡 Attempting to extract product data...", self::COLOR_YELLOW);
-                $productData = $this->productProcessor->extractProductData($url);
+                $body = $this->linkScraper->fetchPageContent($url, false, true);
 
-                if ($productData !== null) {
-                    $successfulProducts[] = $productData;
-                    $this->log("✅ Product data extracted successfully!", self::COLOR_GREEN);
-
-                    $this->log("📦 Product: {$productData['title']}", self::COLOR_BLUE);
-                    $this->log("💰 Price: {$productData['price']}", self::COLOR_BLUE);
-                    $this->log("📊 Available: " . ($productData['availability'] ? 'Yes' : 'No'), self::COLOR_BLUE);
-
-                } else {
-                    $failedProducts[] = $url;
-                    $this->log("❌ Failed to extract data - productData is null", self::COLOR_RED);
+                if ($body === null) {
+                    $this->log("❌ Failed to fetch content for: $url", self::COLOR_RED);
+                    $failedCount++;
+                    $results[] = [
+                        'url' => $url,
+                        'status' => 'failed',
+                        'error' => 'Failed to fetch page content',
+                        'data' => null
+                    ];
+                    continue;
                 }
 
+                $productData = $this->productProcessor->extractProductData($url, $body);
+
+                if ($productData === null) {
+                    $this->log("❌ Failed to extract data for: $url", self::COLOR_RED);
+                    $failedCount++;
+                    $results[] = [
+                        'url' => $url,
+                        'status' => 'failed',
+                        'error' => 'Failed to extract product data',
+                        'data' => null
+                    ];
+                    continue;
+                }
+
+                if (!$this->productProcessor->validateProductData($productData)) {
+                    $this->log("❌ Invalid product data for: $url", self::COLOR_RED);
+                    $failedCount++;
+                    $results[] = [
+                        'url' => $url,
+                        'status' => 'failed',
+                        'error' => 'Invalid product data',
+                        'data' => $productData
+                    ];
+                    continue;
+                }
+
+                $this->log("✅ Successfully extracted data for: $url", self::COLOR_GREEN);
+                $this->log("   Title: " . $productData['title'], self::COLOR_GRAY);
+                $this->log("   Price: " . $productData['price'], self::COLOR_GRAY);
+                $this->log("   Availability: " . ($productData['availability'] ? 'Available' : 'Unavailable'), self::COLOR_GRAY);
+
+                $successCount++;
+                $results[] = [
+                    'url' => $url,
+                    'status' => 'success',
+                    'error' => null,
+                    'data' => $productData
+                ];
+
             } catch (\Exception $e) {
-                $failedProducts[] = $url;
-                $this->log("💥 Exception occurred: " . $e->getMessage(), self::COLOR_RED);
-                $this->log("📍 File: " . $e->getFile() . " Line: " . $e->getLine(), self::COLOR_YELLOW);
+                $this->log("❌ Exception for $url: " . $e->getMessage(), self::COLOR_RED);
+                $failedCount++;
+                $results[] = [
+                    'url' => $url,
+                    'status' => 'failed',
+                    'error' => $e->getMessage(),
+                    'data' => null
+                ];
             }
 
-            $this->log("⏱️ Applying delay...", self::COLOR_YELLOW);
-            $delay = mt_rand(500, 1000);
+            // Add delay between tests
+            $delay = mt_rand(1000, 3000);
             usleep($delay * 1000);
-            $this->log("✅ Delay completed, continuing...", self::COLOR_GREEN);
         }
 
-        // خلاصه نتایج
-        $this->log("", null);
-        $this->log("📊 Test Results Summary:", self::COLOR_PURPLE);
-        $successCount = count($successfulProducts);
-        $failCount = count($failedProducts);
-        $totalCount = count($productUrls);
-
-        $this->log("  ✅ Successful: $successCount", self::COLOR_GREEN);
-        $this->log("  ❌ Failed: $failCount", self::COLOR_RED);
-
-        if ($totalCount > 0) {
-            $successRate = round(($successCount / $totalCount) * 100, 2);
-            $this->log("  📈 Success Rate: {$successRate}%", self::COLOR_BLUE);
-        }
-
-        if (!empty($failedProducts)) {
-            $this->log("", null);
-            $this->log("💀 Failed URLs:", self::COLOR_RED);
-            foreach ($failedProducts as $failedUrl) {
-                $this->log("  - $failedUrl", self::COLOR_YELLOW);
-            }
-        }
-
-        $this->log("🏁 Product Test Mode completed!", self::COLOR_GREEN);
+        $this->log("🧪 Product Test Mode Complete", self::COLOR_PURPLE);
+        $this->log("✅ Successful: $successCount", self::COLOR_GREEN);
+        $this->log("❌ Failed: $failedCount", self::COLOR_RED);
 
         return [
             'status' => 'success',
-            'test_mode' => true,
-            'total_tested' => $totalCount,
             'total_products' => $successCount,
-            'failed_links' => $failCount,
-            'success_rate' => $totalCount > 0 ? round(($successCount / $totalCount) * 100, 2) : 0,
-            'products' => $successfulProducts,
-            'failed_urls' => $failedProducts
+            'failed_links' => $failedCount,
+            'test_results' => $results,
+            'products' => array_column(array_filter($results, fn($r) => $r['status'] === 'success'), 'data')
         ];
     }
 
-    // Helper methods که هنوز نیاز هستند
     private function retryFailedLinks(): void
     {
-        // Implementation for retrying failed links
-        // This would use the productProcessor and other helper classes
-        $this->log("Retry functionality needs to be implemented with new architecture", self::COLOR_YELLOW);
-    }
+        $failedLinks = FailedLink::where('attempts', '<', 3)->get();
 
-    private function processProductPageWithPlaywright(string $url): ?array
-    {
-        // Placeholder for Playwright processing
-        $this->log("Playwright processing not implemented in refactored version", self::COLOR_YELLOW);
-        return null;
+        if ($failedLinks->isEmpty()) {
+            $this->log("No failed links to retry", self::COLOR_YELLOW);
+            return;
+        }
+
+        $this->log("Retrying " . $failedLinks->count() . " failed links...", self::COLOR_PURPLE);
+
+        foreach ($failedLinks as $failedLink) {
+            try {
+                $this->log("Retrying failed link (attempt {$failedLink->attempts}): {$failedLink->url}", self::COLOR_PURPLE);
+
+                $body = $this->linkScraper->fetchPageContent($failedLink->url, false, true);
+
+                if ($body === null) {
+                    $failedLink->increment('attempts');
+                    $failedLink->update(['error_message' => 'Failed to fetch content on retry']);
+                    continue;
+                }
+
+                $productData = $this->productProcessor->extractProductData($failedLink->url, $body);
+
+                if ($productData && $this->productProcessor->validateProductData($productData)) {
+                    DB::beginTransaction();
+                    try {
+                        $this->productProcessor->saveProductToDatabase($productData);
+                        $this->databaseManager->updateLinkProcessedStatus($failedLink->url);
+                        $failedLink->delete();
+                        DB::commit();
+
+                        $this->processedCount++;
+                        $this->log("✅ Successfully recovered failed link: {$failedLink->url}", self::COLOR_GREEN);
+                    } catch (\Exception $e) {
+                        DB::rollBack();
+                        $failedLink->increment('attempts');
+                        $failedLink->update(['error_message' => "Database error on retry: " . $e->getMessage()]);
+                        $this->log("Failed to save recovered product: {$failedLink->url}", self::COLOR_RED);
+                    }
+                } else {
+                    $failedLink->increment('attempts');
+                    $failedLink->update(['error_message' => 'Invalid product data on retry']);
+                }
+
+                // Add delay between retry attempts
+                usleep(mt_rand(1000, 2000) * 1000);
+
+            } catch (\Exception $e) {
+                $failedLink->increment('attempts');
+                $failedLink->update(['error_message' => "Retry error: " . $e->getMessage()]);
+                $this->log("Retry failed for {$failedLink->url}: {$e->getMessage()}", self::COLOR_RED);
+            }
+        }
     }
 
     private function saveFailedLink(string $url, string $errorMessage): void
@@ -571,16 +625,11 @@ class StartController
             $existingFailedLink = FailedLink::where('url', $url)->first();
 
             if ($existingFailedLink) {
-                $oldAttempts = $existingFailedLink->attempts;
+                $existingFailedLink->increment('attempts');
                 $existingFailedLink->update([
-                    'attempts' => $oldAttempts + 1,
                     'error_message' => $errorMessage,
                     'updated_at' => now()
                 ]);
-
-                $this->log("🔄 لینک ناموفق آپدیت شد (تلاش #{$existingFailedLink->attempts}): $url", self::COLOR_YELLOW);
-                $this->log("  └─ خطا: $errorMessage", self::COLOR_RED);
-
             } else {
                 FailedLink::create([
                     'url' => $url,
@@ -589,41 +638,18 @@ class StartController
                     'created_at' => now(),
                     'updated_at' => now()
                 ]);
-
-                $this->log("❌ لینک جدید به failed_links اضافه شد: $url", self::COLOR_RED);
-                $this->log("  └─ خطا: $errorMessage", self::COLOR_RED);
             }
-
         } catch (\Exception $e) {
-            $this->log("💥 خطا در ذخیره failed_link $url: {$e->getMessage()}", self::COLOR_RED);
+            $this->log("Failed to save failed link: $url - {$e->getMessage()}", self::COLOR_RED);
         }
-    }
-
-    private function randomUserAgent(): string
-    {
-        $agents = [
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0',
-            // ... more user agents would be here
-        ];
-        return $agents[array_rand($agents)];
     }
 
     private function isUnwantedDomain(string $url): bool
     {
-        $unwantedDomains = [
-            'telegram.me', 't.me', 'wa.me', 'whatsapp.com', 'aparat.com', 'rubika.ir', 'sapp.ir', 'igap.net', 'bale.ai',
-        ];
-
-        $parsedUrl = parse_url($url, PHP_URL_HOST);
-        if (!$parsedUrl) {
-            return true;
-        }
+        $unwantedDomains = $this->config['unwanted_domains'] ?? [];
 
         foreach ($unwantedDomains as $domain) {
-            if (stripos($parsedUrl, $domain) !== false) {
-                $this->log("Skipping unwanted domain: $url", self::COLOR_YELLOW);
+            if (str_contains($url, $domain)) {
                 return true;
             }
         }
@@ -631,9 +657,40 @@ class StartController
         return false;
     }
 
-    private function isInvalidLink(?string $href): bool
+    private function isInvalidLink(string $url): bool
     {
-        return empty($href) || $href === '#' || stripos($href, 'javascript:') === 0;
+        // بررسی صحت URL
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            return true;
+        }
+
+        // بررسی لینک‌های جاوااسکریپت یا anchor
+        if (str_starts_with($url, 'javascript:') || str_starts_with($url, '#')) {
+            return true;
+        }
+
+        // بررسی فرمت‌های فایل غیرمجاز
+        $invalidExtensions = ['.pdf', '.doc', '.docx', '.zip', '.rar', '.exe'];
+        foreach ($invalidExtensions as $ext) {
+            if (str_ends_with(strtolower($url), $ext)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function randomUserAgent(): string
+    {
+        $userAgents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/121.0'
+        ];
+
+        return $userAgents[array_rand($userAgents)];
     }
 
     public function handleOutput(string $message): void
@@ -647,49 +704,14 @@ class StartController
 
     private function log(string $message, ?string $color = null): void
     {
-        $colorReset = "\033[0m";
+        $colorReset = self::COLOR_RESET;
         $formattedMessage = $color ? $color . $message . $colorReset : $message;
 
-        // ذخیره در فایل لاگ
+        // Log to file
         $logFile = storage_path('logs/scraper_' . date('Ymd') . '.log');
         file_put_contents($logFile, "[" . date('Y-m-d H:i:s') . "] $message\n", FILE_APPEND);
 
-        // حذف کدهای رنگی برای بررسی
-        $cleanMessage = preg_replace("/\033\[[0-9;]*m/", "", $message);
-
-        // شرایط نمایش لاگ‌های مهم
-        $shouldDisplay = $this->shouldDisplayLog($cleanMessage);
-
-        if ($shouldDisplay) {
-            if ($this->outputCallback) {
-                call_user_func($this->outputCallback, $formattedMessage);
-            } else {
-                echo $formattedMessage . PHP_EOL;
-            }
-        }
-    }
-
-    private function shouldDisplayLog(string $cleanMessage): bool
-    {
-        $displayConditions = [
-            str_contains($cleanMessage, '🆕') || str_contains($cleanMessage, '🔄') ||
-            str_contains($cleanMessage, '✅') || str_contains($cleanMessage, '❌'),
-            str_starts_with($cleanMessage, '+') && str_contains($cleanMessage, '|'),
-            str_starts_with($cleanMessage, 'Fetching page') ||
-            str_starts_with($cleanMessage, 'Completed processing page') ||
-            str_contains($cleanMessage, 'Extracted product_id') ||
-            str_contains($cleanMessage, 'failed_links') ||
-            str_contains($cleanMessage, 'Failed to fetch') ||
-            str_contains($cleanMessage, 'Invalid link') ||
-            str_contains($cleanMessage, '═══') || str_contains($cleanMessage, '───') ||
-            str_contains($cleanMessage, 'Playwright') ||
-            str_contains($cleanMessage, 'Starting Playwright') ||
-            str_contains($cleanMessage, 'Temporary script file') ||
-            str_contains($cleanMessage, 'Playwright console log')
-        ];
-
-        return array_reduce($displayConditions, function ($carry, $condition) {
-            return $carry || $condition;
-        }, false);
+        // Output to console/callback
+        $this->handleOutput($formattedMessage);
     }
 }
